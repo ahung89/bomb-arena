@@ -1,0 +1,32 @@
+{
+  "name": "bomb-arena",
+  "version": "1.0.0",
+  "description": "An HTML5 multiplayer arena combat game.",
+  "main": "game.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ahung89/bomb-arena.git"
+  },
+  "author": "TBA",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ahung89/bomb-arena/issues"
+  },
+  "homepage": "https://github.com/ahung89/bomb-arena",
+  "dependencies": {
+    "socket.io": "^1.2.1"
+  },
+  "devDependencies": {
+    "browserify": "^8.1.0",
+    "gulp": "^3.8.10",
+    "gulp-connect": "^2.2.0",
+    "gulp-jshint": "^1.9.0",
+    "gulp-uglify": "^1.0.2",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0",
+    "watchify": "^2.2.1"
+  }
+}
