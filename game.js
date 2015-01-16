@@ -20,21 +20,21 @@ function init() {
 };
 
 function setEventHandlers () {
-	socket.sockets.on('connection', function(client) {
+	socket.sockets.on("connection", function(client) {
 		util.log("New player has connected: " + client.id);
 
-		client.on('new player', onNewPlayer);
+		client.on("new player", onNewPlayer);
 
-		client.on('move player', onMovePlayer);
+		client.on("move player", onMovePlayer);
 
-		client.on('disconnect', onClientDisconnect);
+		client.on("disconnect", onClientDisconnect);
 	});
 };
 
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
-	this.broadcast.emit('remove player', {id: this.id});
+	this.broadcast.emit("remove player", {id: this.id});
 };
 
 function onNewPlayer(data) {
@@ -42,17 +42,17 @@ function onNewPlayer(data) {
 	var newPlayer = new Player(data.x, data.y, this.id);
 
 	// Broadcast new player to connected socket clients
-	this.broadcast.emit('new player', newPlayer);
+	this.broadcast.emit("new player", newPlayer);
 
 	// Notify existing players of the new player
 	for(var i = 0; i < players.length; i++) {
 		var existingPlayer = players[i];
-		this.emit('new player', newPlayer);
+		this.emit("new player", newPlayer);
 	}
 };
 
 function onMovePlayer(data) {
-	this.broadcast.emit('move player', {id: this.id, x: data.x, y: data.y, d: data.direction});
+	this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, d: data.direction});
 };
 
 function startGame() {
