@@ -1,12 +1,13 @@
 // Dependencies
 var util = require('util');
 var io = require('socket.io');
-var Player = require('./Player');
+var Player = require('./entities/Player');
 
 // Game Variables
 var socket;
 var game;
 var players = [];
+var bombs = [];
 
 init();
 
@@ -59,8 +60,6 @@ function onNewPlayer(data) {
 };
 
 function onMovePlayer(data) {
-	util.log("moving player");
-
 	var movingPlayer = findPlayerById(this.id);
 
 	movingPlayer.x = data.x;
@@ -68,6 +67,12 @@ function onMovePlayer(data) {
 	movingPlayer.facing = data.facing;
 
 	this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, facing: data.facing});
+};
+
+function onPlaceBomb(data) {
+	bombs.push();
+
+	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});
 };
 
 function startGame() {

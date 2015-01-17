@@ -1,5 +1,5 @@
-var Player = require('../Player');
-var RemotePlayer = require('../RemotePlayer');
+var Player = require('../entities/Player');
+var RemotePlayer = require('../entities/RemotePlayer');
 
 var Level = function () {};
 

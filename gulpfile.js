@@ -10,8 +10,8 @@ var gulp = require('gulp'),
 gulp.task('default', ['connect', 'compile']);
 
 paths = {
-	entry: './public/src/main.js',
-	dist: './public/dist/'
+	entry: './client/src/main.js',
+	dist: './client/dist/'
 };
 
 gulp.task('compile', function() {
@@ -36,7 +36,7 @@ gulp.task('compile', function() {
 
 gulp.task('connect', function() {
 	connect.server({
-		root: [__dirname + '/public'],
+		root: [__dirname + '/client'],
 		port: 9000,
 		livereload: true
 	});
