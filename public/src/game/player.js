@@ -18,35 +18,31 @@ Player.prototype.move = function() {
 	  var moving = true;;
 
   	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
-  		player.body.velocity.y = 0;
-  		player.body.velocity.x = -200;
+  		this.body.velocity.y = 0;
+  		this.body.velocity.x = -200;
   		this.facing = 'left';
-  		// player.animations.play('left');
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
-  		player.body.velocity.y = 0;
-  		player.body.velocity.x = 200;
+  		this.body.velocity.y = 0;
+  		this.body.velocity.x = 200;
   		this.facing = 'right';
-  		// player.animations.play('right');
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
-  		player.body.velocity.x = 0;
-  		player.body.velocity.y = -200;
+  		this.body.velocity.x = 0;
+  		this.body.velocity.y = -200;
   		this.facing = 'up';
-  		// player.animations.play('up');
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
-  		player.body.velocity.x = 0;
-  		player.body.velocity.y = 200;
+  		this.body.velocity.x = 0;
+  		this.body.velocity.y = 200;
   		this.facing = 'down';
-  		// player.animations.play('down');
   	} else {
       moving = false;
-  		player.body.velocity.x = 0;
-  		player.body.velocity.y = 0;
-  		player.animations.stop();
+  		this.body.velocity.x = 0;
+  		this.body.velocity.y = 0;
+  		this.animations.stop();
   	}
 
   	if(moving)  {
-      player.animations.play(this.facing);
-      socket.emit("move player", {x: player.body.position.x, y: player.body.position.y, facing: this.facing});
+      this.animations.play(this.facing);
+      socket.emit("move player", {x: this.body.position.x, y: this.body.position.y, facing: this.facing});
     }
   };
 

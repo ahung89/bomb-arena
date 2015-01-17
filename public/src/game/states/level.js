@@ -21,6 +21,15 @@ Level.prototype = {
 
   update: function() {
   	player.move();
+  	this.stopAnimationForMotionlessPlayers();
+  },
+
+  stopAnimationForMotionlessPlayers: function() {
+  	remotePlayers.forEach(function(remotePlayer) {
+  		if(game.time.now - remotePlayer.lastMoveTime > 50) {
+  			remotePlayer.animations.stop();
+  		}
+  	});
   }
 };
 
@@ -53,7 +62,13 @@ function onNewPlayer(data) {
 };
 
 function onMovePlayer(data) {
+	var movingPlayer = findRemotePlayerById(data.id);
 
+	movingPlayer.position.x = data.x;
+	movingPlayer.position.y = data.y;
+	movingPlayer.lastMoveTime = game.time.now;
+
+	movingPlayer.animations.play(data.facing);
 };
 
 function onRemovePlayer(data) {

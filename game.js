@@ -67,7 +67,7 @@ function onMovePlayer(data) {
 	movingPlayer.y = data.y;
 	movingPlayer.facing = data.facing;
 
-	this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, d: data.facing});
+	this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, facing: data.facing});
 };
 
 function startGame() {
