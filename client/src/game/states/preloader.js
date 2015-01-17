@@ -5,7 +5,8 @@ module.exports = Preloader;
 Preloader.prototype = {
 
   preload: function () {
-    // Fill in later.
+    this.load.spritesheet("bomberman", "assets/sprites/bomberman.png", 28, 50);
+    this.load.spritesheet("bomb", "assets/sprites/bomb.png", 26, 40);
   },
 
   create: function () {

@@ -2,6 +2,7 @@
 var util = require('util');
 var io = require('socket.io');
 var Player = require('./entities/Player');
+var Bomb = require('./entities/Bomb');
 
 // Game Variables
 var socket;
@@ -36,7 +37,7 @@ function setEventHandlers () {
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
-	var playerToRemove = findPlayerById(this.id);
+	var playerToRemove = findById(this.id, players);
 
 	players.splice(players.indexOf(playerToRemove), 1);
 
@@ -60,7 +61,7 @@ function onNewPlayer(data) {
 };
 
 function onMovePlayer(data) {
-	var movingPlayer = findPlayerById(this.id);
+	var movingPlayer = findById(this.id, players);
 
 	movingPlayer.x = data.x;
 	movingPlayer.y = data.y;
@@ -70,7 +71,14 @@ function onMovePlayer(data) {
 };
 
 function onPlaceBomb(data) {
-	bombs.push();
+	bombs.push(new Bomb(data.x, data.y, data.id));
+
+	setTimeout(3000, function() {
+		var id = data.id;
+		bombs.splice(bombs.indexOf(findById(id, bombs)), 1);
+		util.log("deleting bomb " + bomb.id);
+		// detonate
+	});
 
 	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});
 };
@@ -79,10 +87,10 @@ function startGame() {
 
 };
 
-function findPlayerById(id) {
-	for(var i = 0; i < players.length; i++) {
-		if(players[i].id == id)
-			return players[i];
+function findById(id, arr) {
+	for(var i = 0; i < arr.length; i++) {
+		if(arr[i].id == id)
+			return arr[i];
 	}
 
 	return false;
