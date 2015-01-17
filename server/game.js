@@ -7,8 +7,8 @@ var Bomb = require('./entities/Bomb');
 // Game Variables
 var socket;
 var game;
-var players = [];
-var bombs = [];
+var players = {};
+var bombs = {};
 
 init();
 
@@ -37,9 +37,7 @@ function setEventHandlers () {
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
-	var playerToRemove = findById(this.id, players);
-
-	players.splice(players.indexOf(playerToRemove), 1);
+	delete players[this.id];
 
 	this.broadcast.emit("remove player", {id: this.id});
 };
@@ -52,16 +50,16 @@ function onNewPlayer(data) {
 	this.broadcast.emit("new player", newPlayer);
 
 	// Notify existing players of the new player
-	for(var i = 0; i < players.length; i++) {
-		var existingPlayer = players[i];
-		this.emit("new player", existingPlayer);
+	for(var i in players) {
+		this.emit("new player", players[i]);
 	}
 
-	players.push(newPlayer);
+	players[this.id] = newPlayer;
+	bombs[this.id] = {};
 };
 
 function onMovePlayer(data) {
-	var movingPlayer = findById(this.id, players);
+	var movingPlayer = players[this.id];
 
 	movingPlayer.x = data.x;
 	movingPlayer.y = data.y;
@@ -71,27 +69,18 @@ function onMovePlayer(data) {
 };
 
 function onPlaceBomb(data) {
-	bombs.push(new Bomb(data.x, data.y, data.id));
+	// bombs[this.id].push(new Bomb(data.x, data.y, data.id));
 
-	setTimeout(3000, function() {
-		var id = data.id;
-		bombs.splice(bombs.indexOf(findById(id, bombs)), 1);
-		util.log("deleting bomb " + bomb.id);
-		// detonate
-	});
+	// setTimeout(3000, function() {
+	// 	var id = data.id;
+	// 	bombs.splice(bombs.indexOf(findById(id, bombs)), 1);
+	// 	util.log("deleting bomb " + bomb.id);
+	// 	// detonate
+	// });
 
 	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});
 };
 
 function startGame() {
 
-};
-
-function findById(id, arr) {
-	for(var i = 0; i < arr.length; i++) {
-		if(arr[i].id == id)
-			return arr[i];
-	}
-
-	return false;
 };
