@@ -1,6 +1,6 @@
 var RemotePlayer = function(x, y, id) {
 	this.id = id;
-	this.lastMoveTime = 0;
+	this.previousPosition = {x: x, y: y};
 
 	Phaser.Sprite.call(this, game, x, y, "bomberman");
 

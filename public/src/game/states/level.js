@@ -22,11 +22,18 @@ Level.prototype = {
   update: function() {
   	player.move();
   	this.stopAnimationForMotionlessPlayers();
+  	this.storePreviousPositions();
+  },
+
+  storePreviousPositions: function() {
+  	remotePlayers.forEach(function(remotePlayer) {
+  		remotePlayer.previousPosition = {x: remotePlayer.position.x, y: remotePlayer.position.y};
+  	});
   },
 
   stopAnimationForMotionlessPlayers: function() {
   	remotePlayers.forEach(function(remotePlayer) {
-  		if(game.time.now - remotePlayer.lastMoveTime > 50) {
+  		if(remotePlayer.previousPosition.x == remotePlayer.position.x && remotePlayer.previousPosition.y == remotePlayer.position.y) {
   			remotePlayer.animations.stop();
   		}
   	});
@@ -55,9 +62,6 @@ function onSocketDisconnect() {
 };
 
 function onNewPlayer(data) {
-	console.log("New player connected: ");
-	console.log(data);
-
 	remotePlayers.push(new RemotePlayer(data.x, data.y, data.id));
 };
 
@@ -66,7 +70,6 @@ function onMovePlayer(data) {
 
 	movingPlayer.position.x = data.x;
 	movingPlayer.position.y = data.y;
-	movingPlayer.lastMoveTime = game.time.now;
 
 	movingPlayer.animations.play(data.facing);
 };
