@@ -22,17 +22,19 @@ Level.prototype = {
   },
 
   storePreviousPositions: function() {
-  	remotePlayers.forEach(function(remotePlayer) {
-  		remotePlayer.previousPosition = {x: remotePlayer.position.x, y: remotePlayer.position.y};
-  	});
+    for(var id in remotePlayers) {
+      remotePlayer = remotePlayers[id];
+      remotePlayer.previousPosition = {x: remotePlayer.position.x, y: remotePlayer.position.y};
+    }
   },
 
   stopAnimationForMotionlessPlayers: function() {
-  	remotePlayers.forEach(function(remotePlayer) {
-  		if(remotePlayer.previousPosition.x == remotePlayer.position.x && remotePlayer.previousPosition.y == remotePlayer.position.y) {
-  			remotePlayer.animations.stop();
-  		}
-  	});
+    for(var id in remotePlayers) {
+      remotePlayer = remotePlayers[id];
+      if(remotePlayer.previousPosition.x == remotePlayer.position.x && remotePlayer.previousPosition.y == remotePlayer.position.y) {
+        remotePlayer.animations.stop();
+      }
+    }
   }
 };
 
@@ -58,11 +60,11 @@ function onSocketDisconnect() {
 };
 
 function onNewPlayer(data) {
-	remotePlayers.push(new RemotePlayer(data.x, data.y, data.id));
+	remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id);
 };
 
 function onMovePlayer(data) {
-	var movingPlayer = findRemotePlayerById(data.id);
+	var movingPlayer = remotePlayers[data.id];
 
 	movingPlayer.position.x = data.x;
 	movingPlayer.position.y = data.y;
@@ -71,18 +73,9 @@ function onMovePlayer(data) {
 };
 
 function onRemovePlayer(data) {
-	var playerToRemove = findRemotePlayerById(data.id);
+	var playerToRemove = remotePlayers[data.id];
 
 	playerToRemove.destroy();
 
-	remotePlayers.splice(remotePlayers.indexOf(playerToRemove), 1);
-};
-
-function findRemotePlayerById(id) {
-	for(var i = 0; i < remotePlayers.length; i++) {
-		if(remotePlayers[i].id == id)
-			return remotePlayers[i];
-	}
-
-	return false;
+  delete remotePlayers[data.id];
 };
