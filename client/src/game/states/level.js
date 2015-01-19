@@ -1,5 +1,6 @@
 var Player = require('../entities/Player');
 var RemotePlayer = require('../entities/RemotePlayer');
+var Bomb = require('../entities/Bomb');
 
 var Level = function () {};
 
@@ -8,9 +9,12 @@ module.exports = Level;
 Level.prototype = {
 
   create: function () {
-  	socket = io("http://localhost:8120"); // By default, this connects to the local host.
-    
+    level = this;
+  	socket = io("http://localhost:8120");
     player = new Player(Math.round(Math.random() * game.camera.width), Math.round(Math.random() * game.camera.height));
+
+    this.bombs = game.add.group();
+    game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
 
     setEventHandlers();
   },
@@ -45,6 +49,8 @@ function setEventHandlers() {
   	socket.on("new player", onNewPlayer);
   	socket.on("move player", onMovePlayer);
   	socket.on("remove player", onRemovePlayer);
+    socket.on("place bomb", onPlaceBomb);
+    socket.on("detonate", onDetonate);
 };
 
 function onSocketConnected() {
@@ -78,4 +84,16 @@ function onRemovePlayer(data) {
 	playerToRemove.destroy();
 
   delete remotePlayers[data.id];
+};
+
+function onPlaceBomb(data) {
+  level.bombs.add(new Bomb(data.x, data.y, data.id));
+};
+
+function onDetonate(data) {
+  level.bombs.forEach(function(bomb) {
+    if(bomb.id == data.id) {
+      bomb.destroy();
+    }
+  });
 };

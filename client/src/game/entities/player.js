@@ -5,10 +5,8 @@ var Player = function(x, y) {
 
   this.facing = 'down';
   this.anchor.setTo(.5, .5);
-  this.bombs = game.add.group();
 
 	game.physics.enable(this, Phaser.Physics.ARCADE);
-  game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
 
 	this.animations.add('down', [0, 1, 2, 3, 4], 10, true);
   	this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
@@ -58,9 +56,12 @@ Player.prototype.handleMotionInput = function() {
   };
 
   Player.prototype.handleBombInput = function() {
-    if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && !game.physics.arcade.overlap(this, this.bombs)) {
+    if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && !game.physics.arcade.overlap(this, level.bombs)) {
+      var bomb = new Bomb(this.position.x, this.position.y, game.time.now);
+
       // Bombs for a player are identified by timestamp.
-      this.bombs.add(new Bomb(this.position.x, this.position.y, game.time.now));
+      level.bombs.add(bomb);
+      socket.emit("place bomb", {x: bomb.x, y: bomb.y, id: bomb.id});
     }
   };
 

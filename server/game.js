@@ -31,6 +31,8 @@ function setEventHandlers () {
 		client.on("move player", onMovePlayer);
 
 		client.on("disconnect", onClientDisconnect);
+
+		client.on("place bomb", onPlaceBomb);
 	});
 };
 
@@ -69,14 +71,16 @@ function onMovePlayer(data) {
 };
 
 function onPlaceBomb(data) {
-	// bombs[this.id].push(new Bomb(data.x, data.y, data.id));
+	var bombId = data.id;
+	var playerId = this.id;
 
-	// setTimeout(3000, function() {
-	// 	var id = data.id;
-	// 	bombs.splice(bombs.indexOf(findById(id, bombs)), 1);
-	// 	util.log("deleting bomb " + bomb.id);
-	// 	// detonate
-	// });
+	bombs[playerId][bombId]= new Bomb(data.x, data.y, bombId);
+
+	setTimeout(function() {
+		delete bombs[playerId][bombId];		
+		util.log("deleting bomb " + bombId);
+		socket.sockets.emit("detonate", {id: bombId});
+	}, 3000);
 
 	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});
 };
