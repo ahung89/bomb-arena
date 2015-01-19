@@ -92,7 +92,7 @@ function onPlaceBomb(data) {
 
 function onDetonate(data) {
   level.bombs.forEach(function(bomb) {
-    if(bomb.id == data.id) {
+    if(bomb && bomb.id == data.id) {
       bomb.destroy();
     }
   });
