@@ -1,8 +1,8 @@
 // Dependencies
 var util = require('util');
 var io = require('socket.io');
-var Player = require('./entities/Player');
-var Bomb = require('./entities/Bomb');
+var Player = require('./entities/player');
+var Bomb = require('./entities/bomb');
 
 // Game Variables
 var socket;
