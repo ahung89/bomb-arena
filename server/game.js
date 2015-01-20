@@ -13,6 +13,8 @@ var bombs = {};
 init();
 
 function init() {
+	util.log("port is " + process.env.port);
+
 	socket = io.listen(process.env.PORT || 8120);
 
 	// Begin listening for events.
