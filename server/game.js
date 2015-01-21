@@ -16,7 +16,6 @@ init();
 
 function init() {
 	socket = io.listen(process.env.PORT || 8120);
-	// app.listen(process.env.PORT || 8120);
 
 	// Begin listening for events.
 	setEventHandlers();

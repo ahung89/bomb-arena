@@ -10,8 +10,10 @@ Level.prototype = {
 
   create: function () {
     level = this;
-  	socket = io("https://limitless-brook-9339.herokuapp.com:8120");
+  	socket = io("https://limitless-brook-9339.herokuapp.com:443");
+    // socket = io("http://localhost:8120");
     player = new Player(Math.round(Math.random() * game.camera.width), Math.round(Math.random() * game.camera.height));
+
 
     this.bombs = game.add.group();
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);

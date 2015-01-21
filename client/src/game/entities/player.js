@@ -1,4 +1,4 @@
-var Bomb = require('./Bomb');
+var Bomb = require('./bomb');
 
 var Player = function(x, y) {
 	Phaser.Sprite.call(this, game, x, y, 'bomberman');
