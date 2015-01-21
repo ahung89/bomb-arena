@@ -1,6 +1,9 @@
 // Dependencies
 var util = require('util');
-var io = require('socket.io');
+var app = require('http').createServer();
+var io = require('socket.io')(app);
+
+// Game objects
 var Player = require('./entities/player');
 var Bomb = require('./entities/bomb');
 
@@ -13,9 +16,8 @@ var bombs = {};
 init();
 
 function init() {
-	util.log("port is " + process.env.PORT);
-
-	socket = io.listen(process.env.PORT || 8120);
+	// socket = io.listen(process.env.PORT || 8120);
+	app.listen(process.env.PORT || 8120);
 
 	// Begin listening for events.
 	setEventHandlers();
@@ -25,7 +27,7 @@ function init() {
 };
 
 function setEventHandlers () {
-	socket.sockets.on("connection", function(client) {
+	io.on("connection", function(client) {
 		util.log("New player has connected: " + client.id);
 
 		client.on("new player", onNewPlayer);
@@ -81,7 +83,7 @@ function onPlaceBomb(data) {
 	setTimeout(function() {
 		delete bombs[playerId][bombId];		
 		util.log("deleting bomb " + bombId);
-		socket.sockets.emit("detonate", {id: bombId});
+		io.sockets.emit("detonate", {id: bombId});
 	}, 3000);
 
 	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});
