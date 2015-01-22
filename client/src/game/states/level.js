@@ -10,8 +10,8 @@ Level.prototype = {
 
   create: function () {
     level = this;
-  	socket = io("https://limitless-brook-9339.herokuapp.com:443");
-    // socket = io("http://localhost:8120");
+  	// socket = io("https://limitless-brook-9339.herokuapp.com:443");
+    socket = io("http://localhost:8120");
     player = new Player(Math.round(Math.random() * game.camera.width), Math.round(Math.random() * game.camera.height));
 
 
@@ -47,12 +47,13 @@ Level.prototype = {
   // TODO: Move this somewhere else.
 function setEventHandlers() {
 	socket.on("connect", onSocketConnected);
-  	socket.on("disconnect", onSocketDisconnect);
-  	socket.on("new player", onNewPlayer);
-  	socket.on("move player", onMovePlayer);
-  	socket.on("remove player", onRemovePlayer);
-    socket.on("place bomb", onPlaceBomb);
-    socket.on("detonate", onDetonate);
+  socket.on("assign id", onAssignId);
+  socket.on("disconnect", onSocketDisconnect);
+  socket.on("new player", onNewPlayer);
+  socket.on("move player", onMovePlayer);
+  socket.on("remove player", onRemovePlayer);
+  socket.on("place bomb", onPlaceBomb);
+  socket.on("detonate", onDetonate);
 };
 
 function onSocketConnected() {
@@ -60,6 +61,10 @@ function onSocketConnected() {
 
 	socket.emit("new player", {x: player.position.x, y: player.position.y});
 };
+
+function onAssignId(data) {
+  player.id = data.id;
+}
 
 function onSocketDisconnect() {
 	console.log("Disconnected from socket server.");
@@ -72,10 +77,15 @@ function onNewPlayer(data) {
 };
 
 function onMovePlayer(data) {
+  if(!player.id || data.id == player.id) {
+    return;
+  }
+
 	var movingPlayer = remotePlayers[data.id];
 
 	movingPlayer.position.x = data.x;
 	movingPlayer.position.y = data.y;
+  movingPlayer.lastMoveTime = data.timestamp;
 
 	movingPlayer.animations.play(data.facing);
 };

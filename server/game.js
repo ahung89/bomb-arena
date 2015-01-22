@@ -12,6 +12,8 @@ var game;
 var players = {};
 var bombs = {};
 
+var updateInterval = 100; // Broadcast updates every 100 ms.
+
 init();
 
 function init() {
@@ -20,8 +22,8 @@ function init() {
 	// Begin listening for events.
 	setEventHandlers();
 
-	// Start game
-	startGame();
+	// Start game loop
+	setInterval(broadcastingLoop, updateInterval);
 };
 
 function setEventHandlers () {
@@ -53,6 +55,8 @@ function onNewPlayer(data) {
 	// Broadcast new player to connected socket clients
 	this.broadcast.emit("new player", newPlayer);
 
+	this.emit("assign id", {id: this.id});
+
 	// Notify existing players of the new player
 	for(var i in players) {
 		this.emit("new player", players[i]);
@@ -69,7 +73,7 @@ function onMovePlayer(data) {
 	movingPlayer.y = data.y;
 	movingPlayer.facing = data.facing;
 
-	this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, facing: data.facing, timestamp: (+new Date())});
+	// this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, facing: data.facing, timestamp: (+new Date())});
 };
 
 function onPlaceBomb(data) {
@@ -87,6 +91,9 @@ function onPlaceBomb(data) {
 	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});
 };
 
-function startGame() {
-
+function broadcastingLoop() {
+	for(var i in players) {
+		var player = players[i];
+		socket.sockets.emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
+	}
 };
