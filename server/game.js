@@ -69,7 +69,7 @@ function onMovePlayer(data) {
 	movingPlayer.y = data.y;
 	movingPlayer.facing = data.facing;
 
-	this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, facing: data.facing});
+	this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, facing: data.facing, timestamp: (+new Date())});
 };
 
 function onPlaceBomb(data) {
