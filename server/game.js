@@ -22,15 +22,13 @@ function init() {
 	// Begin listening for events.
 	setEventHandlers();
 
-	util.log("KICKIN OFF DAT LOOP");
-
 	// Start game loop
 	setInterval(broadcastingLoop, updateInterval);
 };
 
 function setEventHandlers () {
 	socket.sockets.on("connection", function(client) {
-		util.log("New playerZZZ has connected: " + client.id);
+		util.log("New player has connected: " + client.id);
 
 		client.on("new player", onNewPlayer);
 
@@ -94,7 +92,6 @@ function onPlaceBomb(data) {
 };
 
 function broadcastingLoop() {
-			util.log("IN BROADCAST LOOP. THERE ARE " + players.length + " PLAYERS.");
 	for(var i in players) {
 		var player = players[i];
 		socket.sockets.emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
