@@ -18,6 +18,8 @@ Level.prototype = {
     this.bombs = game.add.group();
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
 
+    this.lastFrameTime;
+
     setEventHandlers();
   },
 
@@ -25,6 +27,28 @@ Level.prototype = {
   	player.handleInput();
   	this.stopAnimationForMotionlessPlayers();
   	this.storePreviousPositions();
+
+    for(var id in remotePlayers) {
+      var remotePlayer = remotePlayers[id];
+      if(remotePlayer.distanceToCover && this.lastFrameTime) {
+        if((remotePlayer.distanceCovered.x < Math.abs(remotePlayer.distanceToCover.x) || remotePlayer.distanceCovered.y < Math.abs(remotePlayer.distanceToCover.y))) {
+          var fractionOfTimeStep = (game.time.now - this.lastFrameTime) / 100;
+          var distanceCoveredThisFrameX = fractionOfTimeStep * remotePlayer.distanceToCover.x;
+          var distanceCoveredThisFrameY = fractionOfTimeStep * remotePlayer.distanceToCover.y;
+
+          remotePlayer.distanceCovered.x += Math.abs(distanceCoveredThisFrameX);
+          remotePlayer.distanceCovered.y += Math.abs(distanceCoveredThisFrameY);
+
+          remotePlayer.position.x += distanceCoveredThisFrameX;
+          remotePlayer.position.y += distanceCoveredThisFrameY;
+        } else {
+          remotePlayer.position.x = remotePlayer.targetPosition.x;
+          remotePlayer.position.y = remotePlayer.targetPosition.y;
+        }
+      }
+    }
+
+    this.lastFrameTime = game.time.now;
   },
 
   storePreviousPositions: function() {
@@ -81,10 +105,20 @@ function onMovePlayer(data) {
     return;
   }
 
-	var movingPlayer = remotePlayers[data.id];
+  var movingPlayer = remotePlayers[data.id];
 
-	movingPlayer.position.x = data.x;
-	movingPlayer.position.y = data.y;
+  if(movingPlayer.targetPosition) {
+    if(data.x == movingPlayer.targetPosition.x && data.y == movingPlayer.targetPosition.y) {
+      return;
+    }
+    movingPlayer.position.x = movingPlayer.targetPosition.x;
+    movingPlayer.position.y = movingPlayer.targetPosition.y;
+
+    movingPlayer.distanceToCover = {x: data.x - movingPlayer.targetPosition.x, y: data.y - movingPlayer.targetPosition.y};
+    movingPlayer.distanceCovered = {x: 0, y:0};
+  }
+
+  movingPlayer.targetPosition = {x: data.x, y: data.y};
   movingPlayer.lastMoveTime = data.timestamp;
 
 	movingPlayer.animations.play(data.facing);
