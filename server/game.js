@@ -30,7 +30,7 @@ function init() {
 
 function setEventHandlers () {
 	socket.sockets.on("connection", function(client) {
-		util.log("New player has connected: " + client.id);
+		util.log("New playerZZZ has connected: " + client.id);
 
 		client.on("new player", onNewPlayer);
 
