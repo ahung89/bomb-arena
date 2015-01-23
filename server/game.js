@@ -22,6 +22,8 @@ function init() {
 	// Begin listening for events.
 	setEventHandlers();
 
+	util.log("KICKIN OFF DAT LOOP");
+
 	// Start game loop
 	setInterval(broadcastingLoop, updateInterval);
 };
@@ -92,9 +94,9 @@ function onPlaceBomb(data) {
 };
 
 function broadcastingLoop() {
+			util.log("IN BROADCAST LOOP. THERE ARE " + players.length + " PLAYERS.");
 	for(var i in players) {
 		var player = players[i];
-		util.log("EMITTING");
 		socket.sockets.emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
 	}
 };
