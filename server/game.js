@@ -94,6 +94,7 @@ function onPlaceBomb(data) {
 function broadcastingLoop() {
 	for(var i in players) {
 		var player = players[i];
+		util.log("EMITTING");
 		socket.sockets.emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
 	}
 };
