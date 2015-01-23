@@ -12,7 +12,7 @@ var game;
 var players = {};
 var bombs = {};
 
-var updateInterval = 200; // Broadcast updates every 100 ms.
+var updateInterval = 100; // Broadcast updates every 100 ms.
 
 init();
 
