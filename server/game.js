@@ -1,13 +1,13 @@
 // Dependencies
 var util = require('util');
-var io = require('socket.io');
+var express = require('express');
+var app = express();
+var server = require('http').createServer(app);
+var socket = require('socket.io').listen(server);
 
 // Game objects
 var Player = require('./entities/player');
 var Bomb = require('./entities/bomb');
-
-var express = require('express');
-var app = express();
 
 // Game Variables
 var socket;
@@ -18,13 +18,11 @@ var bombs = {};
 var updateInterval = 100; // Broadcast updates every 100 ms.
 
 app.use(express.static('client'));
-app.listen(process.env.PORT || 8000);
+server.listen(process.env.PORT || 8000);
 
 init();
 
 function init() {
-	socket = io.listen(process.env.PORT || 8120);
-
 	// Begin listening for events.
 	setEventHandlers();
 
