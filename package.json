@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ahung89/bomb-arena",
   "dependencies": {
+    "express": "^4.11.1",
     "socket.io": "^1.2.1"
   },
   "devDependencies": {

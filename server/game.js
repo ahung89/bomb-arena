@@ -6,6 +6,9 @@ var io = require('socket.io');
 var Player = require('./entities/player');
 var Bomb = require('./entities/bomb');
 
+var express = require('express');
+var app = express();
+
 // Game Variables
 var socket;
 var game;
@@ -13,6 +16,9 @@ var players = {};
 var bombs = {};
 
 var updateInterval = 100; // Broadcast updates every 100 ms.
+
+app.use(express.static('client'));
+app.listen(8000);
 
 init();
 
