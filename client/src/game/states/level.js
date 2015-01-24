@@ -2,6 +2,8 @@ var Player = require('../entities/Player');
 var RemotePlayer = require('../entities/RemotePlayer');
 var Bomb = require('../entities/Bomb');
 
+var remotePlayerUpdateInterval = 100;
+
 var Level = function () {};
 
 module.exports = Level;
@@ -10,8 +12,8 @@ Level.prototype = {
 
   create: function () {
     level = this;
-  	socket = io("https://limitless-brook-9339.herokuapp.com:443");
-    // socket = io("http://localhost:8120");
+  	// socket = io("https://limitless-brook-9339.herokuapp.com:443");
+    socket = io("http://localhost:8120");
     player = new Player(Math.round(Math.random() * game.camera.width), Math.round(Math.random() * game.camera.height));
 
 
@@ -32,7 +34,7 @@ Level.prototype = {
       var remotePlayer = remotePlayers[id];
       if(remotePlayer.distanceToCover && this.lastFrameTime) {
         if((remotePlayer.distanceCovered.x < Math.abs(remotePlayer.distanceToCover.x) || remotePlayer.distanceCovered.y < Math.abs(remotePlayer.distanceToCover.y))) {
-          var fractionOfTimeStep = (game.time.now - this.lastFrameTime) / 100;
+          var fractionOfTimeStep = (game.time.now - this.lastFrameTime) / remotePlayerUpdateInterval;
           var distanceCoveredThisFrameX = fractionOfTimeStep * remotePlayer.distanceToCover.x;
           var distanceCoveredThisFrameY = fractionOfTimeStep * remotePlayer.distanceToCover.y;
 
