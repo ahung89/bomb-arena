@@ -12,8 +12,8 @@ Level.prototype = {
 
   create: function () {
     level = this;
-  	// socket = io("https://limitless-brook-9339.herokuapp.com:443");
-    socket = io("http://localhost:8000");
+  	socket = io("https://limitless-brook-9339.herokuapp.com:443");
+    // socket = io("http://localhost:8000");
     player = new Player(Math.round(Math.random() * game.camera.width), Math.round(Math.random() * game.camera.height));
 
 
