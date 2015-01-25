@@ -2,8 +2,6 @@ var Player = require('../entities/Player');
 var RemotePlayer = require('../entities/RemotePlayer');
 var Bomb = require('../entities/Bomb');
 
-var remotePlayerUpdateInterval = 100;
-
 var Level = function () {};
 
 module.exports = Level;
@@ -31,23 +29,7 @@ Level.prototype = {
   	this.storePreviousPositions();
 
     for(var id in remotePlayers) {
-      var remotePlayer = remotePlayers[id];
-      if(remotePlayer.distanceToCover && this.lastFrameTime) {
-        if((remotePlayer.distanceCovered.x < Math.abs(remotePlayer.distanceToCover.x) || remotePlayer.distanceCovered.y < Math.abs(remotePlayer.distanceToCover.y))) {
-          var fractionOfTimeStep = (game.time.now - this.lastFrameTime) / remotePlayerUpdateInterval;
-          var distanceCoveredThisFrameX = fractionOfTimeStep * remotePlayer.distanceToCover.x;
-          var distanceCoveredThisFrameY = fractionOfTimeStep * remotePlayer.distanceToCover.y;
-
-          remotePlayer.distanceCovered.x += Math.abs(distanceCoveredThisFrameX);
-          remotePlayer.distanceCovered.y += Math.abs(distanceCoveredThisFrameY);
-
-          remotePlayer.position.x += distanceCoveredThisFrameX;
-          remotePlayer.position.y += distanceCoveredThisFrameY;
-        } else {
-          remotePlayer.position.x = remotePlayer.targetPosition.x;
-          remotePlayer.position.y = remotePlayer.targetPosition.y;
-        }
-      }
+      remotePlayers[id].interpolate(this.lastFrameTime);
     }
 
     this.lastFrameTime = game.time.now;

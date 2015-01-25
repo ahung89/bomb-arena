@@ -1,3 +1,5 @@
+var remotePlayerUpdateInterval = 100;
+
 var RemotePlayer = function(x, y, id) {
 	this.id = id;
 	this.previousPosition = {x: x, y: y};
@@ -19,5 +21,24 @@ var RemotePlayer = function(x, y, id) {
 };
 
 RemotePlayer.prototype = Object.create(Phaser.Sprite.prototype);
+
+RemotePlayer.prototype.interpolate = function(lastFrameTime) {
+	if(this.distanceToCover && lastFrameTime) {
+		if((this.distanceCovered.x < Math.abs(this.distanceToCover.x) || this.distanceCovered.y < Math.abs(this.distanceToCover.y))) {
+          var fractionOfTimeStep = (game.time.now - lastFrameTime) / remotePlayerUpdateInterval;
+          var distanceCoveredThisFrameX = fractionOfTimeStep * this.distanceToCover.x;
+          var distanceCoveredThisFrameY = fractionOfTimeStep * this.distanceToCover.y;
+
+          this.distanceCovered.x += Math.abs(distanceCoveredThisFrameX);
+          this.distanceCovered.y += Math.abs(distanceCoveredThisFrameY);
+
+          this.position.x += distanceCoveredThisFrameX;
+          this.position.y += distanceCoveredThisFrameY;
+        } else {
+          this.position.x = this.targetPosition.x;
+          this.position.y = this.targetPosition.y;
+        }
+    }
+}
 
 module.exports = RemotePlayer;
