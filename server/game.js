@@ -18,6 +18,7 @@ var bombs = {};
 var updateInterval = 100; // Broadcast updates every 100 ms.
 
 app.use(express.static('client'));
+util.log("Listening on port " + process.env.PORT);
 server.listen(process.env.PORT || 8000);
 
 init();
