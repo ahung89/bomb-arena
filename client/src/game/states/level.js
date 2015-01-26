@@ -10,15 +10,23 @@ Level.prototype = {
 
   create: function () {
     level = this;
+    this.lastFrameTime;
+
   	socket = io("https://limitless-brook-9339.herokuapp.com:443");
     // socket = io("http://localhost:8000");
+
+    this.map = game.add.tilemap("levelOne");
+    this.map.addTilesetImage("tilez", "tiles", 40, 40);
+    this.layer = this.map.createLayer('World');
+    this.layer.resizeWorld();
+
     player = new Player(Math.round(Math.random() * game.camera.width), Math.round(Math.random() * game.camera.height));
 
 
     this.bombs = game.add.group();
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
 
-    this.lastFrameTime;
+
 
     setEventHandlers();
   },

@@ -1,5 +1,7 @@
 var Bomb = require('./bomb');
 
+var PLAYER_SPEED = 180;
+
 var Player = function(x, y) {
 	Phaser.Sprite.call(this, game, x, y, 'bomberman');
 
@@ -28,19 +30,19 @@ Player.prototype.handleMotionInput = function() {
 
   	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
   		this.body.velocity.y = 0;
-  		this.body.velocity.x = -200;
+  		this.body.velocity.x = -PLAYER_SPEED;
   		this.facing = 'left';
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
   		this.body.velocity.y = 0;
-  		this.body.velocity.x = 200;
+  		this.body.velocity.x = PLAYER_SPEED;
   		this.facing = 'right';
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
   		this.body.velocity.x = 0;
-  		this.body.velocity.y = -200;
+  		this.body.velocity.y = -PLAYER_SPEED;
   		this.facing = 'up';
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
   		this.body.velocity.x = 0;
-  		this.body.velocity.y = 200;
+  		this.body.velocity.y = PLAYER_SPEED;
   		this.facing = 'down';
   	} else {
       moving = false;
