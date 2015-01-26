@@ -1,4 +1,4 @@
-window.game = new Phaser.Game(800, 480, Phaser.CANVAS, '');
+window.game = new Phaser.Game(600, 600, Phaser.CANVAS, '');
 window.socket; //Refactor socket stuff into its own class?
 window.player;
 window.remotePlayers = {};
