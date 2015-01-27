@@ -1,12 +1,14 @@
 window.game = new Phaser.Game(600, 600, Phaser.CANVAS, '');
-window.socket; //Refactor socket stuff into its own class?
 window.player;
-window.remotePlayers = {};
+window.socket;
 window.level;
 
 startGame();
 
 function startGame() {
+	// socket = io("https://limitless-brook-9339.herokuapp.com:443");
+    socket = io("http://localhost:8000");
+
 	game.state.add('Boot', require('./game/states/Boot'));
 	game.state.add('Preloader', require('./game/states/Preloader'));
 	game.state.add('Level', require('./game/states/Level'));
