@@ -15,6 +15,12 @@ var game;
 var players = {};
 var bombs = {};
 
+var TILE_SIZE = 40;
+
+var spawnLocations = {
+	1: [{x: 2, y: 5}, {x: 13, y: 1}, {x: 2, y: 1}, {x: 12, y: 6}]
+};
+
 var updateInterval = 100; // Broadcast updates every 100 ms.
 
 app.use(express.static('client'));
@@ -53,13 +59,17 @@ function onClientDisconnect() {
 };
 
 function onNewPlayer(data) {
+	// TODO: handle case where you're out of spawn points.
+	var spawnPoint = spawnLocations[1].shift();
+
 	// Create new player
-	var newPlayer = new Player(data.x, data.y, data.facing, this.id);
+	var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, 'down', this.id);
+	newPlayer.spawnPoint = spawnPoint;
 
 	// Broadcast new player to connected socket clients
 	this.broadcast.emit("new player", newPlayer);
 
-	this.emit("assign id", {id: this.id});
+	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
 
 	// Notify existing players of the new player
 	for(var i in players) {

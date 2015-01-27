@@ -21,7 +21,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/tiles\/dw_tileset.png",
+         "image":"..\/tiles\/tileset.png",
          "imageheight":639,
          "imagewidth":1200,
          "margin":0,

@@ -19,8 +19,7 @@ Level.prototype = {
     this.layer = this.map.createLayer('World');
     this.layer.resizeWorld();
 
-    player = new Player(Math.round(Math.random() * game.camera.width), Math.round(Math.random() * game.camera.height));
-    socket.emit("new player", {x: player.position.x, y: player.position.y});
+    socket.emit("new player");
 
     this.bombs = game.add.group();
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
@@ -29,7 +28,10 @@ Level.prototype = {
   },
 
   update: function() {
-  	player.handleInput();
+    if(player != null) {
+          player.handleInput();
+    }
+
   	this.stopAnimationForMotionlessPlayers();
   	this.storePreviousPositions();
 
@@ -67,6 +69,9 @@ Level.prototype = {
   },
 
   onAssignId: function(data) {
+    console.log("creating new player at " + data.x + ", " + data.y);
+
+    player = new Player(data.x, data.y);
     player.id = data.id;
   },
 
@@ -81,7 +86,7 @@ Level.prototype = {
   },
 
   onMovePlayer: function(data) {
-    if(!player.id || data.id == player.id) {
+    if(!player || !player.id || data.id == player.id) {
       return;
     }
 

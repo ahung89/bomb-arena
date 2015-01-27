@@ -1,7 +1,7 @@
 window.game = new Phaser.Game(600, 600, Phaser.CANVAS, '');
-window.player;
-window.socket;
-window.level;
+window.player = null;
+window.socket = null;
+window.level = null;
 
 startGame();
 
