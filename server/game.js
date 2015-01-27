@@ -53,6 +53,7 @@ function setEventHandlers () {
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
+	spawnLocations[1].push(players[this.id].spawnPoint);
 	delete players[this.id];
 
 	this.broadcast.emit("remove player", {id: this.id});

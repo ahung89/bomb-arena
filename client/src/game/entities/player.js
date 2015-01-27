@@ -6,7 +6,7 @@ var Player = function(x, y) {
 	Phaser.Sprite.call(this, game, x, y, 'bomberman');
 
   this.facing = 'down';
-  this.anchor.setTo(.5, .5);
+  //this.anchor.setTo(.5, .5);
 
 	game.physics.enable(this, Phaser.Physics.ARCADE);
 
