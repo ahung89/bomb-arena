@@ -63,7 +63,7 @@ Player.prototype.handleMotionInput = function() {
 
   Player.prototype.handleBombInput = function() {
     if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && !game.physics.arcade.overlap(this, level.bombs)) {
-      var bomb = new Bomb(this.position.x + this.body.width * .5, this.position.y + this.body.height * .75, game.time.now);
+      var bomb = new Bomb(this.position.x + 14, this.position.y + 30, game.time.now);
 
       // Bombs for a player are identified by timestamp.
       level.bombs.add(bomb);
