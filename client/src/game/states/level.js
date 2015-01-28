@@ -9,13 +9,13 @@ var Level = function () {};
 module.exports = Level;
 
 Level.prototype = {
-
   create: function () {
     level = this;
     this.lastFrameTime;
 
     this.map = game.add.tilemap("levelOne");
     this.map.addTilesetImage("tilez", "tiles", 40, 40);
+    this.map.setCollision(127);
     this.layer = this.map.createLayer('World');
     this.layer.resizeWorld();
 
@@ -40,6 +40,12 @@ Level.prototype = {
     }
 
     this.lastFrameTime = game.time.now;
+  },
+
+  render: function() {
+    if(window.debugging == true) {
+      game.debug.body(player);
+    }
   },
 
   storePreviousPositions: function() {
