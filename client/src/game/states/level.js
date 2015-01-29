@@ -137,7 +137,29 @@ Level.prototype = {
     }, level);
   },
 
-  drawExplosion: function(x, y, size) {
-    
+  drawExplosion: function(x, y, strength) {
+    var strength = 2;
+    this.drawIndividualExplosion(x, y, "explosion_center");
+
+    for(var i = 0; i < strength - 1; i++) {
+      this.drawIndividualExplosion(x + ((i + 1) * 40), y, "explosion_horizontal");
+      this.drawIndividualExplosion(x - ((i + 1) * 40), y, "explosion_horizontal");
+      this.drawIndividualExplosion(x, y + ((i + 1) * 40), "explosion_vertical");
+      this.drawIndividualExplosion(x, y - ((i + 1) * 40), "explosion_vertical");
+    }
+
+    this.drawIndividualExplosion(x + strength * 40, y, "explosion_right");
+    this.drawIndividualExplosion(x - strength * 40, y, "explosion_left");
+    this.drawIndividualExplosion(x, y - strength * 40, "explosion_top");
+    this.drawIndividualExplosion(x, y + strength * 40, "explosion_bottom");
+  },
+
+  drawIndividualExplosion: function(x, y, explosionSpriteKey) {
+    var explosion = new Phaser.Sprite(game, x, y, explosionSpriteKey, 0);
+    explosion.anchor.setTo(.5, .5);
+    explosion.animations.add("explode");
+
+    game.add.existing(explosion);
+    explosion.play("explode", 20, false, true); //framerate 20, no looping, kill on complete
   }
 };
