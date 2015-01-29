@@ -100,7 +100,7 @@ function onPlaceBomb(data) {
 	setTimeout(function() {
 		delete bombs[playerId][bombId];		
 		util.log("deleting bomb " + bombId);
-		socket.sockets.emit("detonate", {id: bombId});
+		socket.sockets.emit("detonate", {id: bombId, strength: playerId.bombStrength});
 	}, 3000);
 
 	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});

@@ -65,6 +65,7 @@ Level.prototype = {
   },
 
   setEventHandlers: function() {
+    // Remember - these will actually be executed from the context of the Socket, not from the context of the level.
     socket.on("assign id", this.onAssignId);
     socket.on("disconnect", this.onSocketDisconnect);
     socket.on("new player", this.onNewPlayer);
@@ -130,8 +131,13 @@ Level.prototype = {
   onDetonate: function(data) {
     level.bombs.forEach(function(bomb) {
       if(bomb && bomb.id == data.id) {
+        this.drawExplosion(bomb.x, bomb.y, data.bombStrength);
         bomb.destroy();
       }
-    });
+    }, level);
+  },
+
+  drawExplosion: function(x, y, size) {
+    
   }
 };

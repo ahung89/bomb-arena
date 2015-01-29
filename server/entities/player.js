@@ -3,6 +3,8 @@ var Player = function(x, y, facing, id) {
 	this.y = y;
 	this.facing = facing;
 	this.id = id;
+
+	this.bombStrength = 4;
 }
 
 module.exports = Player;
