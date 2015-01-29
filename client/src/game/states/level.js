@@ -141,25 +141,33 @@ Level.prototype = {
     var strength = 2;
     this.drawIndividualExplosion(x, y, "explosion_center");
 
+    this.drawExplosionInDirection(x, y, 1, 0, strength, "explosion_horizontal", "explosion_right");
+    this.drawExplosionInDirection(x, y, -1, 0, strength, "explosion_horizontal", "explosion_left");
+    this.drawExplosionInDirection(x, y, 0, 1, strength, "explosion_vertical", "explosion_bottom");
+    this.drawExplosionInDirection(x, y, 0, -1, strength, "explosion_vertical", "explosion_top");
+  },
+
+  drawExplosionInDirection: function(x, y, xCoefficient, yCoefficient, strength, middleKey, endKey) {
     for(var i = 0; i < strength - 1; i++) {
-      this.drawIndividualExplosion(x + ((i + 1) * 40), y, "explosion_horizontal");
-      this.drawIndividualExplosion(x - ((i + 1) * 40), y, "explosion_horizontal");
-      this.drawIndividualExplosion(x, y + ((i + 1) * 40), "explosion_vertical");
-      this.drawIndividualExplosion(x, y - ((i + 1) * 40), "explosion_vertical");
+      if(this.drawIndividualExplosion(x + xCoefficient *  ((i + 1) * 40), y + yCoefficient * ((i + 1) * 40), middleKey) == false) {
+        return;
+      }
     }
 
-    this.drawIndividualExplosion(x + strength * 40, y, "explosion_right");
-    this.drawIndividualExplosion(x - strength * 40, y, "explosion_left");
-    this.drawIndividualExplosion(x, y - strength * 40, "explosion_top");
-    this.drawIndividualExplosion(x, y + strength * 40, "explosion_bottom");
+    this.drawIndividualExplosion(x + xCoefficient * (strength * 40), y + yCoefficient * (strength * 40), endKey);
   },
 
   drawIndividualExplosion: function(x, y, explosionSpriteKey) {
+    if(this.map.getTileWorldXY(x, y) == null || this.map.getTileWorldXY(x, y).index == 127) {
+      return false;
+    }
+
     var explosion = new Phaser.Sprite(game, x, y, explosionSpriteKey, 0);
     explosion.anchor.setTo(.5, .5);
     explosion.animations.add("explode");
 
     game.add.existing(explosion);
     explosion.play("explode", 20, false, true); //framerate 20, no looping, kill on complete
+    // TODO: make sure the sprite is actually removed from the game.
   }
 };
