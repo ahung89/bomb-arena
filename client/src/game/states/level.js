@@ -149,12 +149,14 @@ Level.prototype = {
 
   drawExplosionInDirection: function(x, y, xCoefficient, yCoefficient, strength, middleKey, endKey) {
     for(var i = 0; i < strength - 1; i++) {
-      if(this.drawIndividualExplosion(x + xCoefficient *  ((i + 1) * 40), y + yCoefficient * ((i + 1) * 40), middleKey) == false) {
+      var explosionPixelSize = i == 0 ? 30 : 40;
+      if(this.drawIndividualExplosion(x + xCoefficient *  ((i + 1) * explosionPixelSize),
+         y + yCoefficient * ((i + 1) * explosionPixelSize), middleKey) == false) {
         return;
       }
     }
 
-    this.drawIndividualExplosion(x + xCoefficient * (strength * 40), y + yCoefficient * (strength * 40), endKey);
+    this.drawIndividualExplosion(x + xCoefficient * (((strength - 1) * 40) + 30), y + yCoefficient * (((strength - 1) * 40) + 30), endKey);
   },
 
   drawIndividualExplosion: function(x, y, explosionSpriteKey) {
@@ -167,7 +169,7 @@ Level.prototype = {
     explosion.animations.add("explode");
 
     game.add.existing(explosion);
-    explosion.play("explode", 20, false, true); //framerate 20, no looping, kill on complete
+    explosion.play("explode", 15, false, true); //framerate 20, no looping, kill on complete
     // TODO: make sure the sprite is actually removed from the game.
   }
 };
