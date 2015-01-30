@@ -3,6 +3,7 @@ var RemotePlayer = require('../entities/RemotePlayer');
 var Bomb = require('../entities/Bomb');
 
 var remotePlayers = {};
+var deadGroup = [];
 
 var Level = function () {};
 
@@ -15,14 +16,21 @@ Level.prototype = {
 
     this.map = game.add.tilemap("levelOne");
     this.map.addTilesetImage("tilez", "tiles", 40, 40);
-    this.map.setCollision(127);
-    this.layer = this.map.createLayer('World');
-    this.layer.resizeWorld();
+
+    this.groundLayer = this.map.createLayer("Ground");
+    this.groundLayer.resizeWorld();
+    this.blockLayer = this.map.createLayer("Blocks");
+    this.blockLayer.resizeWorld(); // What does this do?
+
+    this.map.setCollision(127, true, "Blocks");
+ 
 
     socket.emit("new player");
 
     this.bombs = game.add.group();
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
+    game.physics.arcade.enable(this.blockLayer);
+
 
     this.setEventHandlers();
   },
@@ -40,6 +48,14 @@ Level.prototype = {
     }
 
     this.lastFrameTime = game.time.now;
+
+    this.destroyDeadSprites();
+  },
+
+  destroyDeadSprites: function() {
+    deadGroup.forEach(function(deadSprite) {
+      deadSprite.destroy();
+    });
   },
 
   render: function() {
@@ -160,16 +176,27 @@ Level.prototype = {
   },
 
   drawIndividualExplosion: function(x, y, explosionSpriteKey) {
-    if(this.map.getTileWorldXY(x, y) == null || this.map.getTileWorldXY(x, y).index == 127) {
-      return false;
-    }
+    var hitWall = this.map.getTileWorldXY(x, y, 40, 40, "Blocks") && this.map.getTileWorldXY(x, y, 40, 40, "Blocks").index == 127;
 
     var explosion = new Phaser.Sprite(game, x, y, explosionSpriteKey, 0);
     explosion.anchor.setTo(.5, .5);
     explosion.animations.add("explode");
+    explosion.animations.getAnimation("explode").onComplete.add(function() {
+      deadGroup.push(this);
+    }, explosion);
 
-    game.add.existing(explosion);
+    if(hitWall) {
+      game.world.addAt(explosion, 1);
+    } else {
+      game.world.add(explosion);
+    }
+
+
     explosion.play("explode", 15, false, true); //framerate 20, no looping, kill on complete
     // TODO: make sure the sprite is actually removed from the game.
+
+    if(hitWall) {
+      return false;
+    }
   }
 };

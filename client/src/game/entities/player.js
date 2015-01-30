@@ -30,7 +30,7 @@ Player.prototype.handleInput = function() {
 Player.prototype.handleMotionInput = function() {
 	  var moving = true;
 
-    game.physics.arcade.collide(this, level.layer);
+    game.physics.arcade.collide(this, level.blockLayer);
 
   	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
   		this.body.velocity.y = 0;
