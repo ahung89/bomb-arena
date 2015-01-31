@@ -8,7 +8,7 @@ var socket = require('socket.io').listen(server);
 // Game objects
 var Player = require('./entities/player');
 var Bomb = require('./entities/bomb');
-var TilemapParser = require('./tilemap-parser');
+var Map = require('./entities/map');
 
 // Game Variables
 var socket;
@@ -64,7 +64,10 @@ function onClientDisconnect() {
 };
 
 function onRegisterMap(data) {
-	map = TilemapParser.parse(data);
+	map = new Map(data);
+	for(var i = 0; i < map.mapData.length; i++) {
+		util.log(map.mapData[i]);
+	}
 };
 
 function onNewPlayer(data) {
