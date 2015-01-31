@@ -64,10 +64,16 @@ function onClientDisconnect() {
 };
 
 function onRegisterMap(data) {
-	map = new Map(data);
-	for(var i = 0; i < map.mapData.length; i++) {
-		util.log(map.mapData[i]);
-	}
+	map = new Map(data, TILE_SIZE);
+
+	var test1 = map.hitTest(83, 90);
+
+	util.log(test1.left + ", " + test1.right + ", " + test1.top + ", " + test1.bottom);
+
+
+	// for(var i = 0; i < map.mapData.length; i++) {
+	// 	util.log(map.mapData[i]);
+	// }
 };
 
 function onNewPlayer(data) {

@@ -1,6 +1,8 @@
-var Map = function(data) {
+var Map = function(data, tileSize) {
 	// initialize map by parsing the tilemap data from the client into a 2d array.
 	this.mapData = [];
+	this.tileSize = tileSize;
+
 	var tiles = data.tiles;
 	var i = 0;
 
@@ -12,6 +14,23 @@ var Map = function(data) {
 		}
 	}
 
-}
+};
+
+Map.prototype = {
+	// Check if coordinates lay within a block. If so, return the bounds of that block. If not, return null;
+	hitTest: function(x, y) {
+		var row = Math.floor(x / this.tileSize), col = Math.floor(y / this.tileSize);
+		if(this.mapData[row] && this.mapData[row][col] == 1) {
+			return {
+				left: col * this.tileSize,
+				right: (col + 1) * this.tileSize,
+				top: row * this.tileSize,
+				bottom: (row + 1) * this.tileSize
+			};
+		} else {
+			return null;
+		}
+	}
+};
 
 module.exports = Map;
