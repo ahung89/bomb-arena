@@ -8,10 +8,12 @@ var socket = require('socket.io').listen(server);
 // Game objects
 var Player = require('./entities/player');
 var Bomb = require('./entities/bomb');
+var TilemapParser = require('./tilemap-parser');
 
 // Game Variables
 var socket;
 var game;
+var map;
 var players = {};
 var bombs = {};
 
@@ -61,8 +63,8 @@ function onClientDisconnect() {
 	this.broadcast.emit("remove player", {id: this.id});
 };
 
-function onRegisterMap(map) {
-	util.log(map);
+function onRegisterMap(data) {
+	map = TilemapParser.parse(data);
 };
 
 function onNewPlayer(data) {
