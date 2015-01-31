@@ -47,6 +47,8 @@ function setEventHandlers () {
 		client.on("disconnect", onClientDisconnect);
 
 		client.on("place bomb", onPlaceBomb);
+
+		client.on("register map", onRegisterMap);
 	});
 };
 
@@ -57,6 +59,10 @@ function onClientDisconnect() {
 	delete players[this.id];
 
 	this.broadcast.emit("remove player", {id: this.id});
+};
+
+function onRegisterMap(map) {
+	util.log(map);
 };
 
 function onNewPlayer(data) {
