@@ -9,4 +9,23 @@ var Bomb = function(x, y, id) {
 
 Bomb.prototype = Object.create(Phaser.Sprite.prototype);
 
+Bomb.renderExplosion = function(explosions) {
+	explosions.forEach(function(explosion) {
+      var explosionSprite = new Phaser.Sprite(game, explosion.x, explosion.y, explosion.key, 0);
+      explosionSprite.anchor.setTo(.5, .5);
+      explosionSprite.animations.add("explode");
+      explosionSprite.animations.getAnimation("explode").onComplete.add(function() {
+       level.deadGroup.push(this);
+      }, explosionSprite);
+
+      if(explosion.hide) {
+        game.world.addAt(explosionSprite, 1);
+      } else {
+        game.world.add(explosionSprite);
+      }
+
+      explosionSprite.play("explode", 15, false);
+    });
+}
+
 module.exports = Bomb;

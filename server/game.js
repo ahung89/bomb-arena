@@ -116,10 +116,11 @@ function onPlaceBomb(data) {
 	bombs[playerId][bombId]= new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombId);
 
 	setTimeout(function() {
+		var explosions = bombs[playerId][bombId].detonate(map, 2);
 		delete bombs[playerId][bombId];		
 		util.log("deleting bomb " + bombId);
-		socket.sockets.emit("detonate", {id: bombId, strength: playerId.bombStrength});
-	}, 3000);
+		socket.sockets.emit("detonate", {explosions: explosions, id: bombId});
+	}, 2000);
 
 	socket.sockets.emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
