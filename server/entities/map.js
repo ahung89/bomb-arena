@@ -19,7 +19,7 @@ var Map = function(data, tileSize) {
 Map.prototype = {
 	// Check if coordinates lay within a block. If so, return the bounds of that block. If not, return null;
 	hitTest: function(x, y) {
-		var row = Math.floor(x / this.tileSize), col = Math.floor(y / this.tileSize);
+		var row = Math.floor(y / this.tileSize), col = Math.floor(x / this.tileSize);
 		if(this.mapData[row] && this.mapData[row][col] == 1) {
 			return {
 				left: col * this.tileSize,
@@ -30,6 +30,11 @@ Map.prototype = {
 		} else {
 			return null;
 		}
+	},
+
+	findNearestTileCenter: function(x, y) {
+		var col = Math.floor(x / this.tileSize), row = Math.floor(y / this.tileSize);
+		return {x: col * this.tileSize + this.tileSize / 2, y: row * this.tileSize + this.tileSize / 2};
 	}
 };
 

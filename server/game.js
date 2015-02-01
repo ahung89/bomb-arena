@@ -112,7 +112,8 @@ function onPlaceBomb(data) {
 	var bombId = data.id;
 	var playerId = this.id;
 
-	bombs[playerId][bombId]= new Bomb(data.x, data.y, bombId);
+	var normalizedBombLocation = map.findNearestTileCenter(data.x, data.y);
+	bombs[playerId][bombId]= new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombId);
 
 	setTimeout(function() {
 		delete bombs[playerId][bombId];		
@@ -120,7 +121,7 @@ function onPlaceBomb(data) {
 		socket.sockets.emit("detonate", {id: bombId, strength: playerId.bombStrength});
 	}, 3000);
 
-	this.broadcast.emit("place bomb", {x: data.x, y: data.y, id: data.id});
+	socket.sockets.emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
 function broadcastingLoop() {
