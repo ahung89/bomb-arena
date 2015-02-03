@@ -23,7 +23,6 @@ Level.prototype = {
     this.blockLayer.resizeWorld(); // What does this do?
 
     this.map.setCollision(127, true, "Blocks");
- 
 
     socket.emit("new player");
 

@@ -18,12 +18,6 @@ Bomb.prototype = {
    		this.generateExplosionInDirection(this.x, this.y, 0, 1, strength, "explosion_vertical", "explosion_bottom", explosions, map);
    		this.generateExplosionInDirection(this.x, this.y, 0, -1, strength, "explosion_vertical", "explosion_top", explosions, map);
 
-   		explosions.forEach(function(explosion) {
-   			util.log("x: " + explosion.x);
-   			util.log("y: " + explosion.y);
-   			util.log("key: " + explosion.key);
-   		});
-
    		return explosions;
 	},
 
@@ -44,7 +38,6 @@ Bomb.prototype = {
 	generateIndividualExplosion: function(x, y, xCoefficient, yCoefficient, key, explosions, map) {
 		var hitBlock = map.hitTest(x + 20 * xCoefficient, y + 20 * yCoefficient);
 		var hide = hitBlock != null;
-		util.log("hiding? " + hide);
 
 		explosions.push({x: x, y: y, key: key, hide: hide});
 

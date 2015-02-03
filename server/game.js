@@ -57,26 +57,18 @@ function setEventHandlers () {
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
-	spawnLocations[1].push(players[this.id].spawnPoint);
-	delete players[this.id];
-
-	this.broadcast.emit("remove player", {id: this.id});
+	removePlayer(this.id);	
 };
 
 function onRegisterMap(data) {
 	map = new Map(data, TILE_SIZE);
-
-	var test1 = map.hitTest(83, 90);
-
-	util.log(test1.left + ", " + test1.right + ", " + test1.top + ", " + test1.bottom);
-
-
-	// for(var i = 0; i < map.mapData.length; i++) {
-	// 	util.log(map.mapData[i]);
-	// }
 };
 
 function onNewPlayer(data) {
+	if(spawnLocations[1].length == 0) {
+		return;
+	}
+
 	// TODO: handle case where you're out of spawn points.
 	var spawnPoint = spawnLocations[1].shift();
 
@@ -104,8 +96,6 @@ function onMovePlayer(data) {
 	movingPlayer.x = data.x;
 	movingPlayer.y = data.y;
 	movingPlayer.facing = data.facing;
-
-	// this.broadcast.emit("move player", {id: this.id, x: data.x, y: data.y, facing: data.facing, timestamp: (+new Date())});
 };
 
 function onPlaceBomb(data) {
@@ -118,11 +108,17 @@ function onPlaceBomb(data) {
 	setTimeout(function() {
 		var explosions = bombs[playerId][bombId].detonate(map, 2);
 		delete bombs[playerId][bombId];		
-		util.log("deleting bomb " + bombId);
 		socket.sockets.emit("detonate", {explosions: explosions, id: bombId});
 	}, 2000);
 
 	socket.sockets.emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
+};
+
+function removePlayer(id) {
+	spawnLocations[1].push(players[id].spawnPoint);
+	delete players[id];
+
+	this.broadcast.emit("remove player", {id: id});
 };
 
 function broadcastingLoop() {
