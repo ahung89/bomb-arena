@@ -4,6 +4,7 @@ var Bomb = function(x, y, id) {
 
 	this.anchor.setTo(.5, .5);
 	game.physics.enable(this, Phaser.Physics.ARCADE);
+  this.body.immovable = true;
 	game.add.existing(this);
 }
 
