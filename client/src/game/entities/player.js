@@ -6,11 +6,11 @@ var Player = function(x, y) {
 	Phaser.Sprite.call(this, game, x, y, 'bomberman');
 
   this.facing = 'down';
-  // this.anchor.setTo(.5, .5);
+  this.anchor.setTo(.5, .5);
 
 	game.physics.enable(this, Phaser.Physics.ARCADE);
 
-  this.body.setSize(14, 16, 7, 30);
+  this.body.setSize(15, 16, 1, 15);
 
 	this.animations.add('down', [0, 1, 2, 3, 4], 10, true);
   	this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
@@ -63,11 +63,9 @@ Player.prototype.handleMotionInput = function() {
 
   Player.prototype.handleBombInput = function() {
     if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && !game.physics.arcade.overlap(this, level.bombs)) {
-      // var bomb = new Bomb(this.position.x + 14, this.position.y + 30, game.time.now);
-
       // Bombs for a player are identified by timestamp.
       // level.bombs.add(bomb);
-      socket.emit("place bomb", {x: this.position.x + 14, y: this.position.y + 30, id: game.time.now});
+      socket.emit("place bomb", {x: this.body.position.x, y: this.body.position.y, id: game.time.now});
     }
   };
 
