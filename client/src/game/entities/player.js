@@ -57,14 +57,13 @@ Player.prototype.handleMotionInput = function() {
 
   	if(moving)  {
       this.animations.play(this.facing);
-      socket.emit("move player", {x: this.position.x, y: this.position.y, facing: this.facing});
+      socket.emit("move player", {x: this.body.position.x, y: this.body.position.y, facing: this.facing});
     }
   };
 
   Player.prototype.handleBombInput = function() {
     if(game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && !game.physics.arcade.overlap(this, level.bombs)) {
       // Bombs for a player are identified by timestamp.
-      // level.bombs.add(bomb);
       socket.emit("place bomb", {x: this.body.position.x, y: this.body.position.y, id: game.time.now});
     }
   };

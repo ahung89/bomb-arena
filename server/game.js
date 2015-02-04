@@ -1,3 +1,5 @@
+TILE_SIZE = 40;
+
 // Dependencies
 var util = require('util');
 var express = require('express');
@@ -16,8 +18,6 @@ var game;
 var map;
 var players = {};
 var bombs = {};
-
-var TILE_SIZE = 40;
 
 var spawnLocations = {
 	1: [{x: 2, y: 5}, {x: 13, y: 1}, {x: 2, y: 1}, {x: 12, y: 6}]
@@ -57,7 +57,10 @@ function setEventHandlers () {
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
-	removePlayer(this.id);	
+	spawnLocations[1].push(players[this.id].spawnPoint);
+	delete players[this.id];
+
+	socket.sockets.emit("remove player", {id: this.id});	
 };
 
 function onRegisterMap(data) {
@@ -106,20 +109,25 @@ function onPlaceBomb(data) {
 	bombs[playerId][bombId]= new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombId);
 
 	setTimeout(function() {
-		var explosions = bombs[playerId][bombId].detonate(map, 2);
-		delete bombs[playerId][bombId];		
-		socket.sockets.emit("detonate", {explosions: explosions, id: bombId});
+		var explosionData = bombs[playerId][bombId].detonate(map, 2, players);
+
+		delete bombs[playerId][bombId];
+
+		socket.sockets.emit("detonate", {explosions: explosionData.explosions, id: bombId});
+
+		explosionData.killedPlayers.forEach(function(killedPlayer) {
+			signalPlayerDeath(killedPlayer);
+		});
 	}, 2000);
 
 	socket.sockets.emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
-function removePlayer(id) {
-	spawnLocations[1].push(players[id].spawnPoint);
-	delete players[id];
-
-	this.broadcast.emit("remove player", {id: id});
-};
+function signalPlayerDeath(id) {
+	util.log("Player has been killed: " + id);
+	
+	socket.sockets.emit("kill player", {id: id});
+}
 
 function broadcastingLoop() {
 	for(var i in players) {

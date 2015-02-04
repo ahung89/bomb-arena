@@ -24,7 +24,7 @@ Bomb.renderExplosion = function(explosions) {
         game.world.add(explosionSprite);
       }
 
-      explosionSprite.play("explode", 15, false);
+      explosionSprite.play("explode", 17, false);
     });
 }
 

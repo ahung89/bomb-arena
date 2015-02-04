@@ -91,6 +91,7 @@ Level.prototype = {
     socket.on("new player", this.onNewPlayer);
     socket.on("move player", this.onMovePlayer);
     socket.on("remove player", this.onRemovePlayer);
+    socket.on("kill player", this.onKillPlayer);
     socket.on("place bomb", this.onPlaceBomb);
     socket.on("detonate", this.onDetonate);
   },
@@ -142,6 +143,12 @@ Level.prototype = {
     playerToRemove.destroy();
 
     delete remotePlayers[data.id];
+  },
+
+  onKillPlayer: function(data) {
+    console.log("You've been killed.");
+
+    player.destroy();
   },
 
   onPlaceBomb: function(data) {
