@@ -115,8 +115,8 @@ function onPlaceBomb(data) {
 
 		socket.sockets.emit("detonate", {explosions: explosionData.explosions, id: bombId});
 
-		explosionData.killedPlayers.forEach(function(killedPlayer) {
-			signalPlayerDeath(killedPlayer);
+		explosionData.killedPlayers.forEach(function(killedPlayerId) {
+			signalPlayerDeath(killedPlayerId);
 		});
 	}, 2000);
 

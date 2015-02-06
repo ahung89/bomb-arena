@@ -51,9 +51,10 @@ Bomb.prototype = {
 
 		for(var i in players) {
 			var player = players[i];
-			if(Math.floor((player.x - 6.5)/ TILE_SIZE) == Math.floor(x / TILE_SIZE)  && Math.floor((player.y + 7)/ TILE_SIZE) == Math.floor(y / TILE_SIZE) ) {
+			if(Math.floor((player.x - 6.5)/ TILE_SIZE) == Math.floor(x / TILE_SIZE)  && Math.floor((player.y + 7)/ TILE_SIZE) == Math.floor(y / TILE_SIZE)) {
+				util.log("killed a player.");
 				explosionData.killedPlayers.push(player.id);
-			}
+			} + ", "
 		}
 
 		if(hitBlock) {

@@ -146,9 +146,11 @@ Level.prototype = {
   },
 
   onKillPlayer: function(data) {
-    console.log("You've been killed.");
+    if(data.id == player.id) {
+      console.log("You've been killed.");
 
-    player.destroy();
+      player.destroy();
+    }
   },
 
   onPlaceBomb: function(data) {
