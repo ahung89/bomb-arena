@@ -86,17 +86,22 @@ function onNewPlayer(data) {
 
 	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
 
-	// Notify existing players of the new player
+	// Notify the new player of the existing players.
 	for(var i in players) {
 		this.emit("new player", players[i]);
 	}
-
+	
 	players[this.id] = newPlayer;
 	bombs[this.id] = {};
 };
 
 function onMovePlayer(data) {
 	var movingPlayer = players[this.id];
+
+	// Moving player can be null if a player is killed and leftover movement signals come through.
+	if(!movingPlayer) {
+		return;
+	}
 
 	movingPlayer.x = data.x;
 	movingPlayer.y = data.y;

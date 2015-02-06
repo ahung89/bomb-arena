@@ -114,7 +114,7 @@ Level.prototype = {
   },
 
   onMovePlayer: function(data) {
-    if(!player || !player.id || data.id == player.id) {
+    if(player && data.id == player.id) {
       return;
     }
 
