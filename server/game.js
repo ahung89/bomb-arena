@@ -57,10 +57,12 @@ function setEventHandlers () {
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
-	spawnLocations[1].push(players[this.id].spawnPoint);
-	delete players[this.id];
+	if(this.id in players) {
+		spawnLocations[1].push(players[this.id].spawnPoint);
+		delete players[this.id];
 
-	socket.sockets.emit("remove player", {id: this.id});	
+		socket.sockets.emit("remove player", {id: this.id});	
+	}
 };
 
 function onRegisterMap(data) {
@@ -125,6 +127,9 @@ function onPlaceBomb(data) {
 
 function signalPlayerDeath(id) {
 	util.log("Player has been killed: " + id);
+
+	spawnLocations[1].push(players[id].spawnPoint);
+	delete players[id];
 	
 	socket.sockets.emit("kill player", {id: id});
 }

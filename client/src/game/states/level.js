@@ -40,7 +40,7 @@ Level.prototype = {
   },
 
   update: function() {
-    if(player != null) {
+    if(player != null && player.alive == true) {
           player.handleInput();
     }
 
@@ -150,6 +150,12 @@ Level.prototype = {
       console.log("You've been killed.");
 
       player.destroy();
+    } else {
+      var playerToRemove = remotePlayers[data.id];
+
+      playerToRemove.destroy();
+
+      delete remotePlayers[data.id];
     }
   },
 
