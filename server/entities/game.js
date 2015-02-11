@@ -1,7 +1,7 @@
 var Game = function() {
 	this.players = {};
 	this.map = {};
-	this.bomb = {};
+	this.bombs = {};
 };
 
 Game.prototype = {

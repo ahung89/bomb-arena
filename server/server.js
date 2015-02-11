@@ -11,13 +11,12 @@ var socket = require('socket.io').listen(server);
 var Player = require('./entities/player');
 var Bomb = require('./entities/bomb');
 var Map = require('./entities/map');
+var Game = require('./entities/game');
+
+var games = {};
 
 // Game Variables
 var socket;
-var game;
-var map;
-var players = {};
-var bombs = {};
 
 var spawnLocations = {
 	1: [{x: 2, y: 5}, {x: 13, y: 1}, {x: 2, y: 1}, {x: 12, y: 6}]
@@ -31,6 +30,10 @@ server.listen(process.env.PORT || 8000);
 init();
 
 function init() {
+	//This is the first stage - eventually the games will be created via the lobby.
+	var game = new Game();
+	games[123] = game;
+
 	// Begin listening for events.
 	setEventHandlers();
 
@@ -66,7 +69,7 @@ function onClientDisconnect() {
 };
 
 function onRegisterMap(data) {
-	map = new Map(data, TILE_SIZE);
+	games[this.gameId].map = new Map(data, TILE_SIZE);
 };
 
 function onNewPlayer(data) {
@@ -74,8 +77,11 @@ function onNewPlayer(data) {
 		return;
 	}
 
-	// TODO: handle case where you're out of spawn points.
 	var spawnPoint = spawnLocations[1].shift();
+
+	// This is temporary.
+	this.gameId = 123;
+	var game = games[123];
 
 	// Create new player
 	var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, 'down', this.id);
@@ -87,16 +93,18 @@ function onNewPlayer(data) {
 	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
 
 	// Notify the new player of the existing players.
-	for(var i in players) {
-		this.emit("new player", players[i]);
+	for(var i in game.players) {
+		this.emit("new player", game.players[i]);
 	}
 	
-	players[this.id] = newPlayer;
-	bombs[this.id] = {};
+	game.players[this.id] = newPlayer;
+	game.bombs[this.id] = {};
 };
 
 function onMovePlayer(data) {
-	var movingPlayer = players[this.id];
+	var game = games[this.gameId];
+
+	var movingPlayer = game.players[this.id];
 
 	// Moving player can be null if a player is killed and leftover movement signals come through.
 	if(!movingPlayer) {
@@ -109,39 +117,44 @@ function onMovePlayer(data) {
 };
 
 function onPlaceBomb(data) {
+	var game = games[this.gameId];
+
 	var bombId = data.id;
 	var playerId = this.id;
 
-	var normalizedBombLocation = map.findNearestTileCenter(data.x, data.y);
-	bombs[playerId][bombId]= new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombId);
+	var normalizedBombLocation = game.map.findNearestTileCenter(data.x, data.y);
+	game.bombs[playerId][bombId]= new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombId);
 
 	setTimeout(function() {
-		var explosionData = bombs[playerId][bombId].detonate(map, 2, players);
+		var explosionData = game.bombs[playerId][bombId].detonate(game.map, 2, game.players);
 
-		delete bombs[playerId][bombId];
+		delete game.bombs[playerId][bombId];
 
 		socket.sockets.emit("detonate", {explosions: explosionData.explosions, id: bombId});
 
 		explosionData.killedPlayers.forEach(function(killedPlayerId) {
-			signalPlayerDeath(killedPlayerId);
+			signalPlayerDeath(killedPlayerId, game);
 		});
 	}, 2000);
 
 	socket.sockets.emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
-function signalPlayerDeath(id) {
+function signalPlayerDeath(id, game) {
 	util.log("Player has been killed: " + id);
 
-	spawnLocations[1].push(players[id].spawnPoint);
-	delete players[id];
+	spawnLocations[1].push(game.players[id].spawnPoint);
+	delete game.players[id];
 	
 	socket.sockets.emit("kill player", {id: id});
 }
 
 function broadcastingLoop() {
-	for(var i in players) {
-		var player = players[i];
-		socket.sockets.emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
+	for(var g in games) {
+		var game = games[g];
+		for(var i in game.players) {
+			var player = game.players[i];
+			socket.sockets.emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
+		}
 	}
 };
