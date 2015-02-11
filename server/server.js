@@ -60,9 +60,11 @@ function setEventHandlers () {
 function onClientDisconnect() {
 	util.log("Player has disconnected: " + this.id);
 
+	var game = games[this.gameId];
+
 	if(this.id in players) {
-		spawnLocations[1].push(players[this.id].spawnPoint);
-		delete players[this.id];
+		spawnLocations[1].push(game.players[this.id].spawnPoint);
+		delete game.players[this.id];
 
 		socket.sockets.emit("remove player", {id: this.id});	
 	}
@@ -81,6 +83,7 @@ function onNewPlayer(data) {
 
 	// This is temporary.
 	this.gameId = 123;
+	this.join(123);
 	var game = games[123];
 
 	// Create new player
@@ -88,7 +91,7 @@ function onNewPlayer(data) {
 	newPlayer.spawnPoint = spawnPoint;
 
 	// Broadcast new player to connected socket clients
-	this.broadcast.emit("new player", newPlayer);
+	this.broadcast.to(123).emit("new player", newPlayer);
 
 	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
 
@@ -118,6 +121,7 @@ function onMovePlayer(data) {
 
 function onPlaceBomb(data) {
 	var game = games[this.gameId];
+	var gameId = this.gameId;
 
 	var bombId = data.id;
 	var playerId = this.id;
@@ -130,23 +134,23 @@ function onPlaceBomb(data) {
 
 		delete game.bombs[playerId][bombId];
 
-		socket.sockets.emit("detonate", {explosions: explosionData.explosions, id: bombId});
+		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId});
 
 		explosionData.killedPlayers.forEach(function(killedPlayerId) {
-			signalPlayerDeath(killedPlayerId, game);
+			signalPlayerDeath(killedPlayerId, game, gameId);
 		});
 	}, 2000);
 
-	socket.sockets.emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
+	socket.sockets.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
-function signalPlayerDeath(id, game) {
+function signalPlayerDeath(id, game, gameId) {
 	util.log("Player has been killed: " + id);
 
 	spawnLocations[1].push(game.players[id].spawnPoint);
 	delete game.players[id];
 	
-	socket.sockets.emit("kill player", {id: id});
+	socket.sockets.in(gameId).emit("kill player", {id: id});
 }
 
 function broadcastingLoop() {
@@ -154,7 +158,7 @@ function broadcastingLoop() {
 		var game = games[g];
 		for(var i in game.players) {
 			var player = game.players[i];
-			socket.sockets.emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
+			socket.sockets.in(g).emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
 		}
 	}
 };
