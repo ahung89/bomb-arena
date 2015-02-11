@@ -1,1 +1,1 @@
-web: node server/game.js
+web: node server/server.js
