@@ -15,6 +15,8 @@ var Game = require('./entities/game');
 
 var games = {};
 
+var numPlayers = 0;
+
 // Game Variables
 var socket;
 
@@ -33,6 +35,9 @@ function init() {
 	//This is the first stage - eventually the games will be created via the lobby.
 	var game = new Game();
 	games[123] = game;
+
+	var game2 = new Game();
+	games[456] = game2;
 
 	// Begin listening for events.
 	setEventHandlers();
@@ -67,6 +72,8 @@ function onClientDisconnect() {
 		delete game.players[this.id];
 
 		socket.sockets.emit("remove player", {id: this.id});	
+
+		numPlayers--;
 	}
 };
 
@@ -79,19 +86,21 @@ function onNewPlayer(data) {
 		return;
 	}
 
+	numPlayers++;
+
 	var spawnPoint = spawnLocations[1].shift();
 
 	// This is temporary.
-	this.gameId = 123;
-	this.join(123);
-	var game = games[123];
+	this.gameId = numPlayers <= 2 ? 123 : 456;
+	this.join(this.gameId);
+	var game = games[this.gameId];
 
 	// Create new player
 	var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, 'down', this.id);
 	newPlayer.spawnPoint = spawnPoint;
 
 	// Broadcast new player to connected socket clients
-	this.broadcast.to(123).emit("new player", newPlayer);
+	this.broadcast.to(this.gameId).emit("new player", newPlayer);
 
 	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
 
