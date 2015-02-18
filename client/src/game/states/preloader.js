@@ -23,6 +23,6 @@ Preloader.prototype = {
   },
 
   create: function () {
-    game.state.start("Level");
+    game.state.start("Lobby");
   }
 };

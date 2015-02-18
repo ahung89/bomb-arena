@@ -11,6 +11,7 @@ function startGame() {
 
 	game.state.add('Boot', require('./game/states/Boot'));
 	game.state.add('Preloader', require('./game/states/Preloader'));
+	game.state.add('Lobby', require('./game/states/Lobby'));
 	game.state.add('Level', require('./game/states/Level'));
 
 	game.state.start('Boot');
