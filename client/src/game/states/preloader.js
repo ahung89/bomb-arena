@@ -2,6 +2,10 @@ var Preloader = function () {};
 
 module.exports = Preloader;
 
+WebFontConfig = {
+   google: { families: [ "Carter One" ] }
+};
+
 Preloader.prototype = {
 
   preload: function () {
@@ -20,9 +24,13 @@ Preloader.prototype = {
 
     this.load.tilemap("levelOne", 'assets/levels/level_one.json', null, Phaser.Tilemap.TILED_JSON);
     this.load.image("tiles", "assets/tiles/tileset.png");
+    this.load.image("select_stage", "assets/sprites/lobby/select_stage.png", 520, 474);
+    this.load.image("limitless_brook_thumbnail", "assets/levels/thumbnails/limitless_brook_thumbnail.png", 100, 115);
+
+    game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },
 
   create: function () {
-    game.state.start("Lobby");
+    game.state.start("StageSelect");
   }
 };
