@@ -21,6 +21,9 @@ Preloader.prototype = {
     this.load.spritesheet("lobby_slot", "assets/sprites/lobby/lobby_slot.png", 540, 100);
     this.load.spritesheet("join_button", "assets/sprites/lobby/join_button.png", 95, 33);
     this.load.spritesheet("host_button", "assets/sprites/lobby/host_button.png", 95, 33);
+    this.load.spritesheet("left_select_button", "assets/sprites/lobby/left_select_button.png", 60, 60);
+    this.load.spritesheet("right_select_button", "assets/sprites/lobby/right_select_button.png", 60, 60);
+    this.load.spritesheet("ok_button", "assets/sprites/lobby/ok_button.png", 60, 60);
 
     this.load.tilemap("levelOne", 'assets/levels/level_one.json', null, Phaser.Tilemap.TILED_JSON);
     this.load.image("tiles", "assets/tiles/tileset.png");
