@@ -19,7 +19,7 @@ StageSelect.prototype = {
 		var selectionWindow = game.add.image(xOffset, yOffset, "select_stage");
 		this.leftButton = game.add.button(150, 180, "left_select_button", null, null, 1, 0);
 		this.rightButton = game.add.button(400, 180, "right_select_button", null, null, 1, 0);
-		this.okButton = game.add.button(495, 460, "ok_button", null, null, 1, 0);
+		this.okButton = game.add.button(495, 460, "ok_button", this.confirmStageSelection, null, 1, 0);
 
 		this.loadStageInfo(stages[0]);
 	},
@@ -48,5 +48,9 @@ StageSelect.prototype = {
 		text.font = "Carter One";
 		text.fill = color;
 		text.fontSize = size;
+	},
+
+	confirmStageSelection: function() {
+		game.state.start("PendingGame");
 	}
 };

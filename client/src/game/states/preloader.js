@@ -24,16 +24,20 @@ Preloader.prototype = {
     this.load.spritesheet("left_select_button", "assets/sprites/lobby/left_select_button.png", 60, 60);
     this.load.spritesheet("right_select_button", "assets/sprites/lobby/right_select_button.png", 60, 60);
     this.load.spritesheet("ok_button", "assets/sprites/lobby/ok_button.png", 60, 60);
+    this.load.spritesheet("character_square", "assets/sprites/lobby/character_square.png", 89, 89);
+    this.load.spritesheet("start_game_button", "assets/sprites/lobby/start_game_button.png", 202, 43);
+    this.load.spritesheet("leave_game_button", "assets/sprites/lobby/leave_game_button.png", 202, 43);
 
     this.load.tilemap("levelOne", 'assets/levels/level_one.json', null, Phaser.Tilemap.TILED_JSON);
     this.load.image("tiles", "assets/tiles/tileset.png");
     this.load.image("select_stage", "assets/sprites/lobby/select_stage.png", 520, 474);
     this.load.image("limitless_brook_thumbnail", "assets/levels/thumbnails/limitless_brook_thumbnail.png", 100, 115);
+    this.load.image("pending_game_backdrop", "assets/sprites/lobby/backdrop.png", 517, 474);
 
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },
 
   create: function () {
-    game.state.start("StageSelect");
+    game.state.start("Lobby");
   }
 };
