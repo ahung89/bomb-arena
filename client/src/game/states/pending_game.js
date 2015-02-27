@@ -17,6 +17,7 @@ var numCharacterSquares = 6;
 
 PendingGame.prototype = {
 	create: function() {
+		this.repeatingBombTilesprite = game.add.tileSprite(0, 0, 608, 608, "repeating_bombs");
 		var backdrop = game.add.image(xOffset, yOffset, "pending_game_backdrop");
 		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", null, null,
 			1, 0);
@@ -25,7 +26,8 @@ PendingGame.prototype = {
 	},
 
 	update: function() {
-
+		this.repeatingBombTilesprite.tilePosition.x++;
+		this.repeatingBombTilesprite.tilePosition.y--;
 	},
 
 	drawCharacterSquares: function(numOpenings) {

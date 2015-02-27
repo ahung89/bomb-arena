@@ -16,6 +16,7 @@ var stages = [
 
 StageSelect.prototype = {
 	create: function() {
+		this.repeatingBombTilesprite = game.add.tileSprite(0, 0, 608, 608, "repeating_bombs");
 		var selectionWindow = game.add.image(xOffset, yOffset, "select_stage");
 		this.leftButton = game.add.button(150, 180, "left_select_button", null, null, 1, 0);
 		this.rightButton = game.add.button(400, 180, "right_select_button", null, null, 1, 0);
@@ -25,7 +26,8 @@ StageSelect.prototype = {
 	},
 
 	update: function() {
-
+		this.repeatingBombTilesprite.tilePosition.x++;
+		this.repeatingBombTilesprite.tilePosition.y--;
 	},
 
 	loadStageInfo: function(stage) {
