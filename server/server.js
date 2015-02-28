@@ -37,13 +37,6 @@ init();
 function init() {
 	initializeLobbySlots();
 
-	//This is the first stage - eventually the games will be created via the lobby.
-	var game = new Game();
-	games[123] = game;
-
-	var game2 = new Game();
-	games[456] = game2;
-
 	// Begin listening for events.
 	setEventHandlers();
 
@@ -61,7 +54,6 @@ function setEventHandlers () {
 	socket.sockets.on("connection", function(client) {
 		util.log("New player has connected: " + client.id);
 
-		client.on("new player", onNewPlayer);
 		client.on("move player", onMovePlayer);
 		client.on("disconnect", onClientDisconnect);
 		client.on("place bomb", onPlaceBomb);
@@ -70,6 +62,7 @@ function setEventHandlers () {
 		client.on("host game", onHostGame);
 		client.on("select stage", onStageSelect);
 		client.on("enter pending game", onEnterPendingGame);
+		client.on("start game on server", onStartGame);
 	});
 };
 
@@ -113,36 +106,54 @@ function onRegisterMap(data) {
 	games[this.gameId].map = new Map(data, TILE_SIZE);
 };
 
-function onNewPlayer(data) {
-	if(spawnLocations[1].length == 0) {
-		return;
-	}
+// function onNewPlayer(data) {
+// 	if(spawnLocations[1].length == 0) {
+// 		return;
+// 	}
 
-	numPlayers++;
+// 	numPlayers++;
 
-	var spawnPoint = spawnLocations[1].shift();
+// 	var spawnPoint = spawnLocations[1].shift();
 
-	// This is temporary.
-	this.gameId = numPlayers <= 2 ? 123 : 456;
-	this.join(this.gameId);
-	var game = games[this.gameId];
+// 	// This is temporary.
+// 	this.gameId = numPlayers <= 2 ? 123 : 456;
+// 	this.join(this.gameId);
+// 	var game = games[this.gameId];
 
-	// Create new player
-	var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, 'down', this.id);
-	newPlayer.spawnPoint = spawnPoint;
+// 	// Create new player
+// 	var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, 'down', this.id);
+// 	newPlayer.spawnPoint = spawnPoint;
 
-	// Broadcast new player to connected socket clients
-	this.broadcast.to(this.gameId).emit("new player", newPlayer);
+// 	// Broadcast new player to connected socket clients
+// 	this.broadcast.to(this.gameId).emit("new player", newPlayer);
 
-	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
+// 	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
 
-	// Notify the new player of the existing players.
-	for(var i in game.players) {
-		this.emit("new player", game.players[i]);
-	}
+// 	// Notify the new player of the existing players.
+// 	for(var i in game.players) {
+// 		this.emit("new player", game.players[i]);
+// 	}
 	
-	game.players[this.id] = newPlayer;
-	game.bombs[this.id] = {};
+// 	game.players[this.id] = newPlayer;
+// 	game.bombs[this.id] = {};
+// };
+
+// Create new game, set up players, assign spawn points, broadcast info to all players.
+function onStartGame() {
+	var game = new Game();
+	games[this.gameId] = game;
+	var pendingGame = lobbySlots[this.gameId];
+
+	pendingGame.playerIds.forEach(function(playerId) {
+		var spawnPoint = spawnLocations[1].shift();
+		var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, "down", playerId);
+		newPlayer.spawnPoint = spawnPoint;
+
+		game.players[playerId] = newPlayer;
+		game.bombs[playerId] = {};
+	}, this);
+
+	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
 };
 
 function onMovePlayer(data) {

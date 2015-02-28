@@ -9,8 +9,11 @@ var Level = function () {};
 module.exports = Level;
 
 Level.prototype = {
-  init: function(tilemapName) {
+  init: function(tilemapName, players, id) {
     this.tilemapName = tilemapName;
+    this.players = players;
+    console.log(this.players.length);
+    this.playerId = id;
   },
 
   create: function () {
@@ -28,8 +31,6 @@ Level.prototype = {
 
     this.map.setCollision(127, true, "Blocks");
 
-    socket.emit("new player");
-
     // Send map data to server so it can do collisions.
     // TODO: do not allow the game to start until this operation is complete.
     var blockLayerData = game.cache.getTilemapData("levelOne").data.layers[1];
@@ -39,8 +40,8 @@ Level.prototype = {
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
     game.physics.arcade.enable(this.blockLayer);
 
-
     this.setEventHandlers();
+    this.initializePlayers();
   },
 
   update: function() {
@@ -90,21 +91,12 @@ Level.prototype = {
 
   setEventHandlers: function() {
     // Remember - these will actually be executed from the context of the Socket, not from the context of the level.
-    socket.on("assign id", this.onAssignId);
     socket.on("disconnect", this.onSocketDisconnect);
-    socket.on("new player", this.onNewPlayer);
     socket.on("move player", this.onMovePlayer);
     socket.on("remove player", this.onRemovePlayer);
     socket.on("kill player", this.onKillPlayer);
     socket.on("place bomb", this.onPlaceBomb);
     socket.on("detonate", this.onDetonate);
-  },
-
-  onAssignId: function(data) {
-    console.log("creating new player at " + data.x + ", " + data.y);
-
-    player = new Player(data.x, data.y);
-    player.id = data.id;
   },
 
   onSocketDisconnect: function() {
@@ -113,8 +105,15 @@ Level.prototype = {
     this.broadcast.emit("remove player", {id: this.id});
   },
 
-  onNewPlayer: function(data) {
-    remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id);
+  initializePlayers: function() {
+    for(var i in this.players) {
+      var data = this.players[i];
+      if(data.id == this.playerId) {
+        player = new Player(data.x, data.y, data.id);
+      } else {
+        remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id);
+      }
+    }
   },
 
   onMovePlayer: function(data) {

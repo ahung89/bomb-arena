@@ -2,9 +2,10 @@ var Bomb = require('./bomb');
 
 var PLAYER_SPEED = 180;
 
-var Player = function(x, y) {
+var Player = function(x, y, id) {
 	Phaser.Sprite.call(this, game, x, y, 'bomberman');
 
+  this.id = id;
   this.facing = 'down';
   this.anchor.setTo(.5, .5);
   this.bombButtonJustPressed = false;

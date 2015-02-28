@@ -30,7 +30,7 @@ PendingGame.prototype = {
 
 		this.repeatingBombTilesprite = game.add.tileSprite(0, 0, 608, 608, "repeating_bombs");
 		var backdrop = game.add.image(xOffset, yOffset, "pending_game_backdrop");
-		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", this.startGame, this,
+		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", this.startGameAction, this,
 			1, 0);
 		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, "leave_game_button", null, null, 1, 0);
 		this.characterSquares = this.drawCharacterSquares(4);
@@ -40,6 +40,7 @@ PendingGame.prototype = {
 		socket.on("show current players", this.populateCharacterSquares.bind(this));
 		socket.on("player joined", this.playerJoined.bind(this));
 		socket.on("player left", this.playerLeft.bind(this));
+		socket.on("start game on client", this.startGame);
 	},
 
 	update: function() {
@@ -87,8 +88,14 @@ PendingGame.prototype = {
 		this.characterImages[index].destroy();
 	},
 
-	startGame: function() {
+	// When the "start" button is clicked, send a message to the server to initialize the game.
+	startGameAction: function() {
+		socket.emit("start game on server");
+	},
+
+	startGame: function(data) {
 		// TODO: send signal to server so that the game starts for all players in the game.
-		game.state.start("Level", true, false, this.tilemapName);
+		console.log(data.players);
+		game.state.start("Level", true, false, data.mapName, data.players, this.id);
 	}
 }
