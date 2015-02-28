@@ -62,13 +62,13 @@ Lobby.prototype = {
 			var state = gameData[i].state;
 			var settings = this.stateSettings[state];
 
-			(function(n) {
-				if(settings.callback != null) {
+			(function(n, fn) {
+				if(fn != null) {
 					callback = function() {
-						settings.callback(n);
+						fn(n);
 					}
 				}
-			})(i);
+			})(i, settings.callback);
 
 			var slotYOffset = initialSlotYOffset + i * lobbySlotDistance;
 			this.slots[i] = game.add.button(slotXOffset, slotYOffset, "game_slot", callback, null, settings.overFrame, settings.outFrame);

@@ -62,20 +62,14 @@ function setEventHandlers () {
 		util.log("New player has connected: " + client.id);
 
 		client.on("new player", onNewPlayer);
-
 		client.on("move player", onMovePlayer);
-
 		client.on("disconnect", onClientDisconnect);
-
 		client.on("place bomb", onPlaceBomb);
-
 		client.on("register map", onRegisterMap);
-
 		client.on("enter lobby", onEnterLobby);
-
 		client.on("host game", onHostGame);
-
 		client.on("select stage", onStageSelect);
+		client.on("enter pending game", onEnterPendingGame);
 	});
 };
 
@@ -206,6 +200,15 @@ function onHostGame(data) {
 };
 
 function onStageSelect(data) {
+	this.leave(lobbyId);
+	this.join(data.gameId);
 	lobbySlots[data.gameId].state = "joinable";
 	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "joinable"});
+};
+
+function onEnterPendingGame(data) {
+	this.leave(lobbyId); // no-op if the player already has left lobby? make a separate leave lobby listener?
+	this.join(data.gameId);
+	this.emit("list current players", lobbySlots[data.gameId].playerIds);
+	socket.sockets.in(data.gameId).emit("show player join", {});
 };
