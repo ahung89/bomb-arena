@@ -33,6 +33,7 @@ Preloader.prototype = {
     this.load.image("pending_game_backdrop", "assets/sprites/lobby/backdrop.png");
     this.load.image("repeating_bombs", "assets/sprites/lobby/repeating_bombs.png");
     this.load.image("lobby_backdrop", "assets/sprites/lobby/lobby_backdrop.png");
+    this.load.image("bomberman_head", "assets/sprites/lobby/bomberman_head.png");
 
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },

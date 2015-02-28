@@ -12,15 +12,16 @@ var Player = require('./entities/player');
 var Bomb = require('./entities/bomb');
 var Map = require('./entities/map');
 var Game = require('./entities/game');
+var PendingGame = require('./entities/pending_game');
 
 var games = {};
 
 var numPlayers = 0;
 
 // Game Variables
-//var socket; why the hell is this here?
 var lobbyId = -1;
-var lobbySlots = [{state: "empty"}, {state: "empty"}, {state: "joinable"}, {state: "insession"}];
+var lobbySlots = [];
+var numLobbySlots = 7;
 
 var spawnLocations = {
 	1: [{x: 2, y: 5}, {x: 13, y: 1}, {x: 2, y: 1}, {x: 12, y: 6}]
@@ -34,6 +35,8 @@ server.listen(process.env.PORT || 8000);
 init();
 
 function init() {
+	initializeLobbySlots();
+
 	//This is the first stage - eventually the games will be created via the lobby.
 	var game = new Game();
 	games[123] = game;
@@ -46,6 +49,12 @@ function init() {
 
 	// Start game loop
 	setInterval(broadcastingLoop, updateInterval);
+};
+
+function initializeLobbySlots() {
+	for(var i = 0; i < numLobbySlots; i++) {
+		lobbySlots.push(new PendingGame());
+	}
 };
 
 function setEventHandlers () {
@@ -65,6 +74,8 @@ function setEventHandlers () {
 		client.on("enter lobby", onEnterLobby);
 
 		client.on("host game", onHostGame);
+
+		client.on("select stage", onStageSelect);
 	});
 };
 
@@ -182,13 +193,19 @@ function broadcastingLoop() {
 };
 
 function onEnterLobby(data) {
-	console.log("player has joined lobby");
+	util.log("player has joined lobby");
 	this.join(lobbyId);
 	socket.sockets.in(lobbyId).emit("add slots", lobbySlots);
 };
 
 // LOBBY CODE - Will refactor into other class once it's working.
 function onHostGame(data) {
-	games[data.gameId] = new Game();
-	// TODO: Mark the game as unjoinable for the time-being since it is being set up.
+	lobbySlots[data.gameId].state = "insession";
+	lobbySlots[data.gameId].playerIds.push(this.id);
+	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "insession"});
+};
+
+function onStageSelect(data) {
+	lobbySlots[data.gameId].state = "joinable";
+	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "joinable"});
 };

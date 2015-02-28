@@ -59,6 +59,7 @@ StageSelect.prototype = {
 	},
 
 	confirmStageSelection: function() {
+		socket.emit("select stage", {gameId: this.gameId});
 		game.state.start("PendingGame", true, false, this.selectedStage.tilemapName);
 	}
 };

@@ -14,9 +14,9 @@ var Player = function(x, y) {
   this.body.setSize(15, 16, 1, 15);
 
 	this.animations.add('down', [0, 1, 2, 3, 4], 10, true);
-  	this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
-  	this.animations.add('right', [10, 11, 12], 10, true);
-  	this.animations.add('left', [13, 14, 15], 10, true);
+  this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
+  this.animations.add('right', [10, 11, 12], 10, true);
+  this.animations.add('left', [13, 14, 15], 10, true);
 
 	game.add.existing(this);
 };
