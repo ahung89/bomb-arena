@@ -19,7 +19,8 @@ Lobby.prototype = {
 
 		var gameData = [{state: "empty"}, {state: "empty"}, {state: "joinable"}, {state: "insession"}];
 
-		this.addSlots(gameData);
+		socket.emit("enter lobby");
+		socket.on("add slots", this.addSlots.bind(this));
 	},
 
 	update: function() {
@@ -28,6 +29,7 @@ Lobby.prototype = {
 	},
 
 	addSlots: function(gameData) {
+		console.log(gameData.length);
 		for(var i = 0; i < gameData.length; i++) {
 			var outFrame, overFrame, text, callback;
 
@@ -74,7 +76,6 @@ Lobby.prototype = {
 	},
 
 	hostGameAction: function(gameId) {
-		console.log("hosting game in slot " + gameId);
-		game.state.start("StageSelect");
+		game.state.start("StageSelect", true, false, gameId);
 	}
 };

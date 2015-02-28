@@ -18,7 +18,9 @@ var games = {};
 var numPlayers = 0;
 
 // Game Variables
-var socket;
+//var socket; why the hell is this here?
+var lobbyId = -1;
+var lobbySlots = [{state: "empty"}, {state: "empty"}, {state: "joinable"}, {state: "insession"}];
 
 var spawnLocations = {
 	1: [{x: 2, y: 5}, {x: 13, y: 1}, {x: 2, y: 1}, {x: 12, y: 6}]
@@ -59,6 +61,10 @@ function setEventHandlers () {
 		client.on("place bomb", onPlaceBomb);
 
 		client.on("register map", onRegisterMap);
+
+		client.on("enter lobby", onEnterLobby);
+
+		client.on("host game", onHostGame);
 	});
 };
 
@@ -67,7 +73,10 @@ function onClientDisconnect() {
 
 	var game = games[this.gameId];
 
-	if(this.id in players) {
+	//TODO: remove this return statement
+	return;
+
+	if(this.id in game.players) {
 		spawnLocations[1].push(game.players[this.id].spawnPoint);
 		delete game.players[this.id];
 
@@ -170,4 +179,16 @@ function broadcastingLoop() {
 			socket.sockets.in(g).emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
 		}
 	}
+};
+
+function onEnterLobby(data) {
+	console.log("player has joined lobby");
+	this.join(lobbyId);
+	socket.sockets.in(lobbyId).emit("add slots", lobbySlots);
+};
+
+// LOBBY CODE - Will refactor into other class once it's working.
+function onHostGame(data) {
+	games[data.gameId] = new Game();
+	// TODO: Mark the game as unjoinable for the time-being since it is being set up.
 };

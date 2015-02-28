@@ -11,16 +11,22 @@ var thumbnailYOffset = 150;
 var stageNameYOffset = 328;
 
 var stages = [
-	{name: "Limitless Brook", thumbnailKey: "limitless_brook_thumbnail", maxPlayers: 2, size: "small"}
+	{name: "Limitless Brook", thumbnailKey: "limitless_brook_thumbnail", tilemapName: "levelOne", maxPlayers: 2, size: "small"}
 ];
 
 StageSelect.prototype = {
+	init: function(gameId) {
+		this.gameId = gameId;
+	},
+
 	create: function() {
 		this.repeatingBombTilesprite = game.add.tileSprite(0, 0, 608, 608, "repeating_bombs");
 		var selectionWindow = game.add.image(xOffset, yOffset, "select_stage");
+		this.selectedStage = stages[0];
+
 		this.leftButton = game.add.button(150, 180, "left_select_button", null, null, 1, 0);
 		this.rightButton = game.add.button(400, 180, "right_select_button", null, null, 1, 0);
-		this.okButton = game.add.button(495, 460, "ok_button", this.confirmStageSelection, null, 1, 0);
+		this.okButton = game.add.button(495, 460, "ok_button", this.confirmStageSelection, this, 1, 0);
 
 		this.loadStageInfo(stages[0]);
 	},
@@ -53,6 +59,6 @@ StageSelect.prototype = {
 	},
 
 	confirmStageSelection: function() {
-		game.state.start("PendingGame");
+		game.state.start("PendingGame", true, false, this.selectedStage.tilemapName);
 	}
 };

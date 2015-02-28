@@ -9,12 +9,16 @@ var Level = function () {};
 module.exports = Level;
 
 Level.prototype = {
+  init: function(tilemapName) {
+    this.tilemapName = tilemapName;
+  },
+
   create: function () {
     level = this;
     this.lastFrameTime;
     this.deadGroup = [];
 
-    this.map = game.add.tilemap("levelOne");
+    this.map = game.add.tilemap(this.tilemapName);
     this.map.addTilesetImage("tilez", "tiles", 40, 40);
 
     this.groundLayer = this.map.createLayer("Ground");

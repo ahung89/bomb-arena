@@ -16,10 +16,14 @@ var characterSquareYDistance = 100;
 var numCharacterSquares = 6;
 
 PendingGame.prototype = {
+	init: function(tilemapName) {
+		this.tilemapName = tilemapName;
+	},
+
 	create: function() {
 		this.repeatingBombTilesprite = game.add.tileSprite(0, 0, 608, 608, "repeating_bombs");
 		var backdrop = game.add.image(xOffset, yOffset, "pending_game_backdrop");
-		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", null, null,
+		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", this.startGame, this,
 			1, 0);
 		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, "leave_game_button", null, null, 1, 0);
 		this.characterSquares = this.drawCharacterSquares(4);
@@ -45,5 +49,10 @@ PendingGame.prototype = {
 				yOffset += characterSquareYDistance;
 			}
 		}
+	},
+
+	startGame: function() {
+		// TODO: send signal to server so that the game starts for all players in the game.
+		game.state.start("Level", true, false, this.tilemapName);
 	}
 }
