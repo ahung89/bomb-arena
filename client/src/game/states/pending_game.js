@@ -26,6 +26,7 @@ PendingGame.prototype = {
 	},
 
 	create: function() {
+		console.log("startin dat state, sendin da ID " + this.gameId);
 		socket.emit("enter pending game", {gameId: this.gameId});
 
 		this.repeatingBombTilesprite = game.add.tileSprite(0, 0, 608, 608, "repeating_bombs");
@@ -35,8 +36,10 @@ PendingGame.prototype = {
 		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, "leave_game_button", null, null, 1, 0);
 		this.characterSquares = this.drawCharacterSquares(4);
 		this.characterImages = [];
+		this.numPlayersInGame = 0;
 
-		socket.on("list current players", this.populateCharacterSquares.bind(this));
+		socket.on("show current players", this.populateCharacterSquares.bind(this));
+		socket.on("player joined", this.playerJoined.bind(this));
 	},
 
 	update: function() {
@@ -64,12 +67,18 @@ PendingGame.prototype = {
 	},
 
 	populateCharacterSquares: function(data) {
-		for(var i = 0; i < 8; i++) {
-			// create a list
-			if(!!data[i]) {
-				this.characterImages[i] = game.add.image(this.characterSquares[i].position.x + characterOffsetX, this.characterSquares[i].position.y + characterOffsetY, "bomberman_head");
-			}
+		this.numPlayersInGame = data.numPlayers;
+
+		for(var i = 0; i < this.numPlayersInGame; i++) {
+			this.characterImages[i] = game.add.image(this.characterSquares[i].position.x + characterOffsetX, this.characterSquares[i].position.y + characterOffsetY, "bomberman_head");
 		}
+	},
+
+	playerJoined: function() {
+		this.numPlayersInGame++;
+		var index = this.numPlayersInGame - 1;
+
+		this.characterImages[index] = game.add.image(this.characterSquares[index].position.x + characterOffsetX, this.characterSquares[index].position.y + characterOffsetY, "bomberman_head");
 	},
 
 	startGame: function() {

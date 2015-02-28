@@ -195,13 +195,10 @@ function onEnterLobby(data) {
 // LOBBY CODE - Will refactor into other class once it's working.
 function onHostGame(data) {
 	lobbySlots[data.gameId].state = "insession";
-	lobbySlots[data.gameId].playerIds.push(this.id);
 	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "insession"});
 };
 
 function onStageSelect(data) {
-	this.leave(lobbyId);
-	this.join(data.gameId);
 	lobbySlots[data.gameId].state = "joinable";
 	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "joinable"});
 };
@@ -209,6 +206,8 @@ function onStageSelect(data) {
 function onEnterPendingGame(data) {
 	this.leave(lobbyId); // no-op if the player already has left lobby? make a separate leave lobby listener?
 	this.join(data.gameId);
-	this.emit("list current players", lobbySlots[data.gameId].playerIds);
-	socket.sockets.in(data.gameId).emit("show player join", {});
+
+	lobbySlots[data.gameId].playerIds.push(this.id);
+	this.emit("show current players", {numPlayers: lobbySlots[data.gameId].playerIds.length});
+	this.broadcast.to(data.gameId).emit("player joined");
 };

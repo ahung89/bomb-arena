@@ -15,19 +15,19 @@ Lobby.prototype = {
 			empty: {
 				outFrame: 0,
 				overFrame: 1,
-				text: "Host Game",
+				text: "Host Game ", // For some reason, text gets slightly truncated if I don't have a space.
 				callback: this.hostGameAction
 			},
 			joinable: {
 				outFrame: 2,
 				overFrame: 3,
-				text: "Join Game",
-				callback: null
+				text: "Join Game ",
+				callback: this.joinGameAction
 			},
 			insession: {
 				outFrame: 4,
 				overFrame: 5,
-				text: "Game in Session",
+				text: "Game in Session ",
 				callback: null
 			}
 		};
@@ -90,6 +90,11 @@ Lobby.prototype = {
 		game.state.start("StageSelect", true, false, gameId);
 	},
 
+	joinGameAction: function(gameId) {
+		console.log(gameId);
+		game.state.start("PendingGame", true, false, null, gameId);
+	},
+
 	updateSlot: function(updateInfo) {
 		var settings = this.stateSettings[updateInfo.newState];
 		var id = updateInfo.gameId;
@@ -100,6 +105,6 @@ Lobby.prototype = {
 
 		// Change callback of button
 		button.onInputUp = new Phaser.Signal();
-		button.onInputUp.add(settings.callback, this);
+		button.onInputUp.add(function() { return settings.callback(id)}, this);
 	}
 };
