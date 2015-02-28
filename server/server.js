@@ -74,12 +74,30 @@ function setEventHandlers () {
 };
 
 function onClientDisconnect() {
-	util.log("Player has disconnected: " + this.id);
+	util.log("Player has disconnected: " + this.id + ". gameId is " + this.gameId);
 
-	var game = games[this.gameId];
+	if (this.gameId == null) {
+		return;
+	}
+
+	var lobbySlot = lobbySlots[this.gameId];
+
+	if (lobbySlot.state == "joinable") {
+		socket.sockets.in(this.gameId).emit("player left");
+		lobbySlot.playerIds.splice(lobbySlot.playerIds.indexOf(this.id), 1);
+
+		if(lobbySlot.playerIds.length == 0) {
+			lobbySlot.state = "empty";
+			socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
+		}
+	} else {
+
+	}
 
 	//TODO: remove this return statement
 	return;
+
+	var game = games[this.gameId];
 
 	if(this.id in game.players) {
 		spawnLocations[1].push(game.players[this.id].spawnPoint);
@@ -174,7 +192,7 @@ function signalPlayerDeath(id, game, gameId) {
 	delete game.players[id];
 	
 	socket.sockets.in(gameId).emit("kill player", {id: id});
-}
+};
 
 function broadcastingLoop() {
 	for(var g in games) {
@@ -200,6 +218,7 @@ function onHostGame(data) {
 
 function onStageSelect(data) {
 	lobbySlots[data.gameId].state = "joinable";
+	lobbySlots[data.gameId].mapName = data.mapName;
 	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "joinable"});
 };
 
@@ -208,6 +227,8 @@ function onEnterPendingGame(data) {
 	this.join(data.gameId);
 
 	lobbySlots[data.gameId].playerIds.push(this.id);
+	this.gameId = data.gameId;
+
 	this.emit("show current players", {numPlayers: lobbySlots[data.gameId].playerIds.length});
 	this.broadcast.to(data.gameId).emit("player joined");
 };
