@@ -40,8 +40,6 @@ Lobby.prototype = {
 
 		var gameData = [{state: "empty"}, {state: "empty"}, {state: "joinable"}, {state: "insession"}];
 
-		console.log("SOCKET ID IS " + socket.id);
-
 		socket.emit("enter lobby");
 		socket.on("add slots", this.addSlots.bind(this));
 		socket.on("update slot", this.updateSlot.bind(this));
@@ -58,7 +56,7 @@ Lobby.prototype = {
 
 		console.log(gameData.length);
 		for(var i = 0; i < gameData.length; i++) {
-			var callback;
+			var callback = null;
 			var state = gameData[i].state;
 			var settings = this.stateSettings[state];
 
