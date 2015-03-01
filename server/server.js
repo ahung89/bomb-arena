@@ -86,8 +86,9 @@ function onClientDisconnect() {
 		if(Object.keys(game.players).length == 0) {
 			delete games[this.gameId];
 
+			lobbySlots[this.gameId] = new PendingGame();
+
 			// TODO: Move this out. Like, seriously.
-			lobbySlots[this.gameId].state = "empty";
 			socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
 		}
 	}
