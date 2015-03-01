@@ -6,8 +6,8 @@ window.level = null;
 startGame();
 
 function startGame() {
-	// socket = io("https://limitless-brook-9339.herokuapp.com:443");
-    socket = io("http://localhost:8000");
+	socket = io("https://limitless-brook-9339.herokuapp.com:443");
+    // socket = io("http://localhost:8000");
 
 	game.state.add("Boot", require("./game/states/boot"));
 	game.state.add("Preloader", require("./game/states/preloader"));
