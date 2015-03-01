@@ -77,7 +77,6 @@ PendingGame.prototype = {
 
 	playerJoined: function() {
 		this.numPlayersInGame++;
-		console.log("player joined. # players in game: " + this.numPlayersInGame);
 		var index = this.numPlayersInGame - 1;
 
 		this.characterImages[index] = game.add.image(this.characterSquares[index].position.x + characterOffsetX, this.characterSquares[index].position.y + characterOffsetY, "bomberman_head");
@@ -85,7 +84,6 @@ PendingGame.prototype = {
 
 	playerLeft: function() {
 		this.numPlayersInGame--;
-		console.log("player left. # players in game: " + this.numPlayersInGame);
 		var index = this.numPlayersInGame;
 		this.characterImages[index].destroy();
 	},
@@ -102,8 +100,6 @@ PendingGame.prototype = {
 	},
 
 	startGame: function(data) {
-		// TODO: send signal to server so that the game starts for all players in the game.
-		console.log(data.players);
 		game.state.start("Level", true, false, data.mapName, data.players, this.id);
 	},
 

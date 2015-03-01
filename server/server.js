@@ -1,18 +1,19 @@
 TILE_SIZE = 40;
 
 // Dependencies
-var util = require('util');
-var express = require('express');
+var util = require("util");
+var express = require("express");
 var app = express();
-var server = require('http').createServer(app);
-var socket = require('socket.io').listen(server);
+var server = require("http").createServer(app);
+var socket = require("socket.io").listen(server);
 
 // Game objects
-var Player = require('./entities/player');
-var Bomb = require('./entities/bomb');
-var Map = require('./entities/map');
-var Game = require('./entities/game');
-var PendingGame = require('./entities/pending_game');
+var Player = require("./entities/player");
+var Bomb = require("./entities/bomb");
+var Map = require("./entities/map");
+var Game = require("./entities/game");
+var PendingGame = require("./entities/pending_game");
+var MapInfo = require("./metadata/map_info");
 
 var games = {};
 
@@ -23,13 +24,9 @@ var lobbyId = -1;
 var lobbySlots = [];
 var numLobbySlots = 7;
 
-var spawnLocations = {
-	1: [{x: 2, y: 5}, {x: 13, y: 1}, {x: 2, y: 1}, {x: 12, y: 6}]
-};
-
 var updateInterval = 100; // Broadcast updates every 100 ms.
 
-app.use(express.static('client'));
+app.use(express.static("client"));
 server.listen(process.env.PORT || 8000);
 
 init();
@@ -123,15 +120,15 @@ function onStartGame() {
 	// Refactor this call out, since it's being used several times.
 	socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "inprogress"});
 
-
-	pendingGame.playerIds.forEach(function(playerId) {
-		var spawnPoint = spawnLocations[1].shift();
+	for(var i = 0; i < pendingGame.playerIds.length; i++) {
+		var playerId = pendingGame.playerIds[i];
+		var spawnPoint = MapInfo[pendingGame.mapName].spawnLocations[i];
 		var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, "down", playerId);
 		newPlayer.spawnPoint = spawnPoint;
 
 		game.players[playerId] = newPlayer;
 		game.bombs[playerId] = {};
-	}, this);
+	}
 
 	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
 };
