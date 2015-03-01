@@ -11,7 +11,7 @@ var thumbnailYOffset = 150;
 var stageNameYOffset = 328;
 
 var stages = [
-	{name: "Limitless Brook", thumbnailKey: "limitless_brook_thumbnail", tilemapName: "levelOne", maxPlayers: 2, size: "small"}
+	{name: "Limitless Brook", thumbnailKey: "limitless_brook_thumbnail", tilemapName: "levelOne", maxPlayers: 4, size: "small"}
 ];
 
 StageSelect.prototype = {
