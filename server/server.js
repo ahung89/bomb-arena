@@ -62,27 +62,18 @@ function setEventHandlers () {
 		client.on("host game", onHostGame);
 		client.on("select stage", onStageSelect);
 		client.on("enter pending game", onEnterPendingGame);
+		client.on("leave pending game", onLeavePendingGame);
 		client.on("start game on server", onStartGame);
 	});
 };
 
 function onClientDisconnect() {
-	util.log("Player has disconnected: " + this.id + ". gameId is " + this.gameId);
-
 	if (this.gameId == null) {
 		return;
 	}
 
-	var lobbySlot = lobbySlots[this.gameId];
-
-	if (lobbySlot.state == "joinable") {
-		socket.sockets.in(this.gameId).emit("player left");
-		lobbySlot.playerIds.splice(lobbySlot.playerIds.indexOf(this.id), 1);
-
-		if(lobbySlot.playerIds.length == 0) {
-			lobbySlot.state = "empty";
-			socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
-		}
+	if (lobbySlots[this.gameId].state == "joinable") {
+		leavePendingGame.call(this);
 	} else {
 
 	}
@@ -102,47 +93,36 @@ function onClientDisconnect() {
 	}
 };
 
+function onLeavePendingGame() {
+	leavePendingGame.call(this);
+};
+
+function leavePendingGame() {
+	var lobbySlot = lobbySlots[this.gameId];
+
+	socket.sockets.in(this.gameId).emit("player left");
+	lobbySlot.playerIds.splice(lobbySlot.playerIds.indexOf(this.id), 1);
+
+	if(lobbySlot.playerIds.length == 0) {
+		lobbySlot.state = "empty";
+		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
+	}
+};
+
 function onRegisterMap(data) {
 	games[this.gameId].map = new Map(data, TILE_SIZE);
 };
-
-// function onNewPlayer(data) {
-// 	if(spawnLocations[1].length == 0) {
-// 		return;
-// 	}
-
-// 	numPlayers++;
-
-// 	var spawnPoint = spawnLocations[1].shift();
-
-// 	// This is temporary.
-// 	this.gameId = numPlayers <= 2 ? 123 : 456;
-// 	this.join(this.gameId);
-// 	var game = games[this.gameId];
-
-// 	// Create new player
-// 	var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, 'down', this.id);
-// 	newPlayer.spawnPoint = spawnPoint;
-
-// 	// Broadcast new player to connected socket clients
-// 	this.broadcast.to(this.gameId).emit("new player", newPlayer);
-
-// 	this.emit("assign id", {x: newPlayer.x, y: newPlayer.y, id: this.id});
-
-// 	// Notify the new player of the existing players.
-// 	for(var i in game.players) {
-// 		this.emit("new player", game.players[i]);
-// 	}
-	
-// 	game.players[this.id] = newPlayer;
-// 	game.bombs[this.id] = {};
-// };
 
 // Create new game, set up players, assign spawn points, broadcast info to all players.
 function onStartGame() {
 	var game = new Game();
 	games[this.gameId] = game;
 	var pendingGame = lobbySlots[this.gameId];
+	lobbySlots[this.gameId].state = "inprogress";
+
+	// Refactor this call out, since it's being used several times.
+	socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "inprogress"});
+
 
 	pendingGame.playerIds.forEach(function(playerId) {
 		var spawnPoint = spawnLocations[1].shift();
@@ -223,8 +203,8 @@ function onEnterLobby(data) {
 
 // LOBBY CODE - Will refactor into other class once it's working.
 function onHostGame(data) {
-	lobbySlots[data.gameId].state = "insession";
-	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "insession"});
+	lobbySlots[data.gameId].state = "settingup";
+	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "settingup"});
 };
 
 function onStageSelect(data) {

@@ -32,7 +32,7 @@ PendingGame.prototype = {
 		var backdrop = game.add.image(xOffset, yOffset, "pending_game_backdrop");
 		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", this.startGameAction, this,
 			1, 0);
-		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, "leave_game_button", null, null, 1, 0);
+		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, "leave_game_button", this.leaveGameAction, null, 1, 0);
 		this.characterSquares = this.drawCharacterSquares(4);
 		this.characterImages = [];
 		this.numPlayersInGame = 0;
@@ -77,6 +77,7 @@ PendingGame.prototype = {
 
 	playerJoined: function() {
 		this.numPlayersInGame++;
+		console.log("player joined. # players in game: " + this.numPlayersInGame);
 		var index = this.numPlayersInGame - 1;
 
 		this.characterImages[index] = game.add.image(this.characterSquares[index].position.x + characterOffsetX, this.characterSquares[index].position.y + characterOffsetY, "bomberman_head");
@@ -84,6 +85,7 @@ PendingGame.prototype = {
 
 	playerLeft: function() {
 		this.numPlayersInGame--;
+		console.log("player left. # players in game: " + this.numPlayersInGame);
 		var index = this.numPlayersInGame;
 		this.characterImages[index].destroy();
 	},
@@ -93,9 +95,17 @@ PendingGame.prototype = {
 		socket.emit("start game on server");
 	},
 
+	leaveGameAction: function() {
+		socket.emit("leave pending game");
+		socket.removeAllListeners();
+		game.state.start("Lobby");
+	},
+
 	startGame: function(data) {
 		// TODO: send signal to server so that the game starts for all players in the game.
 		console.log(data.players);
 		game.state.start("Level", true, false, data.mapName, data.players, this.id);
-	}
+	},
+
+
 }

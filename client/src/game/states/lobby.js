@@ -24,10 +24,22 @@ Lobby.prototype = {
 				text: "Join Game ",
 				callback: this.joinGameAction
 			},
-			insession: {
+			settingup: {
 				outFrame: 4,
 				overFrame: 5,
-				text: "Game in Session ",
+				text: "Game is being set up... ",
+				callback: null
+			},
+			inprogress: {
+				outFrame: 4,
+				overFrame: 5,
+				text: "Game in Progress ",
+				callback: null
+			},
+			full: {
+				outFrame: 4,
+				overFrame: 5,
+				text: "Game Full ",
 				callback: null
 			}
 		};
@@ -41,8 +53,11 @@ Lobby.prototype = {
 		var gameData = [{state: "empty"}, {state: "empty"}, {state: "joinable"}, {state: "insession"}];
 
 		socket.emit("enter lobby");
-		socket.on("add slots", this.addSlots.bind(this));
-		socket.on("update slot", this.updateSlot.bind(this));
+
+		if(!socket.hasListeners("add slots")) {
+			socket.on("add slots", this.addSlots.bind(this));
+			socket.on("update slot", this.updateSlot.bind(this));
+		}
 	},
 
 	update: function() {
@@ -87,11 +102,12 @@ Lobby.prototype = {
 
 	hostGameAction: function(gameId) {
 		socket.emit("host game", {gameId: gameId});
+		socket.removeAllListeners();
 		game.state.start("StageSelect", true, false, gameId);
 	},
 
 	joinGameAction: function(gameId) {
-		console.log(gameId);
+		socket.removeAllListeners();
 		game.state.start("PendingGame", true, false, null, gameId);
 	},
 
