@@ -69,10 +69,13 @@ function onClientDisconnect() {
 		return;
 	}
 
-	if (lobbySlots[this.gameId].state == "joinable") {
+	if (lobbySlots[this.gameId].state == "joinable" || lobbySlots[this.gameId].state == "full") {
 		leavePendingGame.call(this);
-	} else {
+	} else if (lobbySlots[this.gameId].state == "settingup") {
+		lobbySlots[this.gameId].state = "empty";
 
+		// TODO: Move this out.
+		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
 	}
 
 	//TODO: remove this return statement
@@ -81,7 +84,6 @@ function onClientDisconnect() {
 	var game = games[this.gameId];
 
 	if(this.id in game.players) {
-		spawnLocations[1].push(game.players[this.id].spawnPoint);
 		delete game.players[this.id];
 
 		socket.sockets.emit("remove player", {id: this.id});	
@@ -103,6 +105,11 @@ function leavePendingGame() {
 	if(lobbySlot.playerIds.length == 0) {
 		lobbySlot.state = "empty";
 		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
+	}
+
+	if(lobbySlot.state == "full") {
+		lobbySlot.state = "joinable";
+		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "joinable"});
 	}
 };
 
@@ -176,7 +183,6 @@ function onPlaceBomb(data) {
 function signalPlayerDeath(id, game, gameId) {
 	util.log("Player has been killed: " + id);
 
-	spawnLocations[1].push(game.players[id].spawnPoint);
 	delete game.players[id];
 	
 	socket.sockets.in(gameId).emit("kill player", {id: id});
@@ -201,6 +207,7 @@ function onEnterLobby(data) {
 // LOBBY CODE - Will refactor into other class once it's working.
 function onHostGame(data) {
 	lobbySlots[data.gameId].state = "settingup";
+	this.gameId = data.gameId;
 	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "settingup"});
 };
 
@@ -211,12 +218,19 @@ function onStageSelect(data) {
 };
 
 function onEnterPendingGame(data) {
+	var pendingGame = lobbySlots[data.gameId];
+
 	this.leave(lobbyId); // no-op if the player already has left lobby? make a separate leave lobby listener?
 	this.join(data.gameId);
 
-	lobbySlots[data.gameId].playerIds.push(this.id);
+	pendingGame.playerIds.push(this.id);
 	this.gameId = data.gameId;
 
-	this.emit("show current players", {numPlayers: lobbySlots[data.gameId].playerIds.length});
+	this.emit("show current players", {numPlayers: pendingGame.playerIds.length});
 	this.broadcast.to(data.gameId).emit("player joined");
+
+	if(pendingGame.playerIds.length >= MapInfo[pendingGame.mapName].spawnLocations.length) {
+		pendingGame.state = "full";
+		socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "full"});
+	}
 };
