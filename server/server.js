@@ -17,8 +17,6 @@ var MapInfo = require("./metadata/map_info");
 
 var games = {};
 
-var numPlayers = 0;
-
 // Game Variables
 var lobbyId = -1;
 var lobbySlots = [];
@@ -76,19 +74,22 @@ function onClientDisconnect() {
 
 		// TODO: Move this out.
 		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
-	}
+	} else if(lobbySlots[this.gameId].state == "inprogress") {
+		var game = games[this.gameId];
+	
+		if(this.id in game.players) {
+			delete game.players[this.id];
+	
+			socket.sockets.emit("remove player", {id: this.id});	
+		}
 
-	//TODO: remove this return statement
-	return;
+		if(Object.keys(game.players).length == 0) {
+			delete games[this.gameId];
 
-	var game = games[this.gameId];
-
-	if(this.id in game.players) {
-		delete game.players[this.id];
-
-		socket.sockets.emit("remove player", {id: this.id});	
-
-		numPlayers--;
+			// TODO: Move this out. Like, seriously.
+			lobbySlots[this.gameId].state = "empty";
+			socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
+		}
 	}
 };
 
