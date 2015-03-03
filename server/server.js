@@ -101,6 +101,7 @@ function onLeavePendingGame() {
 function leavePendingGame() {
 	var lobbySlot = lobbySlots[this.gameId];
 
+	this.leave(this.gameId);
 	socket.sockets.in(this.gameId).emit("player left");
 	lobbySlot.playerIds.splice(lobbySlot.playerIds.indexOf(this.id), 1);
 
