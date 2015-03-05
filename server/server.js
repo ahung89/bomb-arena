@@ -215,9 +215,9 @@ function onHostGame(data) {
 };
 
 function onStageSelect(data) {
-	lobbySlots[data.gameId].state = "joinable";
-	lobbySlots[data.gameId].mapName = data.mapName;
-	socket.sockets.in(lobbyId).emit("update slot", {gameId: data.gameId, newState: "joinable"});
+	lobbySlots[this.gameId].state = "joinable";
+	lobbySlots[this.gameId].mapName = data.mapName;
+	socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "joinable"});
 };
 
 function onEnterPendingGame(data) {

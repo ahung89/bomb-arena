@@ -19,16 +19,18 @@ var characterOffsetY = 4.5;
 
 var numCharacterSquares = 6;
 
+var repeatingBombTilesprite;
+
 PendingGame.prototype = {
-	init: function(tilemapName, gameId) {
+	init: function(tilemapName, gameId, rbts) {
 		this.tilemapName = tilemapName;
 		this.gameId = gameId;
+		repeatingBombTilesprite = rbts;
 	},
 
 	create: function() {
 		socket.emit("enter pending game", {gameId: this.gameId});
 
-		this.repeatingBombTilesprite = game.add.tileSprite(0, 0, 608, 608, "repeating_bombs");
 		var backdrop = game.add.image(xOffset, yOffset, "pending_game_backdrop");
 		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", this.startGameAction, this,
 			1, 0);
@@ -44,8 +46,8 @@ PendingGame.prototype = {
 	},
 
 	update: function() {
-		this.repeatingBombTilesprite.tilePosition.x++;
-		this.repeatingBombTilesprite.tilePosition.y--;
+		repeatingBombTilesprite.tilePosition.x++;
+		repeatingBombTilesprite.tilePosition.y--;
 	},
 
 	drawCharacterSquares: function(numOpenings) {
@@ -96,12 +98,11 @@ PendingGame.prototype = {
 	leaveGameAction: function() {
 		socket.emit("leave pending game");
 		socket.removeAllListeners();
-		game.state.start("Lobby");
+		game.state.start("Lobby", true, false, repeatingBombTilesprite);
 	},
 
 	startGame: function(data) {
+		repeatingBombTilesprite.doNotDestroy = false;
 		game.state.start("Level", true, false, data.mapName, data.players, this.id);
-	},
-
-
+	}
 }
