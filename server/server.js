@@ -66,8 +66,7 @@ function onClientDisconnect() {
 	} else if (lobbySlots[this.gameId].state == "settingup") {
 		lobbySlots[this.gameId].state = "empty";
 
-		// TODO: Move this out.
-		socket.sockets.in(Lobby.getLobbyId()).emit("update slot", {gameId: this.gameId, newState: "empty"});
+		Lobby.broadcastSlotStateUpdate(this.gameId, "empty");
 	} else if(lobbySlots[this.gameId].state == "inprogress") {
 		var game = games[this.gameId];
 	
@@ -82,8 +81,7 @@ function onClientDisconnect() {
 
 			lobbySlots[this.gameId] = new PendingGame();
 
-			// TODO: Move this out. Like, seriously.
-			socket.sockets.in(Lobby.getLobbyId()).emit("update slot", {gameId: this.gameId, newState: "empty"});
+			Lobby.broadcastSlotStateUpdate(this.gameId, "empty");
 		}
 	}
 };
@@ -96,8 +94,7 @@ function onStartGame() {
 	var pendingGame = lobbySlots[this.gameId];
 	lobbySlots[this.gameId].state = "inprogress";
 
-	// Refactor this call out, since it's being used several times.
-	socket.sockets.in(Lobby.getLobbyId()).emit("update slot", {gameId: this.gameId, newState: "inprogress"});
+	Lobby.broadcastSlotStateUpdate(this.gameId, "inprogress");
 
 	for(var i = 0; i < pendingGame.playerIds.length; i++) {
 		var playerId = pendingGame.playerIds[i];
