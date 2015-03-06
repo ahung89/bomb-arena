@@ -13,7 +13,6 @@ var Map = function(data, tileSize) {
 			i++;
 		}
 	}
-
 };
 
 Map.prototype = {

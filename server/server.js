@@ -96,9 +96,15 @@ function onStartGame() {
 
 	Lobby.broadcastSlotStateUpdate(this.gameId, "inprogress");
 
-	for(var i = 0; i < pendingGame.playerIds.length; i++) {
-		var playerId = pendingGame.playerIds[i];
-		var spawnPoint = MapInfo[pendingGame.mapName].spawnLocations[i];
+	beginRound(pendingGame.playerIds, pendingGame.mapName, game);
+
+	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
+};
+
+function beginRound(ids, mapName, game) {
+	for(var i = 0; i < ids.length; i++) {
+		var playerId = ids[i];
+		var spawnPoint = MapInfo[mapName].spawnLocations[i];
 		var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, "down", playerId);
 		newPlayer.spawnPoint = spawnPoint;
 
@@ -106,7 +112,7 @@ function onStartGame() {
 		game.bombs[playerId] = {};
 	}
 
-	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
+	game.numPlayersAlive = ids.length;
 };
 
 function onRegisterMap(data) {
@@ -147,15 +153,27 @@ function onPlaceBomb(data) {
 
 		explosionData.killedPlayers.forEach(function(killedPlayerId) {
 			game.players[killedPlayerId].alive = false;
-			signalPlayerDeath(killedPlayerId, gameId);
+			handlePlayerDeath(killedPlayerId, gameId);
 		});
 	}, 2000);
 
 	socket.sockets.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
-function signalPlayerDeath(id, gameId) {
+function handlePlayerDeath(id, gameId) {
 	socket.sockets.in(gameId).emit("kill player", {id: id});
+	games[gameId].numPlayersAlive--;
+	if(games[gameId].numPlayersAlive == 1) {
+		endRound(gameId);
+	}
+};
+
+function endRound(gameId) {
+	var game = games[gameId];
+	var gameMetadata = Lobby.getLobbySlots()[gameId];
+
+	beginRound(gameMetadata.playerIds, gameMetadata.mapName, game);
+	socket.sockets.in(gameId).emit("restart");
 };
 
 function broadcastingLoop() {

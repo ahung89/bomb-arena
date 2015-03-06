@@ -2,10 +2,7 @@ var Game = function() {
 	this.players = {};
 	this.map = {};
 	this.bombs = {};
-};
-
-Game.prototype = {
-	
+	this.numPlayersAlive = 0;
 };
 
 module.exports = Game;

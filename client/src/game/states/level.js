@@ -12,7 +12,6 @@ Level.prototype = {
   init: function(tilemapName, players, id) {
     this.tilemapName = tilemapName;
     this.players = players;
-    console.log(this.players.length);
     this.playerId = id;
   },
 
@@ -21,20 +20,7 @@ Level.prototype = {
     this.lastFrameTime;
     this.deadGroup = [];
 
-    this.map = game.add.tilemap(this.tilemapName);
-    this.map.addTilesetImage("tilez", "tiles", 40, 40);
-
-    this.groundLayer = this.map.createLayer("Ground");
-    this.groundLayer.resizeWorld();
-    this.blockLayer = this.map.createLayer("Blocks");
-    this.blockLayer.resizeWorld(); // What does this do?
-
-    this.map.setCollision(127, true, "Blocks");
-
-    // Send map data to server so it can do collisions.
-    // TODO: do not allow the game to start until this operation is complete.
-    var blockLayerData = game.cache.getTilemapData("levelOne").data.layers[1];
-    socket.emit("register map", {tiles: blockLayerData.data, height: blockLayerData.height, width: blockLayerData.width});
+    this.initializeMap();
 
     this.bombs = game.add.group();
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
@@ -42,6 +28,27 @@ Level.prototype = {
 
     this.setEventHandlers();
     this.initializePlayers();
+  },
+
+  restartGame: function() {
+    if(player.alive) {
+      player.destroy();
+    }
+
+    for(var i in remotePlayers) {
+      var remotePlayer = remotePlayers[i];
+      if(remotePlayer.alive) {
+        remotePlayer.destroy();
+      }
+    }
+
+    remotePlayers = {};
+    player = null;
+    this.deadGroup = [];
+    this.lastFrameTime;
+    this.initializePlayers();
+
+    console.log("restartin diz b");
   },
 
   update: function() {
@@ -97,6 +104,7 @@ Level.prototype = {
     socket.on("kill player", this.onKillPlayer);
     socket.on("place bomb", this.onPlaceBomb);
     socket.on("detonate", this.onDetonate);
+    socket.on("restart", this.restartGame.bind(this));
   },
 
   onSocketDisconnect: function() {
@@ -114,6 +122,24 @@ Level.prototype = {
         remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id);
       }
     }
+  },
+
+  initializeMap: function() {
+    this.map = game.add.tilemap(this.tilemapName);
+    this.map.addTilesetImage("tilez", "tiles", 40, 40);
+
+    this.groundLayer = this.map.createLayer("Ground");
+    this.groundLayer.resizeWorld();
+    this.blockLayer = this.map.createLayer("Blocks");
+    this.blockLayer.resizeWorld(); // What does this do?
+
+    this.map.setCollision(127, true, "Blocks");
+
+    // Send map data to server so it can do collisions.
+    // TODO: do not allow the game to start until this operation is complete.
+    var blockLayerData = game.cache.getTilemapData("levelOne").data.layers[1];
+
+    socket.emit("register map", {tiles: blockLayerData.data, height: blockLayerData.height, width: blockLayerData.width});
   },
 
   onMovePlayer: function(data) {
