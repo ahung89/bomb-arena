@@ -1,3 +1,7 @@
+/**
+* This module contains all logic related to hosting/joining games.
+*/
+
 var PendingGame = require("./entities/pending_game");
 var MapInfo = require("./metadata/map_info");
 
@@ -5,7 +9,6 @@ var lobbySlots = [];
 var lobbyId = -1;
 var numLobbySlots = 7;
 
-// This class contains all server-side logic related to hosting/joining games.
 var Lobby = {
 	getLobbySlots: function() {
 		return lobbySlots;

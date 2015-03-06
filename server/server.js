@@ -1,7 +1,7 @@
 // Dependencies
 var express = require("express");
 var app = express();
-var server = require("http").createServer(app);
+var server = require("http").Server(app);
 
 // Figure out what to do about these globals.
 socket = require("socket.io").listen(server);
@@ -20,6 +20,7 @@ var games = {};
 
 var updateInterval = 100; // Broadcast updates every 100 ms.
 
+// Serve up index.html.
 app.use(express.static("client"));
 server.listen(process.env.PORT || 8000);
 
@@ -148,18 +149,15 @@ function onPlaceBomb(data) {
 		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId});
 
 		explosionData.killedPlayers.forEach(function(killedPlayerId) {
-			signalPlayerDeath(killedPlayerId, game, gameId);
+			game.players[killedPlayerId].alive = false;
+			signalPlayerDeath(killedPlayerId, gameId);
 		});
 	}, 2000);
 
 	socket.sockets.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
-function signalPlayerDeath(id, game, gameId) {
-	console.log("Player has been killed: " + id);
-
-	delete game.players[id];
-	
+function signalPlayerDeath(id, gameId) {
 	socket.sockets.in(gameId).emit("kill player", {id: id});
 };
 
@@ -168,7 +166,9 @@ function broadcastingLoop() {
 		var game = games[g];
 		for(var i in game.players) {
 			var player = game.players[i];
-			socket.sockets.in(g).emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
+			if(player.alive) {
+				socket.sockets.in(g).emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
+			}
 		}
 	}
 };

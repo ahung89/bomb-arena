@@ -20,7 +20,7 @@ Lobby.prototype = {
 			empty: {
 				outFrame: 0,
 				overFrame: 1,
-				text: "Host Game ", // For some reason, text gets slightly truncated if I don't have a space.
+				text: "Host Game ", // For some reason, text gets slightly truncated if I don't append a space.
 				callback: this.hostGameAction
 			},
 			joinable: {
