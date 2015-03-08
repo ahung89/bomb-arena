@@ -59,7 +59,7 @@ var Lobby = {
 		this.gameId = data.gameId;
 	
 		this.emit("show current players", {players: pendingGame.players});
-		this.broadcast.to(data.gameId).emit("player joined");
+		this.broadcast.to(data.gameId).emit("player joined", {id: this.id, color: pendingGame.players[this.id].color});
 	
 		if(pendingGame.getNumPlayers() >= MapInfo[pendingGame.mapName].spawnLocations.length) {
 			pendingGame.state = "full";
@@ -80,8 +80,8 @@ function leavePendingGame() {
 	var lobbySlot = lobbySlots[this.gameId];
 
 	this.leave(this.gameId);
-	socket.sockets.in(this.gameId).emit("player left");
 	lobbySlot.removePlayer(this.id);
+	socket.sockets.in(this.gameId).emit("player left", {players: lobbySlot.players});
 
 	if(lobbySlot.getNumPlayers()== 0) {
 		lobbySlot.state = "empty";

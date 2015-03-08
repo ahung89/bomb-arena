@@ -15,12 +15,18 @@ PendingGame.prototype = {
 	},
 
 	removePlayer: function(id) {
+		console.log("removing player. colors was previously");
+		console.log(this.availableColors);
 		this.availableColors.unshift(this.players[id].color);
+		console.log("now it be ");
+		console.log(this.availableColors);
 		delete this.players[id];
 	},
 
 	addPlayer: function(id) {
-		this.players[id] = {color: this.availableColors.shift()};
+		var color = this.availableColors.shift();
+		console.log("creating new player. his color is " + color);
+		this.players[id] = {color: color};
 	}
 };
 
