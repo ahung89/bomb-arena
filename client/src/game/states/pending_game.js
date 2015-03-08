@@ -72,9 +72,6 @@ PendingGame.prototype = {
 	populateCharacterSquares: function(data) {
 		this.numPlayersInGame = 0;
 
-		console.log("populatin dat shiet");
-		console.log(data);
-
 		for(var playerId in data.players) {
 			var color = data.players[playerId].color;
 			this.characterImages[playerId] = game.add.image(this.characterSquares[this.numPlayersInGame].position.x + characterOffsetX, 
