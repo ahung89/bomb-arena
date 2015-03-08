@@ -62,7 +62,7 @@ function onClientDisconnect() {
 	var lobbySlots = Lobby.getLobbySlots();
 
 	if (lobbySlots[this.gameId].state == "joinable" || lobbySlots[this.gameId].state == "full") {
-		leavePendingGame.call(this);
+		Lobby.onLeavePendingGame.call(this);
 	} else if (lobbySlots[this.gameId].state == "settingup") {
 		lobbySlots[this.gameId].state = "empty";
 
