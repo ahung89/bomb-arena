@@ -96,7 +96,7 @@ function onStartGame() {
 
 	Lobby.broadcastSlotStateUpdate(this.gameId, "inprogress");
 
-	beginRound(pendingGame.playerIds, pendingGame.mapName, game);
+	beginRound(pendingGame.getPlayerIds(), pendingGame.mapName, game);
 
 	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
 };
@@ -170,9 +170,9 @@ function handlePlayerDeath(id, gameId) {
 
 function endRound(gameId) {
 	var game = games[gameId];
-	var gameMetadata = Lobby.getLobbySlots()[gameId];
+	var pendingGame = Lobby.getLobbySlots()[gameId];
 
-	beginRound(gameMetadata.playerIds, gameMetadata.mapName, game);
+	beginRound(pendingGame.getPlayerIds(), pendingGame.mapName, game);
 	socket.sockets.in(gameId).emit("restart");
 };
 

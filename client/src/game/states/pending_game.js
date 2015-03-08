@@ -70,7 +70,7 @@ PendingGame.prototype = {
 	},
 
 	populateCharacterSquares: function(data) {
-		this.numPlayersInGame = data.numPlayers;
+		this.numPlayersInGame = Object.keys(data.players).length;
 
 		for(var i = 0; i < this.numPlayersInGame; i++) {
 			this.characterImages[i] = game.add.image(this.characterSquares[i].position.x + characterOffsetX, this.characterSquares[i].position.y + characterOffsetY, "bomberman_head");
