@@ -142,12 +142,10 @@ function onPlaceBomb(data) {
 	var playerId = this.id;
 
 	var normalizedBombLocation = game.map.findNearestTileCenter(data.x, data.y);
-	game.bombs[playerId][bombId]= new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombId);
+	var bomb = new Bomb(normalizedBombLocation.x, normalizedBombLocation.y);
 
 	setTimeout(function() {
-		var explosionData = game.bombs[playerId][bombId].detonate(game.map, 2, game.players);
-
-		delete game.bombs[playerId][bombId];
+		var explosionData = bomb.detonate(game.map, 2, game.players);
 
 		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId});
 

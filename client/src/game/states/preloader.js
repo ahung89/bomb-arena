@@ -38,6 +38,7 @@ Preloader.prototype = {
     this.load.image("bomberman_head_green", "assets/sprites/lobby/bomberman_head_green.png");
     this.load.image("bomberman_head_purple", "assets/sprites/lobby/bomberman_head_purple.png");
     this.load.image("bomberman_head_red", "assets/sprites/lobby/bomberman_head_red.png");
+    this.load.image("bomberman_head_black", "assets/sprites/lobby/bomberman_head_black.png");
 
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },
