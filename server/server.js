@@ -62,7 +62,7 @@ function onClientDisconnect() {
 	var lobbySlots = Lobby.getLobbySlots();
 
 	if (lobbySlots[this.gameId].state == "joinable" || lobbySlots[this.gameId].state == "full") {
-		leavePendingGame.call(this);
+		Lobby.onLeavePendingGame.call(this);
 	} else if (lobbySlots[this.gameId].state == "settingup") {
 		lobbySlots[this.gameId].state = "empty";
 
@@ -96,16 +96,18 @@ function onStartGame() {
 
 	Lobby.broadcastSlotStateUpdate(this.gameId, "inprogress");
 
-	beginRound(pendingGame.playerIds, pendingGame.mapName, game);
+	beginRound(pendingGame, game);
 
 	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
 };
 
-function beginRound(ids, mapName, game) {
+function beginRound(pendingGame, game) {
+	var ids = pendingGame.getPlayerIds();
+	
 	for(var i = 0; i < ids.length; i++) {
 		var playerId = ids[i];
-		var spawnPoint = MapInfo[mapName].spawnLocations[i];
-		var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, "down", playerId);
+		var spawnPoint = MapInfo[pendingGame.mapName].spawnLocations[i];
+		var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, "down", playerId, pendingGame.players[playerId].color);
 		newPlayer.spawnPoint = spawnPoint;
 
 		game.players[playerId] = newPlayer;
@@ -142,12 +144,10 @@ function onPlaceBomb(data) {
 	var playerId = this.id;
 
 	var normalizedBombLocation = game.map.findNearestTileCenter(data.x, data.y);
-	game.bombs[playerId][bombId]= new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombId);
+	var bomb = new Bomb(normalizedBombLocation.x, normalizedBombLocation.y);
 
 	setTimeout(function() {
-		var explosionData = game.bombs[playerId][bombId].detonate(game.map, 2, game.players);
-
-		delete game.bombs[playerId][bombId];
+		var explosionData = bomb.detonate(game.map, 2, game.players);
 
 		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId});
 
@@ -170,9 +170,9 @@ function handlePlayerDeath(id, gameId) {
 
 function endRound(gameId) {
 	var game = games[gameId];
-	var gameMetadata = Lobby.getLobbySlots()[gameId];
+	var pendingGame = Lobby.getLobbySlots()[gameId];
 
-	beginRound(gameMetadata.playerIds, gameMetadata.mapName, game);
+	beginRound(pendingGame, game);
 	socket.sockets.in(gameId).emit("restart");
 };
 

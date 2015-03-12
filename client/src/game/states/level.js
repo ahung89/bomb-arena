@@ -117,9 +117,9 @@ Level.prototype = {
     for(var i in this.players) {
       var data = this.players[i];
       if(data.id == this.playerId) {
-        player = new Player(data.x, data.y, data.id);
+        player = new Player(data.x, data.y, data.id, data.color);
       } else {
-        remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id);
+        remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id, data.color);
       }
     }
   },
@@ -195,7 +195,7 @@ Level.prototype = {
   onDetonate: function(data) {
     Bomb.renderExplosion(data.explosions);
 
-    //remove bomb from list
+    //remove bomb from group. bombs is a Phaser.Group to make collisions easier.
     level.bombs.forEach(function(bomb) {
       if(bomb && bomb.id == data.id) {
         bomb.destroy();

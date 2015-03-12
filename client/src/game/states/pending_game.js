@@ -70,24 +70,28 @@ PendingGame.prototype = {
 	},
 
 	populateCharacterSquares: function(data) {
-		this.numPlayersInGame = data.numPlayers;
+		this.numPlayersInGame = 0;
 
-		for(var i = 0; i < this.numPlayersInGame; i++) {
-			this.characterImages[i] = game.add.image(this.characterSquares[i].position.x + characterOffsetX, this.characterSquares[i].position.y + characterOffsetY, "bomberman_head");
+		for(var playerId in data.players) {
+			var color = data.players[playerId].color;
+			this.characterImages[playerId] = game.add.image(this.characterSquares[this.numPlayersInGame].position.x + characterOffsetX, 
+				this.characterSquares[this.numPlayersInGame].position.y + characterOffsetY, "bomberman_head_" + color);
+			this.numPlayersInGame++;
 		}
 	},
 
-	playerJoined: function() {
+	playerJoined: function(data) {
 		this.numPlayersInGame++;
 		var index = this.numPlayersInGame - 1;
 
-		this.characterImages[index] = game.add.image(this.characterSquares[index].position.x + characterOffsetX, this.characterSquares[index].position.y + characterOffsetY, "bomberman_head");
+		this.characterImages[data.id] = game.add.image(this.characterSquares[index].position.x + characterOffsetX, this.characterSquares[index].position.y + characterOffsetY, "bomberman_head_" +  data.color);
 	},
 
-	playerLeft: function() {
-		this.numPlayersInGame--;
-		var index = this.numPlayersInGame;
-		this.characterImages[index].destroy();
+	playerLeft: function(data) {
+		for(var playerId in this.characterImages) {
+			this.characterImages[playerId].destroy();
+		}
+		this.populateCharacterSquares(data);
 	},
 
 	// When the "start" button is clicked, send a message to the server to initialize the game.

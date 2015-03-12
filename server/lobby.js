@@ -55,13 +55,13 @@ var Lobby = {
 		this.leave(lobbyId);
 		this.join(data.gameId);
 	
-		pendingGame.playerIds.push(this.id);
+		pendingGame.addPlayer(this.id);
 		this.gameId = data.gameId;
 	
-		this.emit("show current players", {numPlayers: pendingGame.playerIds.length});
-		this.broadcast.to(data.gameId).emit("player joined");
+		this.emit("show current players", {players: pendingGame.players});
+		this.broadcast.to(data.gameId).emit("player joined", {id: this.id, color: pendingGame.players[this.id].color});
 	
-		if(pendingGame.playerIds.length >= MapInfo[pendingGame.mapName].spawnLocations.length) {
+		if(pendingGame.getNumPlayers() >= MapInfo[pendingGame.mapName].spawnLocations.length) {
 			pendingGame.state = "full";
 			broadcastSlotStateUpdate(data.gameId, "full");
 		}
@@ -80,10 +80,10 @@ function leavePendingGame() {
 	var lobbySlot = lobbySlots[this.gameId];
 
 	this.leave(this.gameId);
-	socket.sockets.in(this.gameId).emit("player left");
-	lobbySlot.playerIds.splice(lobbySlot.playerIds.indexOf(this.id), 1);
+	lobbySlot.removePlayer(this.id);
+	socket.sockets.in(this.gameId).emit("player left", {players: lobbySlot.players});
 
-	if(lobbySlot.playerIds.length == 0) {
+	if(lobbySlot.getNumPlayers()== 0) {
 		lobbySlot.state = "empty";
 		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
 	}

@@ -1,12 +1,12 @@
-var Bomb = require('./bomb');
+var Bomb = require("./bomb");
 
 var PLAYER_SPEED = 180;
 
-var Player = function(x, y, id) {
-	Phaser.Sprite.call(this, game, x, y, 'bomberman');
+var Player = function(x, y, id, color) {
+	Phaser.Sprite.call(this, game, x, y, "bomberman_" + color);
 
   this.id = id;
-  this.facing = 'down';
+  this.facing = "down";
   this.anchor.setTo(.5, .5);
   this.bombButtonJustPressed = false;
 
@@ -14,10 +14,10 @@ var Player = function(x, y, id) {
 
   this.body.setSize(15, 16, 1, 15);
 
-	this.animations.add('down', [0, 1, 2, 3, 4], 10, true);
-  this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
-  this.animations.add('right', [10, 11, 12], 10, true);
-  this.animations.add('left', [13, 14, 15], 10, true);
+	this.animations.add("down", [0, 1, 2, 3, 4], 10, true);
+  this.animations.add("up", [5, 6, 7, 8, 9], 10, true);
+  this.animations.add("right", [10, 11, 12], 10, true);
+  this.animations.add("left", [13, 14, 15], 10, true);
 
 	game.add.existing(this);
 };
@@ -38,19 +38,19 @@ Player.prototype.handleMotionInput = function() {
   	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
   		this.body.velocity.y = 0;
   		this.body.velocity.x = -PLAYER_SPEED;
-  		this.facing = 'left';
+  		this.facing = "left";
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
   		this.body.velocity.y = 0;
   		this.body.velocity.x = PLAYER_SPEED;
-  		this.facing = 'right';
+  		this.facing = "right";
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
   		this.body.velocity.x = 0;
   		this.body.velocity.y = -PLAYER_SPEED;
-  		this.facing = 'up';
+  		this.facing = "up";
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
   		this.body.velocity.x = 0;
   		this.body.velocity.y = PLAYER_SPEED;
-  		this.facing = 'down';
+  		this.facing = "down";
   	} else {
       moving = false;
   		this.body.velocity.x = 0;
