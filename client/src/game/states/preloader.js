@@ -9,7 +9,10 @@ WebFontConfig = {
 Preloader.prototype = {
 
   preload: function () {
-    this.load.spritesheet("bomberman", "assets/sprites/bomberman.png", 28, 50);
+    this.load.spritesheet("bomberman_white", "assets/sprites/bomberman.png", 28, 50);
+    this.load.spritesheet("bomberman_black", "assets/sprites/bomberman_black.png", 28, 50);
+    this.load.spritesheet("bomberman_blue", "assets/sprites/bomberman_blue.png", 28, 50);
+    this.load.spritesheet("bomberman_red", "assets/sprites/bomberman_red.png", 28, 50);
     this.load.spritesheet("bomb", "assets/sprites/bomb.png", 26, 40);
     this.load.spritesheet("explosion_top", "assets/sprites/explosion_top.png", 30, 40);
     this.load.spritesheet("explosion_bottom", "assets/sprites/explosion_bottom.png", 30, 40);

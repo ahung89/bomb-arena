@@ -96,16 +96,18 @@ function onStartGame() {
 
 	Lobby.broadcastSlotStateUpdate(this.gameId, "inprogress");
 
-	beginRound(pendingGame.getPlayerIds(), pendingGame.mapName, game);
+	beginRound(pendingGame, game);
 
 	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
 };
 
-function beginRound(ids, mapName, game) {
+function beginRound(pendingGame, game) {
+	var ids = pendingGame.getPlayerIds();
+	
 	for(var i = 0; i < ids.length; i++) {
 		var playerId = ids[i];
-		var spawnPoint = MapInfo[mapName].spawnLocations[i];
-		var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, "down", playerId);
+		var spawnPoint = MapInfo[pendingGame.mapName].spawnLocations[i];
+		var newPlayer = new Player(spawnPoint.x * TILE_SIZE, spawnPoint.y * TILE_SIZE, "down", playerId, pendingGame.players[playerId].color);
 		newPlayer.spawnPoint = spawnPoint;
 
 		game.players[playerId] = newPlayer;
@@ -170,7 +172,7 @@ function endRound(gameId) {
 	var game = games[gameId];
 	var pendingGame = Lobby.getLobbySlots()[gameId];
 
-	beginRound(pendingGame.getPlayerIds(), pendingGame.mapName, game);
+	beginRound(pendingGame, game);
 	socket.sockets.in(gameId).emit("restart");
 };
 

@@ -1,12 +1,12 @@
 var remotePlayerUpdateInterval = 100;
 
-var RemotePlayer = function(x, y, id) {
+var RemotePlayer = function(x, y, id, color) {
 	this.id = id;
 	this.previousPosition = {x: x, y: y};
 	this.lastMoveTime = 0;
 	this.targetPosition;
 
-	Phaser.Sprite.call(this, game, x, y, "bomberman");
+	Phaser.Sprite.call(this, game, x, y, "bomberman_" + color);
 
 	game.physics.enable(this, Phaser.Physics.ARCADE);
 

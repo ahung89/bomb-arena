@@ -117,9 +117,9 @@ Level.prototype = {
     for(var i in this.players) {
       var data = this.players[i];
       if(data.id == this.playerId) {
-        player = new Player(data.x, data.y, data.id);
+        player = new Player(data.x, data.y, data.id, data.color);
       } else {
-        remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id);
+        remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id, data.color);
       }
     }
   },
