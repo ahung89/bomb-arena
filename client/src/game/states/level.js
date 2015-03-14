@@ -1,6 +1,7 @@
-var Player = require('../entities/Player');
-var RemotePlayer = require('../entities/RemotePlayer');
-var Bomb = require('../entities/Bomb');
+var Player = require('../entities/player');
+var RemotePlayer = require('../entities/remoteplayer');
+var Bomb = require('../entities/bomb');
+var RoundEndAnimation = require('../entities/round_end_animation');
 
 var remotePlayers = {};
 
