@@ -4,6 +4,7 @@ var Bomb = require('../entities/bomb');
 var RoundEndAnimation = require('../entities/round_end_animation');
 
 var remotePlayers = {};
+var disableInputs = false;
 
 var Level = function () {};
 
@@ -52,10 +53,11 @@ Level.prototype = {
     console.log("restartin diz b");
 
     var datAnimationDoe = new RoundEndAnimation(game, 1);
+    disableInputs = true;
   },
 
   update: function() {
-    if(player != null && player.alive == true) {
+    if(player != null && player.alive == true && !disableInputs) {
           player.handleInput();
     }
 
