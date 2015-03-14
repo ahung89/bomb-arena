@@ -54,6 +54,7 @@ Level.prototype = {
 
     var datAnimationDoe = new RoundEndAnimation(game, 1);
     disableInputs = true;
+    datAnimationDoe.beginAnimation();
   },
 
   update: function() {
