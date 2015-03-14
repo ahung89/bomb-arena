@@ -50,6 +50,8 @@ Level.prototype = {
     this.initializePlayers();
 
     console.log("restartin diz b");
+
+    var datAnimationDoe = new RoundEndAnimation(game, 1);
   },
 
   update: function() {
