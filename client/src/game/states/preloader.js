@@ -43,6 +43,10 @@ Preloader.prototype = {
     this.load.image("bomberman_head_purple", "assets/sprites/lobby/bomberman_head_purple.png");
     this.load.image("bomberman_head_red", "assets/sprites/lobby/bomberman_head_red.png");
     this.load.image("bomberman_head_black", "assets/sprites/lobby/bomberman_head_black.png");
+    this.load.image("round_1", "assets/sprites/lobby/round_1.png");
+    this.load.image("round_2", "assets/sprites/lobby/round_2.png");
+    this.load.image("final_round", "assets/sprites/lobby/final_round.png");
+    this.load.image("tiebreaker", "assets/sprites/lobby/tiebreaker.png");
 
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },

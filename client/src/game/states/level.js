@@ -1,3 +1,5 @@
+var BLACK_HEX_CODE = "#000000";
+
 var Player = require('../entities/player');
 var RemotePlayer = require('../entities/remoteplayer');
 var Bomb = require('../entities/bomb');
@@ -32,6 +34,14 @@ Level.prototype = {
     this.initializePlayers();
   },
 
+  createDimGraphic: function() {
+    this.dimGraphic = game.add.graphics(0, 0);
+    this.dimGraphic.alpha = .7;
+    this.dimGraphic.beginFill(BLACK_HEX_CODE, 1); // (color, alpha)
+    this.dimGraphic.drawRect(0, 0, game.camera.width, game.camera.height);
+    this.dimGraphic.endFill(); // Draw to canvas
+  },
+
   restartGame: function() {
     if(player.alive) {
       player.destroy();
@@ -52,9 +62,23 @@ Level.prototype = {
 
     console.log("restartin diz b");
 
+    this.createDimGraphic();
     var datAnimationDoe = new RoundEndAnimation(game, 1);
     disableInputs = true;
-    datAnimationDoe.beginAnimation();
+    datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, "round_2"));
+  },
+
+  beginRoundAnimation: function(image, callback) {
+    var beginRoundText = game.add.image(-600, game.camera.height / 2, image);
+    beginRoundText.anchor.setTo(.5, .5);
+
+    var tween = game.add.tween(beginRoundText);
+    tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, null, false, 400);
+    if(typeof callback == "function") {
+      tween.onComplete.addOnce(callback);
+    }
+
+    tween.start();
   },
 
   update: function() {

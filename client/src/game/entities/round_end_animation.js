@@ -46,7 +46,7 @@ RoundEndAnimation.prototype = Object.create(Phaser.Group.prototype);
 
 RoundEndAnimation.prototype.beginAnimation = function(callback) {
 	var entranceTween = game.add.tween(this);
-	entranceTween.to({x: screenWidth}, 500);
+	entranceTween.to({x: screenWidth}, 300);
 	entranceTween.onComplete.addOnce(function() {
 		winnerTextTween.start();
 	}, this);
@@ -64,11 +64,8 @@ RoundEndAnimation.prototype.beginAnimation = function(callback) {
 	}, this);
 
 	var exitTween = game.add.tween(this);
-	exitTween.to({x: 2 * screenWidth}, 500, null, false, 800);
-	exitTween.onComplete.addOnce(function() {
-		exitTween.start();
-	}, this);
-
+	exitTween.to({x: 2 * screenWidth}, 300, null, false, 400);
+	exitTween.onComplete.addOnce(callback);
 
 	entranceTween.start();
 };
