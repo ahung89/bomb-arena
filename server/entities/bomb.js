@@ -1,8 +1,9 @@
 var util = require('util');
 
-var Bomb = function(x, y) {
+var Bomb = function(x, y, explosionTimerId) {
 	this.x = x;
 	this.y = y;
+	this.explosionTimerId = explosionTimerId;
 };
 
 Bomb.prototype = {

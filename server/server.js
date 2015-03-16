@@ -111,7 +111,6 @@ function beginRound(pendingGame, game) {
 		newPlayer.spawnPoint = spawnPoint;
 
 		game.players[playerId] = newPlayer;
-		game.bombs[playerId] = {};
 	}
 
 	game.numPlayersAlive = ids.length;
@@ -144,18 +143,22 @@ function onPlaceBomb(data) {
 	var playerId = this.id;
 
 	var normalizedBombLocation = game.map.findNearestTileCenter(data.x, data.y);
-	var bomb = new Bomb(normalizedBombLocation.x, normalizedBombLocation.y);
 
-	setTimeout(function() {
+	var bombTimeoutId = setTimeout(function() {
 		var explosionData = bomb.detonate(game.map, 2, game.players);
 
 		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId});
+
+		delete game.bombs[bombId];
 
 		explosionData.killedPlayers.forEach(function(killedPlayerId) {
 			game.players[killedPlayerId].alive = false;
 			handlePlayerDeath(killedPlayerId, gameId);
 		});
 	}, 2000);
+
+	var bomb = new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombTimeoutId);
+	game.bombs[bombId] = bomb;
 
 	socket.sockets.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
