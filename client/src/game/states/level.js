@@ -43,6 +43,9 @@ Level.prototype = {
   },
 
   restartGame: function() {
+    this.dimGraphic.destroy();
+    disableInputs = false;
+
     if(player.alive) {
       player.destroy();
     }
@@ -59,13 +62,13 @@ Level.prototype = {
     this.deadGroup = [];
     this.lastFrameTime;
     this.initializePlayers();
+  },
 
-    console.log("restartin diz b");
-
+  onNewRound: function(data) {
     this.createDimGraphic();
     var datAnimationDoe = new RoundEndAnimation(game, 1);
     disableInputs = true;
-    datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, "round_2"));
+    datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, "round_2", this.restartGame.bind(this)));
   },
 
   beginRoundAnimation: function(image, callback) {
@@ -73,10 +76,10 @@ Level.prototype = {
     beginRoundText.anchor.setTo(.5, .5);
 
     var tween = game.add.tween(beginRoundText);
-    tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, null, false, 400);
-    if(typeof callback == "function") {
-      tween.onComplete.addOnce(callback);
-    }
+    tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, null, false, 800).onComplete.add(function() {
+      // For some reason, the callback sent to "onComplete" fires BEFORE the 800 second delay. This is a hack to get around that.
+      game.time.events.add(1100, callback);
+    });
 
     tween.start();
   },
@@ -134,7 +137,7 @@ Level.prototype = {
     socket.on("kill player", this.onKillPlayer);
     socket.on("place bomb", this.onPlaceBomb);
     socket.on("detonate", this.onDetonate);
-    socket.on("restart", this.restartGame.bind(this));
+    socket.on("restart", this.onNewRound.bind(this));
   },
 
   onSocketDisconnect: function() {
