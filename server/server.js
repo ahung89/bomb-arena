@@ -171,9 +171,11 @@ function handlePlayerDeath(id, gameId) {
 function endRound(gameId) {
 	var game = games[gameId];
 	var pendingGame = Lobby.getLobbySlots()[gameId];
+	var winnerColor = game.calculateRoundWinner().color;
+	game.currentRound++;
 
 	beginRound(pendingGame, game);
-	socket.sockets.in(gameId).emit("restart");
+	socket.sockets.in(gameId).emit("new round", {completedRound: game.currentRound - 1, winnerColor: winnerColor});
 };
 
 function broadcastingLoop() {

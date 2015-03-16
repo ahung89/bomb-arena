@@ -19,7 +19,7 @@ function configureText(text, color, size) {
 	text.fontSize = size;
 };
 
-function RoundEndAnimation(game, roundNumber, winnerImage) {
+function RoundEndAnimation(game, roundNumber, winnerColor) {
 	Phaser.Group.call(this, game);
 
 	var roundEndWindow = game.add.image(xOffset, yOffset, "round_end_display");
@@ -31,7 +31,7 @@ function RoundEndAnimation(game, roundNumber, winnerImage) {
 	configureText(winnerText, "white", 28);
 	winnerText.alpha = 0;
 
-	var winnerPicImage = new Phaser.Image(game, winnerPicXOffset, winnerPicYOffset, "bomberman_head_blue");
+	var winnerPicImage = new Phaser.Image(game, winnerPicXOffset, winnerPicYOffset, "bomberman_head_" + winnerColor);
 	winnerPicImage.scale = {x: 1.75, y: 1.75};
 	winnerPicImage.alpha = 0;
 	game.add.existing(winnerPicImage);

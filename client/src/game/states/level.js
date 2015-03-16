@@ -66,9 +66,10 @@ Level.prototype = {
 
   onNewRound: function(data) {
     this.createDimGraphic();
-    var datAnimationDoe = new RoundEndAnimation(game, 1);
+    var datAnimationDoe = new RoundEndAnimation(game, data.completedRound, data.winnerColor);
     disableInputs = true;
-    datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, "round_2", this.restartGame.bind(this)));
+    datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, "round_" + (data.completedRound + 1), 
+      this.restartGame.bind(this)));
   },
 
   beginRoundAnimation: function(image, callback) {
@@ -137,7 +138,7 @@ Level.prototype = {
     socket.on("kill player", this.onKillPlayer);
     socket.on("place bomb", this.onPlaceBomb);
     socket.on("detonate", this.onDetonate);
-    socket.on("restart", this.onNewRound.bind(this));
+    socket.on("new round", this.onNewRound.bind(this));
   },
 
   onSocketDisconnect: function() {
