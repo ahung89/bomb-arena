@@ -161,10 +161,10 @@ function onPlaceBomb(data) {
 };
 
 function handlePlayerDeath(deadPlayerIds, gameId) {
-	var winners;
+	var tiedWinnerIds;
 
 	if(deadPlayerIds.length > 1 && games[gameId].numPlayersAlive - deadPlayerIds.length == 0) {
-		winners = deadPlayerIds;
+		tiedWinnerIds = deadPlayerIds;
 	}
 
 	deadPlayerIds.forEach(function(deadPlayerId) {
@@ -174,27 +174,23 @@ function handlePlayerDeath(deadPlayerIds, gameId) {
 	}, this);
 
 	if(games[gameId].numPlayersAlive <= 1) {
-		endRound(gameId, winners);
+		endRound(gameId, tiedWinnerIds);
 	}
 };
 
-function endRound(gameId, winners) {
+function endRound(gameId, tiedWinnerIds) {
 	var winningColors = [];
 
 	var game = games[gameId];
 	var pendingGame = Lobby.getLobbySlots()[gameId];
 
-	// If "winners" is provided, that means that there was a tie.
-	if(winners) {
-		winners.forEach(function(winnerId) {
-			winningColors.push(game.players[winnerId].color);
+	if(tiedWinnerIds) {
+		tiedWinnerIds.forEach(function(tiedWinnerId) {
+			winningColors.push(game.players[tiedWinnerId].color);
 		});
 	} else {
 		winningColors.push(game.calculateRoundWinner().color);
 	}
-
-	console.log("WINNING COLORS: " + winningColors);
-	console.log("WINNING COLORS TOSTRING: " + winningColors.toString());
 
 	game.currentRound++;
 

@@ -66,7 +66,7 @@ Level.prototype = {
 
   onNewRound: function(data) {
     this.createDimGraphic();
-    var datAnimationDoe = new RoundEndAnimation(game, data.completedRound, data.winnerColor);
+    var datAnimationDoe = new RoundEndAnimation(game, data.completedRound, data.winningColors);
     disableInputs = true;
     datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, "round_" + (data.completedRound + 1), 
       this.restartGame.bind(this)));

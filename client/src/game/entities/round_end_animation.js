@@ -12,6 +12,9 @@ var winnerPicYOffset = 310;
 var winnerTextXOffset = 220 - screenWidth;
 var winnerTextYOffset = 220;
 
+var textToDisplay = "Winner is..."; // Default text to display
+var roundEndTieText = "Draw! Winners are...";
+
 // TODO: Refactor this method into a utility class, since it's already being used elsewhere (in lobby.js).
 function configureText(text, color, size) {
 	text.font = "Carter One";
@@ -20,7 +23,7 @@ function configureText(text, color, size) {
 };
 
 // TODO: have it take an array "winnerColors", initialize/play animation slightly differently in each case
-function RoundEndAnimation(game, roundNumber, winnerColor) {
+function RoundEndAnimation(game, roundNumber, winningColors) {
 	Phaser.Group.call(this, game);
 
 	var roundEndWindow = game.add.image(xOffset, yOffset, "round_end_display");
@@ -28,18 +31,23 @@ function RoundEndAnimation(game, roundNumber, winnerColor) {
 	var header = game.add.text(headerXOffset, headerYOffset, "Round " + roundNumber + " Complete!")
 	configureText(header, "white", 32);
 
-	var winnerText = game.add.text(winnerTextXOffset, winnerTextYOffset, "Winner is...");
-	configureText(winnerText, "white", 28);
-	winnerText.alpha = 0;
+	if(winningColors.length > 1) {
+		textToDisplay = roundEndTieText;
+		winnerTextXOffset -= 55; // Adjust offset so that it is still centered.
+	}
 
-	var winnerPicImage = new Phaser.Image(game, winnerPicXOffset, winnerPicYOffset, "bomberman_head_" + winnerColor);
+	var textObject = game.add.text(winnerTextXOffset, winnerTextYOffset, textToDisplay);
+	configureText(textObject, "white", 28);
+	textObject.alpha = 0;
+
+	var winnerPicImage = new Phaser.Image(game, winnerPicXOffset, winnerPicYOffset, "bomberman_head_");
 	winnerPicImage.scale = {x: 1.75, y: 1.75};
 	winnerPicImage.alpha = 0;
 	game.add.existing(winnerPicImage);
 
 	this.add(roundEndWindow);
 	this.add(header);
-	this.add(winnerText);
+	this.add(textObject);
 	this.add(winnerPicImage);
 };
 
