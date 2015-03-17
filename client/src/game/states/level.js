@@ -72,6 +72,7 @@ Level.prototype = {
       this.restartGame.bind(this)));
   },
 
+  // TODO: Figure out how this will know which animation to play.
   beginRoundAnimation: function(image, callback) {
     var beginRoundText = game.add.image(-600, game.camera.height / 2, image);
     beginRoundText.anchor.setTo(.5, .5);

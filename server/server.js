@@ -151,10 +151,7 @@ function onPlaceBomb(data) {
 
 		delete game.bombs[bombId];
 
-		explosionData.killedPlayers.forEach(function(killedPlayerId) {
-			game.players[killedPlayerId].alive = false;
-			handlePlayerDeath(killedPlayerId, gameId);
-		});
+		handlePlayerDeath(explosionData.killedPlayers, gameId);
 	}, 2000);
 
 	var bomb = new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombTimeoutId);
@@ -163,22 +160,46 @@ function onPlaceBomb(data) {
 	socket.sockets.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
-function handlePlayerDeath(id, gameId) {
-	socket.sockets.in(gameId).emit("kill player", {id: id});
-	games[gameId].numPlayersAlive--;
-	if(games[gameId].numPlayersAlive == 1) {
-		endRound(gameId);
+function handlePlayerDeath(deadPlayerIds, gameId) {
+	var winners;
+
+	if(deadPlayerIds.length > 1 && games[gameId].numPlayersAlive - deadPlayerIds.length == 0) {
+		winners = deadPlayerIds;
+	}
+
+	deadPlayerIds.forEach(function(deadPlayerId) {
+		games[gameId].players[deadPlayerId].alive = false;
+		socket.sockets.in(gameId).emit("kill player", {id: deadPlayerId});
+		games[gameId].numPlayersAlive--;
+	}, this);
+
+	if(games[gameId].numPlayersAlive <= 1) {
+		endRound(gameId, winners);
 	}
 };
 
-function endRound(gameId) {
+function endRound(gameId, winners) {
+	var winningColors = [];
+
 	var game = games[gameId];
 	var pendingGame = Lobby.getLobbySlots()[gameId];
-	var winnerColor = game.calculateRoundWinner().color;
+
+	// If "winners" is provided, that means that there was a tie.
+	if(winners) {
+		winners.forEach(function(winnerId) {
+			winningColors.push(game.players[winnerId].color);
+		});
+	} else {
+		winningColors.push(game.calculateRoundWinner().color);
+	}
+
+	console.log("WINNING COLORS: " + winningColors);
+	console.log("WINNING COLORS TOSTRING: " + winningColors.toString());
+
 	game.currentRound++;
 
 	beginRound(pendingGame, game);
-	socket.sockets.in(gameId).emit("new round", {completedRound: game.currentRound - 1, winnerColor: winnerColor});
+	socket.sockets.in(gameId).emit("new round", {completedRound: game.currentRound - 1, winningColors: winningColors});
 };
 
 function broadcastingLoop() {

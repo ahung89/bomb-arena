@@ -19,6 +19,7 @@ function configureText(text, color, size) {
 	text.fontSize = size;
 };
 
+// TODO: have it take an array "winnerColors", initialize/play animation slightly differently in each case
 function RoundEndAnimation(game, roundNumber, winnerColor) {
 	Phaser.Group.call(this, game);
 
