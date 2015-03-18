@@ -78,10 +78,7 @@ Level.prototype = {
     beginRoundText.anchor.setTo(.5, .5);
 
     var tween = game.add.tween(beginRoundText);
-    tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, null, false, 800).onComplete.add(function() {
-      // For some reason, the callback sent to "onComplete" fires BEFORE the 800 second delay. This is a hack to get around that.
-      game.time.events.add(1100, callback);
-    });
+    tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, Phaser.Easing.Default, false, 800).onComplete.add(callback);
 
     tween.start();
   },
