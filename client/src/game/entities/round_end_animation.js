@@ -85,6 +85,7 @@ RoundEndAnimation.prototype.beginAnimation = function(callback) {
 	entranceTween.start();
 };
 
+// TODO: Make it so that the very last winner image tween doesn't fade out.
 RoundEndAnimation.prototype.generateWinnerImageTween = function(indices, nextTween) {
 	var winnerImageTweens = [];
 	var ctx = this;

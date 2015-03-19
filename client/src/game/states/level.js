@@ -57,6 +57,7 @@ Level.prototype = {
       }
     }
 
+    this.bombs.removeAll(true);
     remotePlayers = {};
     player = null;
     this.deadGroup = [];
