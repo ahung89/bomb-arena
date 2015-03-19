@@ -92,8 +92,9 @@ RoundEndAnimation.prototype.generateWinnerImageTween = function(indices, nextTwe
 	for (var i = 0; i < indices.length; i++) {
 		(function(n) {
 			var tween = game.add.tween(ctx.children[indices[n]]);
-			tween.to({alpha: 1}, 900).to({alpha: 0}, 900);
+			tween.to({alpha: 1}, 900);
 			if(i < indices.length - 1) {
+				tween.to({alpha: 0}, 900);
 				tween.onComplete.addOnce(function() {
 					winnerImageTweens[n + 1].start();
 				});
