@@ -6,7 +6,7 @@ var Bomb = require('../entities/bomb');
 var RoundEndAnimation = require('../entities/round_end_animation');
 
 var remotePlayers = {};
-var disableInputs = true;
+var gameFrozen = true;
 
 var Level = function () {};
 
@@ -47,7 +47,7 @@ Level.prototype = {
 
   restartGame: function() {
     this.dimGraphic.destroy();
-    disableInputs = false;
+    gameFrozen = false;
 
     if(player.alive) {
       player.destroy();
@@ -71,7 +71,7 @@ Level.prototype = {
   onNewRound: function(data) {
     this.createDimGraphic();
     var datAnimationDoe = new RoundEndAnimation(game, data.completedRound, data.winningColors);
-    disableInputs = true;
+    gameFrozen = true;
 
     var roundImage;
     if(data.completedRound < 2) {
@@ -92,7 +92,7 @@ Level.prototype = {
     var tween = game.add.tween(beginRoundText);
     tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, Phaser.Easing.Default, false, 800).onComplete.add(function() {
       this.dimGraphic.destroy();
-      disableInputs = false;
+      gameFrozen = false;
 
       if(callback) {
         callback();
@@ -103,7 +103,7 @@ Level.prototype = {
   },
 
   update: function() {
-    if(player != null && player.alive == true && !disableInputs) {
+    if(player != null && player.alive == true && !gameFrozen) {
           player.handleInput();
     }
 
@@ -193,7 +193,7 @@ Level.prototype = {
   },
 
   onMovePlayer: function(data) {
-    if(player && data.id == player.id) {
+    if(player && data.id == player.id || gameFrozen) {
       return;
     }
 
