@@ -6,7 +6,7 @@ var Bomb = require('../entities/bomb');
 var RoundEndAnimation = require('../entities/round_end_animation');
 
 var remotePlayers = {};
-var disableInputs = false;
+var disableInputs = true;
 
 var Level = function () {};
 
@@ -32,6 +32,9 @@ Level.prototype = {
 
     this.setEventHandlers();
     this.initializePlayers();
+
+    this.createDimGraphic();
+    this.beginRoundAnimation("round_1");
   },
 
   createDimGraphic: function() {
@@ -82,13 +85,19 @@ Level.prototype = {
     datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, roundImage, this.restartGame.bind(this)));
   },
 
-  // TODO: Figure out how this will know which animation to play.
   beginRoundAnimation: function(image, callback) {
     var beginRoundText = game.add.image(-600, game.camera.height / 2, image);
     beginRoundText.anchor.setTo(.5, .5);
 
     var tween = game.add.tween(beginRoundText);
-    tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, Phaser.Easing.Default, false, 800).onComplete.add(callback);
+    tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, Phaser.Easing.Default, false, 800).onComplete.add(function() {
+      this.dimGraphic.destroy();
+      disableInputs = false;
+
+      if(callback) {
+        callback();
+      }
+    }, this);
 
     tween.start();
   },
