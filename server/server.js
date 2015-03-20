@@ -195,20 +195,8 @@ function endRound(gameId, tiedWinnerIds) {
 	game.currentRound++;
 
 	// TODO: Only begin next round if the game isn't over already
-	// Code to begin next round:
-	pendingGame.getPlayerIds().forEach(function(id) {
-		game.players[id].alive = true;
-	}, this);
-
-	game.numPlayersAlive = pendingGame.getNumPlayers();
-
-	// Deactivate bomb timer events, then delete the bombs property.
-	for(var bombId in game.bombs) {
-		var bomb = game.bombs[bombId];
-		clearTimeout(bomb.explosionTimerId);
-	}
-
-	game.bombs = {};
+	beginRound(pendingGame, game);
+	game.resetBombs();
 
 	socket.sockets.in(gameId).emit("new round", {completedRound: game.currentRound - 1, winningColors: winningColors});
 };

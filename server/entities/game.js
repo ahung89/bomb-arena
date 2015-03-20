@@ -33,6 +33,13 @@ Game.prototype = {
 		}
 
 		return winners;
+	},
+
+	resetBombs: function() {
+		for(var bombId in this.bombs) {
+			clearTimeout(this.bombs[bombId].explosionTimerId);
+		}
+		this.bombs = {};
 	}
 };
 
