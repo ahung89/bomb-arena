@@ -1,3 +1,5 @@
+var TextConfigurer = require('../util/text_configurer');
+
 var screenWidth = game.width;
 
 var xOffset = 100 - screenWidth;
@@ -15,27 +17,20 @@ var defaultTextYOffset = 220;
 var singleWinnerText = "Winner is...";
 var roundEndTieText = "Draw! Winners are...";
 
-// TODO: Refactor this method into a utility class, since it's already being used elsewhere (in lobby.js).
-function configureText(text, color, size) {
-	text.font = "Carter One";
-	text.fill = color;
-	text.fontSize = size;
-};
-
 function RoundEndAnimation(game, roundNumber, winningColors) {
 	Phaser.Group.call(this, game);
 
 	var roundEndWindow = game.add.image(xOffset, yOffset, "round_end_display");
 
 	var header = game.add.text(headerXOffset, headerYOffset, "Round " + roundNumber + " Complete!")
-	configureText(header, "white", 32);
+	TextConfigurer.configureText(header, "white", 32);
 
 	// Text and offset differ based on whether or not there was a tie.
 	var actualTextXOffset = winningColors.length > 1 ? defaultTextXOffset - 55 : defaultTextXOffset;
 	var actualTextToDisplay = winningColors.length > 1 ? roundEndTieText : singleWinnerText;
 
 	var textObject = game.add.text(actualTextXOffset, defaultTextYOffset, actualTextToDisplay);
-	configureText(textObject, "white", 28);
+	TextConfigurer.configureText(textObject, "white", 28);
 	textObject.alpha = 0;
 
 	this.add(roundEndWindow);

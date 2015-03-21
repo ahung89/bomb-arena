@@ -1,4 +1,5 @@
 var Lobby = function() {};
+var TextConfigurer = require('../util/text_configurer');
 
 var initialSlotYOffset = 130;
 var slotXOffset = 40;
@@ -97,17 +98,11 @@ Lobby.prototype = {
 			this.slots[i] = game.add.button(slotXOffset, slotYOffset, "game_slot", callback, null, settings.overFrame, settings.outFrame);
 			
 			var text = game.add.text(slotXOffset + textXOffset, slotYOffset + textYOffset, settings.text);
-			this.configureText(text, "white", 18);
+			TextConfigurer.configureText(text, "white", 18);
 			text.anchor.setTo(.5, .5);
 
 			this.labels[i] = text;
 		}
-	},
-
-	configureText: function(text, color, size) {
-		text.font = "Carter One";
-		text.fill = color;
-		text.fontSize = size;
 	},
 
 	hostGameAction: function(gameId) {
