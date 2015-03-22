@@ -77,13 +77,20 @@ function onClientDisconnect() {
 		}
 
 		if(Object.keys(game.players).length == 0) {
-			delete games[this.gameId];
-
-			lobbySlots[this.gameId] = new PendingGame();
-
-			Lobby.broadcastSlotStateUpdate(this.gameId, "empty");
+			terminateExistingGame(this.gameId);
 		}
 	}
+};
+
+// Deletes the game object and frees up the slot.
+function terminateExistingGame(gameId) {
+	games[gameId].clearBombs();
+
+	delete games[gameId];
+
+	Lobby.getLobbySlots()[gameId] = new PendingGame();
+
+	Lobby.broadcastSlotStateUpdate(gameId, "empty");
 };
 
 function onStartGame() {
@@ -118,6 +125,10 @@ function onRegisterMap(data) {
 
 function onMovePlayer(data) {
 	var game = games[this.gameId];
+
+	if(game === undefined) {
+		return; // Prevent extra messages sent after game-end from crashing the game.
+	}
 
 	var movingPlayer = game.players[this.id];
 
@@ -196,6 +207,7 @@ function endRound(gameId, tiedWinnerIds) {
 		var gameWinnerColors = game.calculateGameWinnerColors();
 		if(gameWinnerColors.length == 1 && (game.currentRound > 3 || winner.wins == 2)) {
 			socket.sockets.in(gameId).emit("end game", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors, gameWinnerColor: gameWinnerColors[0]});
+			terminateExistingGame(gameId);
 			return;
 		}
 	}

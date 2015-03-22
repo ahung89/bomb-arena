@@ -35,7 +35,7 @@ Game.prototype = {
 		return winningColors;
 	},
 
-	resetBombs: function() {
+	clearBombs: function() {
 		for(var bombId in this.bombs) {
 			clearTimeout(this.bombs[bombId].explosionTimerId);
 		}
@@ -50,7 +50,7 @@ Game.prototype = {
 	},
 
 	resetForNewRound: function() {
-		this.resetBombs();
+		this.clearBombs();
 		this.resetPlayers();
 		this.numPlayersAlive = Object.keys(this.players).length;
 	}
