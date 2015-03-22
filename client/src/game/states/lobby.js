@@ -84,7 +84,6 @@ Lobby.prototype = {
 			var callback = null;
 			var state = gameData[i].state;
 			var settings = this.stateSettings[state];
-			var ctx = this;
 
 			(function(n, fn) {
 				if(fn != null) {

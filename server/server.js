@@ -179,26 +179,35 @@ function handlePlayerDeath(deadPlayerIds, gameId) {
 };
 
 function endRound(gameId, tiedWinnerIds) {
-	var winningColors = [];
+	var roundWinnerColors = [];
 
 	var game = games[gameId];
 	var pendingGame = Lobby.getLobbySlots()[gameId];
 
 	if(tiedWinnerIds) {
 		tiedWinnerIds.forEach(function(tiedWinnerId) {
-			winningColors.push(game.players[tiedWinnerId].color);
+			roundWinnerColors.push(game.players[tiedWinnerId].color);
 		});
 	} else {
-		winningColors.push(game.calculateRoundWinner().color);
+		var winner = game.calculateRoundWinner();
+		winner.wins++;
+		roundWinnerColors.push(winner.color);
 	}
 
 	game.currentRound++;
 
-	// TODO: Only begin next round if the game isn't over already
+	if(game.currentRound > 2) {
+		var gameWinnerColors = game.calculateGameWinnerColors();
+		if(gameWinnerColors.length == 1 && (game.currentRound > 3 || winner.wins == 2)) {
+			socket.sockets.in(gameId).emit("end game", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors, gameWinnerColor: gameWinnerColors[0]});
+			return;
+		}
+	}
+
 	beginRound(pendingGame, game);
 	game.resetBombs();
 
-	socket.sockets.in(gameId).emit("new round", {completedRound: game.currentRound - 1, winningColors: winningColors});
+	socket.sockets.in(gameId).emit("new round", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors});
 };
 
 function broadcastingLoop() {

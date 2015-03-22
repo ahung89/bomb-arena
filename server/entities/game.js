@@ -19,20 +19,20 @@ Game.prototype = {
 		}
 	},
 
-	calculateGameWinners: function() {
-		var winners = [];
+	calculateGameWinnerColors: function() {
+		var winningColors = [];
 		var maxWinCount = 0;
 
 		for(var i in this.players) {
 			if(this.players[i].wins > maxWinCount) {
-				winners = [this.players[i]];
+				winningColors = [this.players[i].color];
 				maxWinCount = this.players[i].wins;
 			} else if (this.players[i].wins == maxWinCount) {
-				winners.push(this.players[i]);
+				winningColors.push(this.players[i].color);
 			}
 		}
 
-		return winners;
+		return winningColors;
 	},
 
 	resetBombs: function() {

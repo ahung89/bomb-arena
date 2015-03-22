@@ -19,6 +19,18 @@ Level.prototype = {
     this.playerId = id;
   },
 
+  setEventHandlers: function() {
+    // Remember - these will actually be executed from the context of the Socket, not from the context of the level.
+    socket.on("disconnect", this.onSocketDisconnect);
+    socket.on("move player", this.onMovePlayer);
+    socket.on("remove player", this.onRemovePlayer);
+    socket.on("kill player", this.onKillPlayer);
+    socket.on("place bomb", this.onPlaceBomb);
+    socket.on("detonate", this.onDetonate);
+    socket.on("new round", this.onNewRound.bind(this));
+    socket.on("end game", this.onEndGame.bind(this));
+  },
+
   create: function () {
     level = this;
     this.lastFrameTime;
@@ -70,19 +82,28 @@ Level.prototype = {
 
   onNewRound: function(data) {
     this.createDimGraphic();
-    var datAnimationDoe = new RoundEndAnimation(game, data.completedRound, data.winningColors);
+    var datAnimationDoe = new RoundEndAnimation(game, data.completedRoundNumber, data.roundWinnerColors);
     gameFrozen = true;
 
     var roundImage;
-    if(data.completedRound < 2) {
-      roundImage = "round_" + (data.completedRound + 1);
-    } else if (data.completedRound == 2) {
+    if(data.completedRoundNumber < 2) {
+      roundImage = "round_" + (data.completedRoundNumber + 1);
+    } else if (data.completedRoundNumber == 2) {
       roundImage = "final_round";
     } else {
       roundImage = "tiebreaker";
     }
 
     datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, roundImage, this.restartGame.bind(this)));
+  },
+
+  onEndGame: function(data) {
+    // TODO: Tear down the state.
+    this.createDimGraphic();
+    var animation = new RoundEndAnimation(game, data.completedRoundNumber, data.roundWinnerColors);
+    animation.beginAnimation(function() {
+      game.state.start("GameOver", true, false, data.gameWinnerColor);
+    });
   },
 
   beginRoundAnimation: function(image, callback) {
@@ -145,17 +166,6 @@ Level.prototype = {
         remotePlayer.animations.stop();
       }
     }
-  },
-
-  setEventHandlers: function() {
-    // Remember - these will actually be executed from the context of the Socket, not from the context of the level.
-    socket.on("disconnect", this.onSocketDisconnect);
-    socket.on("move player", this.onMovePlayer);
-    socket.on("remove player", this.onRemovePlayer);
-    socket.on("kill player", this.onKillPlayer);
-    socket.on("place bomb", this.onPlaceBomb);
-    socket.on("detonate", this.onDetonate);
-    socket.on("new round", this.onNewRound.bind(this));
   },
 
   onSocketDisconnect: function() {
