@@ -96,12 +96,6 @@ function onStartGame() {
 
 	Lobby.broadcastSlotStateUpdate(this.gameId, "inprogress");
 
-	beginRound(pendingGame, game);
-
-	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
-};
-
-function beginRound(pendingGame, game) {
 	var ids = pendingGame.getPlayerIds();
 	
 	for(var i = 0; i < ids.length; i++) {
@@ -114,6 +108,8 @@ function beginRound(pendingGame, game) {
 	}
 
 	game.numPlayersAlive = ids.length;
+
+	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
 };
 
 function onRegisterMap(data) {
@@ -204,8 +200,7 @@ function endRound(gameId, tiedWinnerIds) {
 		}
 	}
 
-	beginRound(pendingGame, game);
-	game.resetBombs();
+	game.resetForNewRound();
 
 	socket.sockets.in(gameId).emit("new round", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors});
 };

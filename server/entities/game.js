@@ -40,6 +40,19 @@ Game.prototype = {
 			clearTimeout(this.bombs[bombId].explosionTimerId);
 		}
 		this.bombs = {};
+	},
+
+	resetPlayers: function() {
+		for(var i in this.players) {
+			var player = this.players[i];
+			player.resetForNewRound();
+		}
+	},
+
+	resetForNewRound: function() {
+		this.resetBombs();
+		this.resetPlayers();
+		this.numPlayersAlive = Object.keys(this.players).length;
 	}
 };
 

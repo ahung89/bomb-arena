@@ -1,6 +1,8 @@
-var Player = function(x, y, facing, id, color) {
-	this.x = x;
-	this.y = y;
+var Player = function(xSpawn, ySpawn, facing, id, color) {
+	this.xSpawn = xSpawn;
+	this.ySpawn = ySpawn;
+	this.x = xSpawn;
+	this.y = ySpawn;
 	this.facing = facing;
 	this.id = id;
 	this.color = color;
@@ -9,6 +11,15 @@ var Player = function(x, y, facing, id, color) {
 	this.alive = true;
 
 	this.bombStrength = 4;
+}
+
+Player.prototype = {
+	resetForNewRound: function() {
+		this.x = this.xSpawn;
+		this.y = this.ySpawn;
+		this.facing = "down";
+		this.alive = true;
+	}
 }
 
 module.exports = Player;
