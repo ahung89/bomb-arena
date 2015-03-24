@@ -125,8 +125,12 @@ Level.prototype = {
   },
 
   update: function() {
-    if(player != null && player.alive == true && !gameFrozen) {
-          player.handleInput();
+    if(player != null && player.alive == true) {
+      if(gameFrozen) {
+        player.freeze();
+      } else {
+        player.handleInput();
+      }
     }
 
   	this.stopAnimationForMotionlessPlayers();

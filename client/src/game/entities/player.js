@@ -53,9 +53,7 @@ Player.prototype.handleMotionInput = function() {
   		this.facing = "down";
   	} else {
       moving = false;
-  		this.body.velocity.x = 0;
-  		this.body.velocity.y = 0;
-  		this.animations.stop();
+  		this.freeze();
   	}
 
   	if(moving)  {
@@ -73,6 +71,12 @@ Player.prototype.handleMotionInput = function() {
     } else if(!game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && this.bombButtonJustPressed) {
       this.bombButtonJustPressed = false;
     }
+  };
+
+  Player.prototype.freeze = function() {
+    this.body.velocity.x = 0;
+    this.body.velocity.y = 0;
+    this.animations.stop();
   };
 
 module.exports = Player;
