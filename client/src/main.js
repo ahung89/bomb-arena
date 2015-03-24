@@ -1,4 +1,4 @@
-window.game = new Phaser.Game(600, 600, Phaser.CANVAS, '');
+window.game = new Phaser.Game(600, 600, Phaser.AUTO, '');
 window.player = null;
 window.socket = null;
 window.level = null;
@@ -17,6 +17,7 @@ function startGame() {
 	game.state.add("StageSelect", require("./game/states/stage_select"));
 	game.state.add("PendingGame", require("./game/states/pending_game"));
 	game.state.add("Level", require("./game/states/level"));
+	game.state.add("GameOver", require("./game/states/game_over"));
 
 	game.state.start('Boot');
 };
