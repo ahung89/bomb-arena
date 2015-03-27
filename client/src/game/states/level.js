@@ -59,7 +59,6 @@ Level.prototype = {
 
   restartGame: function() {
     this.dimGraphic.destroy();
-    gameFrozen = false;
 
     if(player.alive) {
       player.destroy();
@@ -78,12 +77,15 @@ Level.prototype = {
     this.deadGroup = [];
     this.lastFrameTime;
     this.initializePlayers();
+
+    gameFrozen = false;
   },
 
   onNewRound: function(data) {
     this.createDimGraphic();
     var datAnimationDoe = new RoundEndAnimation(game, data.completedRoundNumber, data.roundWinnerColors);
     gameFrozen = true;
+    socket.emit("end round acknowledge");
 
     var roundImage;
     if(data.completedRoundNumber < 2) {

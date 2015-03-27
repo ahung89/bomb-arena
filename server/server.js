@@ -1,4 +1,3 @@
-// Dependencies
 var express = require("express");
 var app = express();
 var server = require("http").Server(app);
@@ -45,6 +44,7 @@ function setEventHandlers () {
 		client.on("place bomb", onPlaceBomb);
 		client.on("register map", onRegisterMap);
 		client.on("start game on server", onStartGame);
+		client.on("end round acknowledge", onEndRoundAcknowledge);
 
 		client.on("enter lobby", Lobby.onEnterLobby);
 		client.on("host game", Lobby.onHostGame);
@@ -76,8 +76,12 @@ function onClientDisconnect() {
 			socket.sockets.emit("remove player", {id: this.id});	
 		}
 
-		if(Object.keys(game.players).length == 0) {
+		if(game.numPlayers == 0) {
 			terminateExistingGame(this.gameId);
+		}
+
+		if(game.awaitingAcknowledgements && game.numEndOfRoundAcknowledgements >= game.numPlayers) {
+			game.resetForNewRound();
 		}
 	}
 };
@@ -189,7 +193,6 @@ function endRound(gameId, tiedWinnerIds) {
 	var roundWinnerColors = [];
 
 	var game = games[gameId];
-	var pendingGame = Lobby.getLobbySlots()[gameId];
 
 	if(tiedWinnerIds) {
 		tiedWinnerIds.forEach(function(tiedWinnerId) {
@@ -212,9 +215,25 @@ function endRound(gameId, tiedWinnerIds) {
 		}
 	}
 
-	game.resetForNewRound();
+	game.awaitingAcknowledgements = true;
 
 	socket.sockets.in(gameId).emit("new round", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors});
+};
+
+function onEndRoundAcknowledge() {
+	var game = games[this.gameId];
+
+	if(!game.awaitingAcknowledgements) {
+		return;
+	}
+
+	game.acknowledgeEndOfRoundForPlayer(this.id);
+
+	console.log("acknowledgement incremented. acknowledgement count: ", game.numEndOfRoundAcknowledgements);
+
+	if(game.numEndOfRoundAcknowledgements >= game.numPlayers) {
+		game.resetForNewRound();
+	}
 };
 
 function broadcastingLoop() {
