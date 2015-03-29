@@ -124,8 +124,7 @@ Lobby.prototype = {
 		button.setFrames(settings.overFrame, settings.outFrame);
 
 		// Change callback of button
-		button.onInputUp = new Phaser.Signal();
-
+		button.onInputUp.removeAll();
 		button.onInputUp.add(function() { return settings.callback(id)}, this);
 	}
 };
