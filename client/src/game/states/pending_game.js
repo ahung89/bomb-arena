@@ -1,3 +1,4 @@
+var TextConfigurer = require('../util/text_configurer');
 var PendingGame = function() {}
 
 module.exports = PendingGame;
@@ -16,6 +17,9 @@ var characterSquareYDistance = 100;
 
 var characterOffsetX = 4.5;
 var characterOffsetY = 4.5;
+
+var minPlayerMessageOffsetX = 80;
+var minPlayerMessageOffsetY = 400;
 
 var numCharacterSquares = 6;
 
@@ -38,6 +42,10 @@ PendingGame.prototype = {
 		this.characterSquares = this.drawCharacterSquares(4);
 		this.characterImages = [];
 		this.numPlayersInGame = 0;
+
+		this.minPlayerMessage = game.add.text(minPlayerMessageOffsetX, minPlayerMessageOffsetY, "Cannot start game without\nat least 2 players.")
+		TextConfigurer.configureText(this.minPlayerMessage, "red", 17);
+		this.minPlayerMessage.visible = false;
 
 		socket.on("show current players", this.populateCharacterSquares.bind(this));
 		socket.on("player joined", this.playerJoined.bind(this));
@@ -81,6 +89,8 @@ PendingGame.prototype = {
 
 		if(this.numPlayersInGame > 1) {
 			this.activateStartGameButton();
+		} else {
+			this.minPlayerMessage.visible = true;
 		}
 	},
 
@@ -97,12 +107,14 @@ PendingGame.prototype = {
 	},
 
 	activateStartGameButton: function() {
+		this.minPlayerMessage.visible = false;
 		this.startGameButton.setFrames(1, 0);
 		this.startGameButton.onInputUp.removeAll();
 		this.startGameButton.onInputUp.add(this.startGameAction, this);
 	},
 
 	deactivateStartGameButton: function() {
+		this.minPlayerMessage.visible = true;
 		this.startGameButton.setFrames(2, 2);
 		this.startGameButton.onInputUp.removeAll();
 	},
