@@ -25,7 +25,6 @@ Game.prototype = {
 	},
 
 	acknowledgeEndOfRoundForPlayer: function(playerId) {
-		console.log("indexOf ", playerId, " is ", this.endOfRoundAcknowledgements.indexOf(playerId));
 		if(this.endOfRoundAcknowledgements.indexOf(playerId) == -1) {
 			this.endOfRoundAcknowledgements.push(playerId);
 		}

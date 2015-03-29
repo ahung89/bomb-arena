@@ -229,8 +229,6 @@ function onEndRoundAcknowledge() {
 
 	game.acknowledgeEndOfRoundForPlayer(this.id);
 
-	console.log("acknowledgement incremented. acknowledgement count: ", game.numEndOfRoundAcknowledgements);
-
 	if(game.numEndOfRoundAcknowledgements >= game.numPlayers) {
 		game.resetForNewRound();
 	}
