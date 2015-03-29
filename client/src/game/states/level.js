@@ -128,7 +128,7 @@ Level.prototype = {
 
   update: function() {
     // End game if all other players have left.
-    if(Object.keys(remotePlayers).length == 0) {
+    if(Object.keys(this.players).length == 1) {
       game.state.start("GameOver", true, false, null, true);
     }
 
@@ -174,7 +174,7 @@ Level.prototype = {
   stopAnimationForMotionlessPlayers: function() {
     for(var id in remotePlayers) {
       remotePlayer = remotePlayers[id];
-      if(remotePlayer.previousPosition.x == remotePlayer.position.x && remotePlayer.previousPosition.y == remotePlayer.position.y) {
+      if(remotePlayer.lastMoveTime < game.time.now - 200) {
         remotePlayer.animations.stop();
       }
     }
@@ -225,6 +225,9 @@ Level.prototype = {
       if(data.x == movingPlayer.targetPosition.x && data.y == movingPlayer.targetPosition.y) {
         return;
       }
+
+      movingPlayer.animations.play(data.facing);
+
       movingPlayer.position.x = movingPlayer.targetPosition.x;
       movingPlayer.position.y = movingPlayer.targetPosition.y;
 
@@ -233,9 +236,7 @@ Level.prototype = {
     }
 
     movingPlayer.targetPosition = {x: data.x, y: data.y};
-    movingPlayer.lastMoveTime = data.timestamp;
-
-    movingPlayer.animations.play(data.facing);
+    movingPlayer.lastMoveTime = game.time.now;
   },
 
   onRemovePlayer: function(data) {
