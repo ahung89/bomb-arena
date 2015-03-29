@@ -23,7 +23,7 @@ Level.prototype = {
     // Remember - these will actually be executed from the context of the Socket, not from the context of the level.
     socket.on("disconnect", this.onSocketDisconnect);
     socket.on("move player", this.onMovePlayer);
-    socket.on("remove player", this.onRemovePlayer);
+    socket.on("remove player", this.onRemovePlayer.bind(this));
     socket.on("kill player", this.onKillPlayer);
     socket.on("place bomb", this.onPlaceBomb);
     socket.on("detonate", this.onDetonate);
@@ -239,6 +239,7 @@ Level.prototype = {
     playerToRemove.destroy();
 
     delete remotePlayers[data.id];
+    delete this.players[data.id];
   },
 
   onKillPlayer: function(data) {
