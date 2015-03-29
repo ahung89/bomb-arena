@@ -105,7 +105,7 @@ Level.prototype = {
     gameFrozen = true;
     var animation = new RoundEndAnimation(game, data.completedRoundNumber, data.roundWinnerColors);
     animation.beginAnimation(function() {
-      game.state.start("GameOver", true, false, data.gameWinnerColor);
+      game.state.start("GameOver", true, false, data.gameWinnerColor, false);
     });
   },
 
@@ -127,6 +127,11 @@ Level.prototype = {
   },
 
   update: function() {
+    // End game if all other players have left.
+    if(Object.keys(remotePlayers).length == 0) {
+      game.state.start("GameOver", true, false, null, true);
+    }
+
     if(player != null && player.alive == true) {
       if(gameFrozen) {
         player.freeze();
