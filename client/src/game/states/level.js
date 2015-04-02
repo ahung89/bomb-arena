@@ -205,7 +205,7 @@ Level.prototype = {
     this.groundLayer.resizeWorld();
     this.blockLayer = this.map.createLayer("Blocks");
     this.blockLayer.resizeWorld(); // Set the world size to match the size of this layer.
-    this.map.setCollision(127, true, "Blocks");
+    this.map.setCollision([127, 361], true, "Blocks");
 
     // Send map data to server so it can do collisions.
     // TODO: do not allow the game to start until this operation is complete.
@@ -247,7 +247,7 @@ Level.prototype = {
     delete remotePlayers[data.id];
     delete this.players[data.id];
   },
-  
+
   onKillPlayer: function(data) {
     if(data.id == player.id) {
       console.log("You've been killed.");

@@ -35,6 +35,10 @@ Map.prototype = {
 	findNearestTileCenter: function(x, y) {
 		var col = Math.floor(x / this.tileSize), row = Math.floor(y / this.tileSize);
 		return {x: col * this.tileSize + this.tileSize / 2, y: row * this.tileSize + this.tileSize / 2};
+	},
+
+	destroyTile: function(row, col) {
+		this.mapData[row][col] = 0;
 	}
 };
 
