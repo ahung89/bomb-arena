@@ -158,7 +158,7 @@ function onPlaceBomb(data) {
 	var bombTimeoutId = setTimeout(function() {
 		var explosionData = bomb.detonate(game.map, 2, game.players);
 
-		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId});
+		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId, destroyedTiles: explosionData.destroyedBlocks});
 
 		delete game.bombs[bombId];
 

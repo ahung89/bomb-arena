@@ -26,7 +26,7 @@ Level.prototype = {
     socket.on("remove player", this.onRemovePlayer.bind(this));
     socket.on("kill player", this.onKillPlayer);
     socket.on("place bomb", this.onPlaceBomb);
-    socket.on("detonate", this.onDetonate);
+    socket.on("detonate", this.onDetonate.bind(this));
     socket.on("new round", this.onNewRound.bind(this));
     socket.on("end game", this.onEndGame.bind(this));
   },
@@ -211,7 +211,7 @@ Level.prototype = {
     // TODO: do not allow the game to start until this operation is complete.
     var blockLayerData = game.cache.getTilemapData("levelOne").data.layers[1];
 
-    socket.emit("register map", {tiles: blockLayerData.data, height: blockLayerData.height, width: blockLayerData.width});
+    socket.emit("register map", {tiles: blockLayerData.data, height: blockLayerData.height, width: blockLayerData.width, destructibleTileId: 361});
   },
 
   onMovePlayer: function(data) {
@@ -247,7 +247,7 @@ Level.prototype = {
     delete remotePlayers[data.id];
     delete this.players[data.id];
   },
-
+  
   onKillPlayer: function(data) {
     if(data.id == player.id) {
       console.log("You've been killed.");
@@ -275,5 +275,9 @@ Level.prototype = {
         bomb.destroy();
       }
     }, level);
+
+    data.destroyedTiles.forEach(function(destroyedTile) {
+      this.map.removeTile(destroyedTile.col, destroyedTile.row, 1);
+    }, this);
   }
 };

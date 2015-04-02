@@ -29,7 +29,7 @@ Preloader.prototype = {
     this.load.spritesheet("leave_game_button", "assets/sprites/lobby/leave_game_button.png", 202, 43);
     this.load.spritesheet("game_slot", "assets/sprites/lobby/game_slot.png", 522, 48);
 
-    this.load.tilemap("levelOne", 'assets/levels/level_one.json', null, Phaser.Tilemap.TILED_JSON);
+    this.load.tilemap("levelOne", "assets/levels/level_one_blocks.json", null, Phaser.Tilemap.TILED_JSON);
     this.load.image("tiles", "assets/tiles/tileset.png");
     this.load.image("select_stage", "assets/sprites/lobby/select_stage.png");
     this.load.image("limitless_brook_thumbnail", "assets/levels/thumbnails/limitless_brook_thumbnail.png");

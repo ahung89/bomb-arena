@@ -11,6 +11,7 @@ Bomb.prototype = {
 		var explosionData = {};
 		explosionData.explosions = [];
 		explosionData.killedPlayers = [];
+		explosionData.destroyedBlocks = [];
 
 		// Add center explosion.
 		this.generateIndividualExplosion(this.x, this.y, 0, 0, "explosion_center", explosionData, map, players);
@@ -34,7 +35,7 @@ Bomb.prototype = {
 
 			if(this.generateIndividualExplosion(x + xCoefficient * ((i + 1) * distanceBetweenCenters),
 				y + yCoefficient * ((i + 1) * distanceBetweenCenters), xCoefficient, yCoefficient,
-				middleKey, explosionData, map, players) == false) {
+				middleKey, explosionData, map, players, endKey) == false) {
 				return;
 			}
 		}
@@ -43,21 +44,27 @@ Bomb.prototype = {
 		xCoefficient, yCoefficient, endKey, explosionData, map, players);
 	},
 
-	generateIndividualExplosion: function(x, y, xCoefficient, yCoefficient, key, explosionData, map, players) {
-		var hitBlock = map.hitTest(x + 20 * xCoefficient, y + 20 * yCoefficient);
-		var hide = hitBlock != null;
+	generateIndividualExplosion: function(x, y, xCoefficient, yCoefficient, key, explosionData, map, players, destroyBlockKey) {
+		var hitData = map.hitTest(x + 20 * xCoefficient, y + 20 * yCoefficient);
 
-		explosionData.explosions.push({x: x, y: y, key: key, hide: hide});
+		if(hitData.hitBlock == 2) {
+			explosionData.destroyedBlocks.push({row: hitData.row, col: hitData.col});
+			if(destroyBlockKey) {
+				key = destroyBlockKey;
+			}
+		}
+
+		explosionData.explosions.push({x: x, y: y, key: key, hide: hitData.hitBlock == 1});
 
 		for(var i in players) {
 			var player = players[i];
 			if(Math.floor((player.x - 6.5)/ TILE_SIZE) == Math.floor(x / TILE_SIZE)  && Math.floor((player.y + 7)/ TILE_SIZE) == Math.floor(y / TILE_SIZE)) {
 				util.log("killed a player.");
 				explosionData.killedPlayers.push(player.id);
-			} + ", "
+			}
 		}
 
-		if(hitBlock) {
+		if(hitData.hitBlock > 0) {
 			return false;
 		}
 	}

@@ -9,7 +9,13 @@ var Map = function(data, tileSize) {
 	for(var row = 0; row < data.height; row++) {
 		this.mapData.push([]);
 		for(var col = 0; col < data.width; col++) {
-			this.mapData[row][col] = tiles[i] == 0 ? 0 : 1;
+			if(tiles[i] == 0) {
+				this.mapData[row][col] = 0;
+			} else if(tiles[i] == data.destructibleTileId) {
+				this.mapData[row][col] = 2;
+			} else {
+				this.mapData[row][col] = 1;
+			}
 			i++;
 		}
 	}
@@ -19,16 +25,11 @@ Map.prototype = {
 	// Check if coordinates lay within a block. If so, return the bounds of that block. If not, return null;
 	hitTest: function(x, y) {
 		var row = Math.floor(y / this.tileSize), col = Math.floor(x / this.tileSize);
-		if(this.mapData[row] && this.mapData[row][col] == 1) {
-			return {
-				left: col * this.tileSize,
-				right: (col + 1) * this.tileSize,
-				top: row * this.tileSize,
-				bottom: (row + 1) * this.tileSize
-			};
-		} else {
-			return null;
-		}
+		return {
+			row: row,
+			col: col,
+			hitBlock: this.mapData[row][col]
+		};
 	},
 
 	findNearestTileCenter: function(x, y) {
