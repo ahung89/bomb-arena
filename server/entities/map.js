@@ -22,7 +22,7 @@ var Map = function(data, tileSize) {
 };
 
 Map.prototype = {
-	// Check if coordinates lay within a block. If so, return the bounds of that block. If not, return null;
+	// Return the type of block that a tile represents.
 	hitTest: function(x, y) {
 		var row = Math.floor(y / this.tileSize), col = Math.floor(x / this.tileSize);
 		return {

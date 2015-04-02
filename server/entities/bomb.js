@@ -1,4 +1,4 @@
-var util = require('util');
+var ItemGenerator = require("../util/item_generator");
 
 var Bomb = function(x, y, explosionTimerId) {
 	this.x = x;
