@@ -157,13 +157,15 @@ function onPlaceBomb(data) {
 		return;
 	}
 
-
 	var gameId = this.gameId;
 
 	var bombId = data.id;
 	var playerId = this.id;
 
-	var normalizedBombLocation = game.map.findNearestTileCenter(data.x, data.y);
+	var normalizedBombLocation = game.map.placeBombOnGrid(data.x, data.y);
+	if(normalizedBombLocation == -1) {
+		return;
+	}
 
 	var bombTimeoutId = setTimeout(function() {
 		var explosionData = bomb.detonate(game.map, 2, game.players);
@@ -192,7 +194,6 @@ function handlePlayerDeath(deadPlayerIds, gameId) {
 		games[gameId].players[deadPlayerId].alive = false;
 		socket.sockets.in(gameId).emit("kill player", {id: deadPlayerId});
 		games[gameId].numPlayersAlive--;
-		console.log("just killed ", games[gameId].players[deadPlayerId].color, ". numPlayersAlive is now ", games[gameId].numPlayersAlive);
 	}, this);
 
 	if(games[gameId].numPlayersAlive <= 1) {

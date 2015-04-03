@@ -1,6 +1,7 @@
 var Map = function(data, tileSize) {
 	// initialize map by parsing the tilemap data from the client into a 2d array.
 	this.mapData = [];
+	this.placedBombs = [];
 	this.tileSize = tileSize;
 
 	var tiles = data.tiles;
@@ -8,7 +9,9 @@ var Map = function(data, tileSize) {
 
 	for(var row = 0; row < data.height; row++) {
 		this.mapData.push([]);
+		this.placedBombs.push([]);
 		for(var col = 0; col < data.width; col++) {
+			this.placedBombs[row][col] = 0;
 			if(tiles[i] == 0) {
 				this.mapData[row][col] = 0;
 			} else if(tiles[i] == data.destructibleTileId) {
@@ -32,13 +35,28 @@ Map.prototype = {
 		};
 	},
 
-	findNearestTileCenter: function(x, y) {
+	// Returns tile center for bomb's location if successful. Returns -1 if the space is occupied by an existing bomb.
+	placeBombOnGrid: function(x, y) {
 		var col = Math.floor(x / this.tileSize), row = Math.floor(y / this.tileSize);
+		if(this.bombExistsAtLocation(row, col)) {
+			return -1;
+		}
+
+		this.placedBombs[row][col] == 1;
 		return {x: col * this.tileSize + this.tileSize / 2, y: row * this.tileSize + this.tileSize / 2};
 	},
 
 	destroyTile: function(row, col) {
 		this.mapData[row][col] = 0;
+	},
+
+	bombExistsAtLocation: function(row, col) {
+		return this.placedBombs[row][col] == 1;
+	},
+
+	removeBombFromGrid: function(x, y) {
+		var col = Math.floor(x / this.tileSize), row = Math.floor(y / this.tileSize);
+		this.placedBombs[row][col] == 0;
 	}
 };
 

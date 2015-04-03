@@ -74,7 +74,6 @@ Game.prototype = {
 		this.roundReadyAcknowledgements = [];
 		this.awaitingAcknowledgements = false;
 		this.numPlayersAlive = Object.keys(this.players).length;
-		console.log("numPlayersAlive: ", this.numPlayersAlive);
 	}
 };
 
