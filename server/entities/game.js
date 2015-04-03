@@ -6,9 +6,9 @@ var Game = function() {
 	this.bombs = {};
 	this.numPlayersAlive = 0;
 
-	// This is used to keep track of how many players have acknowledged the end of a round, to avoid
+	// This is used to keep track of how many players have acknowledged readiness for a round, to avoid
 	// extra socket messages from causing weird behavior.
-	this.endOfRoundAcknowledgements = [];
+	this.roundReadyAcknowledgements = [];
 	this.awaitingAcknowledgements = false;
 
 	this.numRounds = DEFAULT_NUM_ROUNDS;
@@ -20,13 +20,13 @@ Game.prototype = {
 		return Object.keys(this.players).length;
 	},
 
-	get numEndOfRoundAcknowledgements() {
-		return this.endOfRoundAcknowledgements.length;
+	get numRoundReadinessAcknowledgements() {
+		return this.roundReadyAcknowledgements.length;
 	},
 
-	acknowledgeEndOfRoundForPlayer: function(playerId) {
-		if(this.endOfRoundAcknowledgements.indexOf(playerId) == -1) {
-			this.endOfRoundAcknowledgements.push(playerId);
+	acknowledgeRoundReadinessForPlayer: function(playerId) {
+		if(this.roundReadyAcknowledgements.indexOf(playerId) == -1) {
+			this.roundReadyAcknowledgements.push(playerId);
 		}
 	},
 
@@ -71,9 +71,10 @@ Game.prototype = {
 	resetForNewRound: function() {
 		this.clearBombs();
 		this.resetPlayers();
-		this.endOfRoundAcknowledgements = [];
+		this.roundReadyAcknowledgements = [];
 		this.awaitingAcknowledgements = false;
 		this.numPlayersAlive = Object.keys(this.players).length;
+		console.log("numPlayersAlive: ", this.numPlayersAlive);
 	}
 };
 

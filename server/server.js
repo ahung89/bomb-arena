@@ -44,7 +44,7 @@ function setEventHandlers () {
 		client.on("place bomb", onPlaceBomb);
 		client.on("register map", onRegisterMap);
 		client.on("start game on server", onStartGame);
-		client.on("end round acknowledge", onEndRoundAcknowledge);
+		// client.on("end round acknowledge", onEndRoundAcknowledge);
 
 		client.on("enter lobby", Lobby.onEnterLobby);
 		client.on("host game", Lobby.onHostGame);
@@ -81,7 +81,7 @@ function onClientDisconnect() {
 		}
 
 		if(game.awaitingAcknowledgements && game.numEndOfRoundAcknowledgements >= game.numPlayers) {
-			game.resetForNewRound();
+			// unfreeze
 		}
 	}
 };
@@ -130,6 +130,10 @@ function onRegisterMap(data) {
 function onMovePlayer(data) {
 	var game = games[this.gameId];
 
+	if(game.awaitingAcknowledgements) {
+		return;
+	}
+
 	if(game === undefined) {
 		return; // Prevent extra messages sent after game-end from crashing the game.
 	}
@@ -148,6 +152,12 @@ function onMovePlayer(data) {
 
 function onPlaceBomb(data) {
 	var game = games[this.gameId];
+
+	if(game.awaitingAcknowledgements) {
+		return;
+	}
+
+
 	var gameId = this.gameId;
 
 	var bombId = data.id;
@@ -182,6 +192,7 @@ function handlePlayerDeath(deadPlayerIds, gameId) {
 		games[gameId].players[deadPlayerId].alive = false;
 		socket.sockets.in(gameId).emit("kill player", {id: deadPlayerId});
 		games[gameId].numPlayersAlive--;
+		console.log("just killed ", games[gameId].players[deadPlayerId].color, ". numPlayersAlive is now ", games[gameId].numPlayersAlive);
 	}, this);
 
 	if(games[gameId].numPlayersAlive <= 1) {
@@ -216,21 +227,23 @@ function endRound(gameId, tiedWinnerIds) {
 	}
 
 	game.awaitingAcknowledgements = true;
+	game.resetForNewRound();
+
 
 	socket.sockets.in(gameId).emit("new round", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors});
 };
 
-function onEndRoundAcknowledge() {
+function onReadyForRound() {
 	var game = games[this.gameId];
 
 	if(!game.awaitingAcknowledgements) {
 		return;
 	}
 
-	game.acknowledgeEndOfRoundForPlayer(this.id);
+	game.acknowledgeRoundReadinessForPlayer(this.id);
 
-	if(game.numEndOfRoundAcknowledgements >= game.numPlayers) {
-		game.resetForNewRound();
+	if(game.numRoundReadinessAcknowledgements >= game.numPlayers) {
+		//unfreeze
 	}
 };
 

@@ -79,13 +79,14 @@ Level.prototype = {
     this.initializePlayers();
 
     gameFrozen = false;
+    socket.emit("ready for round");
   },
 
   onNewRound: function(data) {
     this.createDimGraphic();
     var datAnimationDoe = new RoundEndAnimation(game, data.completedRoundNumber, data.roundWinnerColors);
     gameFrozen = true;
-    socket.emit("end round acknowledge");
+
 
     var roundImage;
     if(data.completedRoundNumber < 2) {
