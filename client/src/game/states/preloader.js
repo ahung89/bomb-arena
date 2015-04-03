@@ -43,6 +43,9 @@ Preloader.prototype = {
     this.load.image("bomberman_head_purple", "assets/sprites/lobby/bomberman_head_purple.png");
     this.load.image("bomberman_head_red", "assets/sprites/lobby/bomberman_head_red.png");
     this.load.image("bomberman_head_black", "assets/sprites/lobby/bomberman_head_black.png");
+    this.load.image("bomb_count_powerup", "assets/sprites/lobby/bomb_count_powerup.png");
+    this.load.image("bomb_strength_powerup", "assets/sprites/lobby/bomberman_strength_powerup.png");
+    this.load.image("speed_powerup", "assets/sprites/lobby/speed_powerup.png");
     this.load.image("round_1", "assets/sprites/lobby/round_1.png");
     this.load.image("round_2", "assets/sprites/lobby/round_2.png");
     this.load.image("final_round", "assets/sprites/lobby/final_round.png");
