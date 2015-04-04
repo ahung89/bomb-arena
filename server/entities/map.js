@@ -42,7 +42,7 @@ Map.prototype = {
 			return -1;
 		}
 
-		this.placedBombs[row][col] == 1;
+		this.placedBombs[row][col] = 1;
 		return {x: col * this.tileSize + this.tileSize / 2, y: row * this.tileSize + this.tileSize / 2};
 	},
 
@@ -56,7 +56,7 @@ Map.prototype = {
 
 	removeBombFromGrid: function(x, y) {
 		var col = Math.floor(x / this.tileSize), row = Math.floor(y / this.tileSize);
-		this.placedBombs[row][col] == 0;
+		this.placedBombs[row][col] = 0;
 	}
 };
 

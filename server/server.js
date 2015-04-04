@@ -44,7 +44,7 @@ function setEventHandlers () {
 		client.on("place bomb", onPlaceBomb);
 		client.on("register map", onRegisterMap);
 		client.on("start game on server", onStartGame);
-		// client.on("end round acknowledge", onEndRoundAcknowledge);
+		client.on("ready for round", onReadyForRound);
 
 		client.on("enter lobby", Lobby.onEnterLobby);
 		client.on("host game", Lobby.onHostGame);
@@ -81,7 +81,7 @@ function onClientDisconnect() {
 		}
 
 		if(game.awaitingAcknowledgements && game.numEndOfRoundAcknowledgements >= game.numPlayers) {
-			// unfreeze
+			game.awaitingAcknowledgements = false;
 		}
 	}
 };
@@ -130,12 +130,8 @@ function onRegisterMap(data) {
 function onMovePlayer(data) {
 	var game = games[this.gameId];
 
-	if(game.awaitingAcknowledgements) {
+	if(game === undefined || game.awaitingAcknowledgements) {
 		return;
-	}
-
-	if(game === undefined) {
-		return; // Prevent extra messages sent after game-end from crashing the game.
 	}
 
 	var movingPlayer = game.players[this.id];
@@ -153,7 +149,7 @@ function onMovePlayer(data) {
 function onPlaceBomb(data) {
 	var game = games[this.gameId];
 
-	if(game.awaitingAcknowledgements) {
+	if(game === undefined || game.awaitingAcknowledgements) {
 		return;
 	}
 
@@ -171,8 +167,8 @@ function onPlaceBomb(data) {
 		var explosionData = bomb.detonate(game.map, 2, game.players);
 
 		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId, destroyedTiles: explosionData.destroyedBlocks});
-
 		delete game.bombs[bombId];
+		game.map.removeBombFromGrid(data.x, data.y);
 
 		handlePlayerDeath(explosionData.killedPlayers, gameId);
 	}, 2000);
@@ -243,8 +239,10 @@ function onReadyForRound() {
 
 	game.acknowledgeRoundReadinessForPlayer(this.id);
 
+	console.log("ACK. number of acknowledgements: ", game.numRoundReadinessAcknowledgements, "\nnumber of players: ", game.numPlayers);
+
 	if(game.numRoundReadinessAcknowledgements >= game.numPlayers) {
-		//unfreeze
+		game.awaitingAcknowledgements = false;
 	}
 };
 

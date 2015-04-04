@@ -72,7 +72,6 @@ Game.prototype = {
 		this.clearBombs();
 		this.resetPlayers();
 		this.roundReadyAcknowledgements = [];
-		this.awaitingAcknowledgements = false;
 		this.numPlayersAlive = Object.keys(this.players).length;
 	}
 };
