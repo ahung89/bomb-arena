@@ -10,7 +10,8 @@ var Player = function(xSpawn, ySpawn, facing, id, color) {
 	
 	this.alive = true;
 
-	this.bombStrength = 4;
+	this.bombStrength = 2;
+	this.maxBombCount = 3;
 }
 
 Player.prototype = {
