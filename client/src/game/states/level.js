@@ -37,6 +37,7 @@ Level.prototype = {
     this.deadGroup = [];
 
     this.initializeMap();
+    this.registerMap();
 
     this.bombs = game.add.group();
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
@@ -71,11 +72,14 @@ Level.prototype = {
       }
     }
 
-    this.bombs.removeAll(true);
     remotePlayers = {};
     player = null;
     this.deadGroup = [];
     this.lastFrameTime;
+    this.tearDownMap();
+    this.initializeMap();
+    this.bombs.destroy(true);
+    this.bombs = game.add.group();
     this.initializePlayers();
 
     gameFrozen = false;
@@ -198,6 +202,12 @@ Level.prototype = {
     }
   },
 
+  tearDownMap: function() {
+      this.map.destroy();
+      this.groundLayer.destroy();
+      this.blockLayer.destroy();
+  },
+
   initializeMap: function() {
     this.map = game.add.tilemap(this.tilemapName);
     this.map.addTilesetImage("tilez", "tiles", 40, 40);
@@ -207,7 +217,9 @@ Level.prototype = {
     this.blockLayer = this.map.createLayer("Blocks");
     this.blockLayer.resizeWorld(); // Set the world size to match the size of this layer.
     this.map.setCollision([127, 361], true, "Blocks");
+  },
 
+  registerMap: function() {
     // Send map data to server so it can do collisions.
     // TODO: do not allow the game to start until this operation is complete.
     var blockLayerData = game.cache.getTilemapData("levelOne").data.layers[1];
