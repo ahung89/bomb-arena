@@ -1,3 +1,5 @@
+var ItemGenerator = require("../util/item_generator");
+
 var Map = function(data, tileSize) {
 	// initialize map by parsing the tilemap data from the client into a 2d array.
 	this.mapData = [];
@@ -47,7 +49,16 @@ Map.prototype = {
 	},
 
 	destroyTile: function(row, col) {
-		this.mapData[row][col] = 0;
+		var powerup = ItemGenerator.generateItem();
+
+		if(powerup) {
+			this.mapData[row][col] = powerup.id;
+			console.log("generated an item doe.");
+		} else {
+			this.mapData[row][col] = 0;
+		}
+
+		return powerup;
 	},
 
 	bombExistsAtLocation: function(row, col) {

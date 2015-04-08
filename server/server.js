@@ -239,8 +239,6 @@ function onReadyForRound() {
 
 	game.acknowledgeRoundReadinessForPlayer(this.id);
 
-	console.log("ACK. number of acknowledgements: ", game.numRoundReadinessAcknowledgements, "\nnumber of players: ", game.numPlayers);
-
 	if(game.numRoundReadinessAcknowledgements >= game.numPlayers) {
 		game.awaitingAcknowledgements = false;
 	}

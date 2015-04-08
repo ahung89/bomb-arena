@@ -1,5 +1,3 @@
-var ItemGenerator = require("../util/item_generator");
-
 var Bomb = function(x, y, explosionTimerId) {
 	this.x = x;
 	this.y = y;
@@ -48,11 +46,11 @@ Bomb.prototype = {
 		var hitData = map.hitTest(x + 20 * xCoefficient, y + 20 * yCoefficient);
 
 		if(hitData.hitBlock == 2) {
-			explosionData.destroyedBlocks.push({row: hitData.row, col: hitData.col});
+			var randomItem = map.destroyTile(hitData.row, hitData.col);
+			explosionData.destroyedBlocks.push({row: hitData.row, col: hitData.col, item: randomItem});
 			if(destroyBlockKey) {
 				key = destroyBlockKey;
 			}
-			map.destroyTile(hitData.row, hitData.col);
 		}
 
 		explosionData.explosions.push({x: x, y: y, key: key, hide: hitData.hitBlock == 1});
