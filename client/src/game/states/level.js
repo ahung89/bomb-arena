@@ -1,4 +1,5 @@
 var BLACK_HEX_CODE = "#000000";
+var TILE_SIZE = 40;
 
 var Player = require('../entities/player');
 var RemotePlayer = require('../entities/remoteplayer');
@@ -144,8 +145,8 @@ Level.prototype = {
       }
     }
 
-  	this.stopAnimationForMotionlessPlayers();
-  	this.storePreviousPositions();
+    this.stopAnimationForMotionlessPlayers();
+    this.storePreviousPositions();
 
     for(var id in remotePlayers) {
       remotePlayers[id].interpolate(this.lastFrameTime);
@@ -288,6 +289,10 @@ Level.prototype = {
 
     data.destroyedTiles.forEach(function(destroyedTile) {
       this.map.removeTile(destroyedTile.col, destroyedTile.row, 1);
+      if(destroyedTile.item) {
+        var image = new Phaser.Image(game, destroyedTile.col * TILE_SIZE, destroyedTile.row * TILE_SIZE, "bomb_strength_powerup");
+        game.add.existing(image);
+      }
     }, this);
   }
 };
