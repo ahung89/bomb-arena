@@ -1,10 +1,11 @@
 var BLACK_HEX_CODE = "#000000";
 var TILE_SIZE = 40;
 
-var Player = require('../entities/player');
-var RemotePlayer = require('../entities/remoteplayer');
-var Bomb = require('../entities/bomb');
-var RoundEndAnimation = require('../entities/round_end_animation');
+var Player = require("../entities/player");
+var RemotePlayer = require("../entities/remoteplayer");
+var Bomb = require("../entities/bomb");
+var RoundEndAnimation = require("../entities/round_end_animation");
+var PowerupImageKeys = require("../util/powerup_image_keys");
 
 var remotePlayers = {};
 var gameFrozen = true;
@@ -40,6 +41,7 @@ Level.prototype = {
     this.initializeMap();
 
     this.bombs = game.add.group();
+    this.items = [];
     game.physics.enable(this.bombs, Phaser.Physics.ARCADE);
     game.physics.arcade.enable(this.blockLayer);
 
@@ -290,12 +292,15 @@ Level.prototype = {
 
     data.destroyedTiles.forEach(function(destroyedTile) {
       this.map.removeTile(destroyedTile.col, destroyedTile.row, 1);
-      console.log("destroyedTile.item be ", destroyedTile.item);
       if(destroyedTile.item) {
-        console.log("creating item doe");
         var image = new Phaser.Image(game, destroyedTile.col * TILE_SIZE, destroyedTile.row * TILE_SIZE, "bomb_strength_powerup");
+        this.items[row + "." + col] = image;
         game.world.addAt(image, 2);
       }
     }, this);
+  },
+
+  generateItem: function(item) {
+
   }
 };
