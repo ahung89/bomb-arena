@@ -292,15 +292,16 @@ Level.prototype = {
 
     data.destroyedTiles.forEach(function(destroyedTile) {
       this.map.removeTile(destroyedTile.col, destroyedTile.row, 1);
-      if(destroyedTile.item) {
-        var image = new Phaser.Image(game, destroyedTile.col * TILE_SIZE, destroyedTile.row * TILE_SIZE, "bomb_strength_powerup");
-        this.items[row + "." + col] = image;
-        game.world.addAt(image, 2);
+      if(destroyedTile.itemId) {
+        this.generateItemEntity(destroyedTile.itemId, destroyedTile.row, destroyedTile.col);
       }
     }, this);
   },
 
-  generateItem: function(item) {
-
+  generateItemEntity: function(itemId, row, col) {
+     var imageKey = PowerupImageKeys[itemId];
+     var image = new Phaser.Image(game, col * TILE_SIZE, row * TILE_SIZE, imageKey);
+     this.items[row + "." + col] = image;
+     game.world.addAt(image, 2);
   }
 };

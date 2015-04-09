@@ -47,7 +47,7 @@ Bomb.prototype = {
 
 		if(hitData.hitBlock == 2) {
 			var randomItem = map.destroyTile(hitData.row, hitData.col);
-			explosionData.destroyedBlocks.push({row: hitData.row, col: hitData.col, item: randomItem});
+			explosionData.destroyedBlocks.push({row: hitData.row, col: hitData.col, itemId: randomItem});
 			if(destroyBlockKey) {
 				key = destroyBlockKey;
 			}
