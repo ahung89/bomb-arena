@@ -289,9 +289,11 @@ Level.prototype = {
 
     data.destroyedTiles.forEach(function(destroyedTile) {
       this.map.removeTile(destroyedTile.col, destroyedTile.row, 1);
+      console.log("destroyedTile.item be ", destroyedTile.item);
       if(destroyedTile.item) {
+        console.log("creating item doe");
         var image = new Phaser.Image(game, destroyedTile.col * TILE_SIZE, destroyedTile.row * TILE_SIZE, "bomb_strength_powerup");
-        game.add.existing(image);
+        game.world.addAt(image, 2);
       }
     }, this);
   }

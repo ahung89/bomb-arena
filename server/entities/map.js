@@ -51,12 +51,7 @@ Map.prototype = {
 	destroyTile: function(row, col) {
 		var powerup = ItemGenerator.generateItem();
 
-		if(powerup) {
-			this.mapData[row][col] = powerup.id;
-			console.log("generated an item doe.");
-		} else {
-			this.mapData[row][col] = 0;
-		}
+		this.mapData[row][col] = powerup;
 
 		return powerup;
 	},
