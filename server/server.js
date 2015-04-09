@@ -217,7 +217,7 @@ function endRound(gameId, tiedWinnerIds) {
 	if(game.currentRound > 2) {
 		var gameWinners = game.calculateGameWinners();
 
-		if(gameWinnerColors.length == 1 && (game.currentRound > 3 || gameWinners[0].wins == 2)) {
+		if(gameWinners.length == 1 && (game.currentRound > 3 || gameWinners[0].wins == 2)) {
 			socket.sockets.in(gameId).emit("end game", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors, 
 				gameWinnerColor: gameWinners[0].color});
 			terminateExistingGame(gameId);
