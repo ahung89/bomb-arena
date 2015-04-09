@@ -73,7 +73,10 @@ RoundEndAnimation.prototype.beginAnimation = function(callback) {
 
 	var exitTween = game.add.tween(this);
 	exitTween.to({x: 2 * screenWidth}, 300, Phaser.Easing.Default, false, 200);
-	exitTween.onComplete.addOnce(callback);
+	exitTween.onComplete.addOnce(function() {
+		callback();
+		this.destroy();
+	}, this);
 
 	var winnerDisplayTween = this.generateWinnerImageTween(this.winnerImageIndices, exitTween);
 

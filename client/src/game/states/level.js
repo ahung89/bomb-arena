@@ -121,6 +121,7 @@ Level.prototype = {
     var tween = game.add.tween(beginRoundText);
     tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, Phaser.Easing.Default, false, 800).onComplete.add(function() {
       this.dimGraphic.destroy();
+      beginRoundText.destroy();
       gameFrozen = false;
 
       if(callback) {
