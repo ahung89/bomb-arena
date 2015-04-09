@@ -38,20 +38,20 @@ Game.prototype = {
 		}
 	},
 
-	calculateGameWinnerColors: function() {
-		var winningColors = [];
+	calculateGameWinners: function() {
+		var winningPlayers = [];
 		var maxWinCount = 0;
 
 		for(var i in this.players) {
 			if(this.players[i].wins > maxWinCount) {
-				winningColors = [this.players[i].color];
+				winningPlayers = [this.players[i]];
 				maxWinCount = this.players[i].wins;
 			} else if (this.players[i].wins == maxWinCount) {
-				winningColors.push(this.players[i].color);
+				winningPlayers.push(this.players[i]);
 			}
 		}
 
-		return winningColors;
+		return winningPlayers;
 	},
 
 	clearBombs: function() {
