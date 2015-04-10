@@ -183,13 +183,15 @@ function onPlaceBomb(data) {
 };
 
 function onPowerupOverlap(data) {
-	var powerup = claimPowerup(data.x, data.y);
+	var powerup = games[this.gameId].map.claimPowerup(data.x, data.y);
 
 	if(!powerup) {
 		return;
 	}
 
-	else if(powerup == PowerupIDs.BOMB_STRENGTH) {
+	console.log("powerup acquired, serverside.");
+
+	if(powerup == PowerupIDs.BOMB_STRENGTH) {
 		games[this.gameId].players[this.id].bombStrength++;
 		console.log("incrementing bomb strength for player ", this.id, " to ", games[this.gameId].players[this.id].bombStrength);
 	}

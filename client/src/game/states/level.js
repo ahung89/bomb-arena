@@ -154,6 +154,12 @@ Level.prototype = {
         player.freeze();
       } else {
         player.handleInput();
+        for(var itemKey in this.items) {
+          var item = this.items[itemKey];
+          game.physics.arcade.overlap(player, item, function(p, i) {
+            socket.emit("powerup overlap", {x: item.x, y: item.y});
+          });
+        }
       }
     }
 
@@ -309,9 +315,10 @@ Level.prototype = {
 
   generateItemEntity: function(itemId, row, col) {
      var imageKey = PowerupImageKeys[itemId];
-     var image = new Phaser.Image(game, col * TILE_SIZE, row * TILE_SIZE, imageKey);
-     this.items[row + "." + col] = image;
+     var item = new Phaser.Sprite(game, col * TILE_SIZE, row * TILE_SIZE, imageKey);
+     game.physics.enable(item, Phaser.Physics.ARCADE);
+     this.items[row + "." + col] = item;
 
-     game.world.addAt(image, 2);
+     game.world.addAt(item, 2);
   }
 };
