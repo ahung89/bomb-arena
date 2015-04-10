@@ -143,6 +143,7 @@ function onMovePlayer(data) {
 
 	movingPlayer.x = data.x;
 	movingPlayer.y = data.y;
+	game.map.checkForPowerup(movingPlayer.x, movingPlayer.y);
 	movingPlayer.facing = data.facing;
 };
 

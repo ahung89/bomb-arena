@@ -1,3 +1,5 @@
+var AudioPlayer = require("../util/audio_player");
+
 var Bomb = function(x, y, id) {
 	Phaser.Sprite.call(this, game, x, y, "bomb");
 	this.id = id;
@@ -26,6 +28,7 @@ Bomb.renderExplosion = function(explosions) {
       }
 
       explosionSprite.play("explode", 17, false);
+      AudioPlayer.playBombSound();
     });
 }
 

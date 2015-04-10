@@ -311,9 +311,7 @@ Level.prototype = {
      var imageKey = PowerupImageKeys[itemId];
      var image = new Phaser.Image(game, col * TILE_SIZE, row * TILE_SIZE, imageKey);
      this.items[row + "." + col] = image;
-     console.log(this);
-     console.log(this.items);
-     console.log(level.items);
+
      game.world.addAt(image, 2);
   }
 };

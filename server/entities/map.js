@@ -1,4 +1,5 @@
 var ItemGenerator = require("../util/item_generator");
+var PowerupIDs = require("../../common/powerup_ids");
 
 var Map = function(data, tileSize) {
 	// initialize map by parsing the tilemap data from the client into a 2d array.
@@ -58,6 +59,18 @@ Map.prototype = {
 
 	bombExistsAtLocation: function(row, col) {
 		return this.placedBombs[row][col] == 1;
+	},
+
+	checkForPowerup: function(x, y) {
+		var row = Math.floor(y / this.tileSize), col = Math.floor(x / this.tileSize);
+		var hitBlock = this.mapData[row][col];
+		if(PowerupIDs.isAPowerup(hitBlock)) {
+			console.log("powerup acquired, yo.");
+			this.mapData[row][col] = 0;
+			return hitBlock;
+		} else {
+			return null;
+		}
 	},
 
 	removeBombFromGrid: function(x, y) {

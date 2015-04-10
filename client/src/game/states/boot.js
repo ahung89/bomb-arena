@@ -1,3 +1,5 @@
+var AudioPlayer = require("../util/audio_player");
+
 var Boot = function () {};
 
 module.exports = Boot;
@@ -11,6 +13,7 @@ Boot.prototype = {
   create: function () {
     game.stage.disableVisibilityChange = true; // So that game doesn't stop when window loses focus.
     game.input.maxPointers = 1;
+    AudioPlayer.initialize();
 
     if (game.device.desktop) {
       game.stage.scale.pageAlignHorizontally = true;

@@ -51,6 +51,9 @@ Preloader.prototype = {
     this.load.image("final_round", "assets/sprites/lobby/final_round.png");
     this.load.image("tiebreaker", "assets/sprites/lobby/tiebreaker.png");
 
+    this.load.audio("explosion", "assets/sounds/bomb.ogg");
+    this.load.audio("powerup", "assets/sounds/powerup.ogg");
+
     game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },
 
