@@ -65,9 +65,7 @@ Bomb.prototype = {
 			}
 		}
 
-		if(hitData.hitBlock > 0) {
-			return false;
-		}
+		return hitData.hitBlock != 1 && hitData.hitBlock != 2;
 	}
 }
 
