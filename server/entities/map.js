@@ -61,7 +61,7 @@ Map.prototype = {
 		return this.placedBombs[row][col] == 1;
 	},
 
-	checkForPowerup: function(x, y) {
+	claimPowerup: function(x, y) {
 		var row = Math.floor(y / this.tileSize), col = Math.floor(x / this.tileSize);
 		var hitBlock = this.mapData[row][col];
 		if(PowerupIDs.isAPowerup(hitBlock)) {

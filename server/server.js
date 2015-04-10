@@ -14,6 +14,7 @@ var MapInfo = require("./metadata/map_info");
 var Game = require("./entities/game");
 var Lobby = require("./lobby");
 var PendingGame = require("./entities/pending_game");
+var PowerupIDs = require("../common/powerup_ids");
 
 var games = {};
 
@@ -45,6 +46,7 @@ function setEventHandlers () {
 		client.on("register map", onRegisterMap);
 		client.on("start game on server", onStartGame);
 		client.on("ready for round", onReadyForRound);
+		client.on("powerup overlap", onPowerupOverlap);
 
 		client.on("enter lobby", Lobby.onEnterLobby);
 		client.on("host game", Lobby.onHostGame);
@@ -143,7 +145,6 @@ function onMovePlayer(data) {
 
 	movingPlayer.x = data.x;
 	movingPlayer.y = data.y;
-	game.map.checkForPowerup(movingPlayer.x, movingPlayer.y);
 	movingPlayer.facing = data.facing;
 };
 
@@ -179,6 +180,19 @@ function onPlaceBomb(data) {
 	game.bombs[bombId] = bomb;
 
 	socket.sockets.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
+};
+
+function onPowerupOverlap(data) {
+	var powerup = claimPowerup(data.x, data.y);
+
+	if(!powerup) {
+		return;
+	}
+
+	else if(powerup == PowerupIDs.BOMB_STRENGTH) {
+		games[this.gameId].players[this.id].bombStrength++;
+		console.log("incrementing bomb strength for player ", this.id, " to ", games[this.gameId].players[this.id].bombStrength);
+	}
 };
 
 function handlePlayerDeath(deadPlayerIds, gameId) {

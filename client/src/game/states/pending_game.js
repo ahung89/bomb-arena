@@ -1,4 +1,5 @@
 var TextConfigurer = require('../util/text_configurer');
+
 var PendingGame = function() {}
 
 module.exports = PendingGame;
