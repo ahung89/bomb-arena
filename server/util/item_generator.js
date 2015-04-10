@@ -1,7 +1,7 @@
 var PowerupIDs = require("../../common/powerup_ids");
 
 exports.generateItem = function() {
-	var randomNumber = Math.floor(Math.random() * 15) + 1;
+	var randomNumber = Math.floor(Math.random() * 8) + 1;
 	console.log("randomNumber be ", randomNumber);
 	if (randomNumber < 2) {
 		return PowerupIDs.BOMB_STRENGTH;
