@@ -191,10 +191,12 @@ function onPowerupOverlap(data) {
 
 	console.log("powerup acquired, serverside.");
 
-	if(powerup == PowerupIDs.BOMB_STRENGTH) {
+	if(powerup.powerupType == PowerupIDs.BOMB_STRENGTH) {
 		games[this.gameId].players[this.id].bombStrength++;
 		console.log("incrementing bomb strength for player ", this.id, " to ", games[this.gameId].players[this.id].bombStrength);
 	}
+
+	socket.emit("powerup acquired", {acquiringPlayerId: this.id, powerupId: powerup.id});
 };
 
 function handlePlayerDeath(deadPlayerIds, gameId) {

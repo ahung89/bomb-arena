@@ -1,6 +1,7 @@
 var BLACK_HEX_CODE = "#000000";
 var TILE_SIZE = 40;
 
+var AudioPlayer = require("../util/audio_player");
 var Player = require("../entities/player");
 var RemotePlayer = require("../entities/remoteplayer");
 var Bomb = require("../entities/bomb");
@@ -31,6 +32,7 @@ Level.prototype = {
     socket.on("detonate", this.onDetonate.bind(this));
     socket.on("new round", this.onNewRound.bind(this));
     socket.on("end game", this.onEndGame.bind(this));
+    socket.on("powerup acquired", this.onPowerupAcquired.bind(this));
   },
 
   create: function () {
@@ -311,6 +313,15 @@ Level.prototype = {
         this.generateItemEntity(destroyedTile.itemId, destroyedTile.row, destroyedTile.col);
       }
     }, this);
+  },
+
+  onPowerupAcquired: function(data) {
+    this.items[data.powerupId].destroy();
+    delete this.items[data.powerupId];
+
+    if(data.acquiringPlayerId === this.id) {
+      AudioPlayer.playPowerupSound();
+    }
   },
 
   generateItemEntity: function(itemId, row, col) {

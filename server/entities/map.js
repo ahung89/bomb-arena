@@ -67,7 +67,10 @@ Map.prototype = {
 		if(PowerupIDs.isAPowerup(hitBlock)) {
 			console.log("powerup acquired, yo.");
 			this.mapData[row][col] = 0;
-			return hitBlock;
+			return {
+				powerupType: hitBlock,
+				id: row + "." + col
+			};
 		} else {
 			return null;
 		}
