@@ -1,6 +1,7 @@
 var Bomb = require("./bomb");
 
-var PLAYER_SPEED = 180;
+var DEFAULT_PLAYER_SPEED = 180;
+var PLAYER_SPEED_POWERUP_INCREMENT = 60;
 
 var Player = function(x, y, id, color) {
 	Phaser.Sprite.call(this, game, x, y, "bomberman_" + color);
@@ -9,6 +10,7 @@ var Player = function(x, y, id, color) {
   this.facing = "down";
   this.anchor.setTo(.5, .5);
   this.bombButtonJustPressed = false;
+  this.speed = DEFAULT_PLAYER_SPEED;
 
 	game.physics.enable(this, Phaser.Physics.ARCADE);
 
@@ -37,19 +39,19 @@ Player.prototype.handleMotionInput = function() {
 
   	if (game.input.keyboard.isDown(Phaser.Keyboard.LEFT)) {
   		this.body.velocity.y = 0;
-  		this.body.velocity.x = -PLAYER_SPEED;
+  		this.body.velocity.x = -this.speed;
   		this.facing = "left";
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
   		this.body.velocity.y = 0;
-  		this.body.velocity.x = PLAYER_SPEED;
+  		this.body.velocity.x = this.speed;
   		this.facing = "right";
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.UP)) {
   		this.body.velocity.x = 0;
-  		this.body.velocity.y = -PLAYER_SPEED;
+  		this.body.velocity.y = -this.speed;
   		this.facing = "up";
   	} else if (game.input.keyboard.isDown(Phaser.Keyboard.DOWN)) {
   		this.body.velocity.x = 0;
-  		this.body.velocity.y = PLAYER_SPEED;
+  		this.body.velocity.y = this.speed;
   		this.facing = "down";
   	} else {
       moving = false;
@@ -78,5 +80,9 @@ Player.prototype.handleMotionInput = function() {
     this.body.velocity.y = 0;
     this.animations.stop();
   };
+
+  Player.prototype.applySpeedPowerup = function() {
+    this.speed += PLAYER_SPEED_POWERUP_INCREMENT;
+  }
 
 module.exports = Player;

@@ -1,6 +1,7 @@
 var BLACK_HEX_CODE = "#000000";
 var TILE_SIZE = 40;
 
+var PowerupIDs = require("../../../../common/powerup_ids");
 var AudioPlayer = require("../util/audio_player");
 var Player = require("../entities/player");
 var RemotePlayer = require("../entities/remoteplayer");
@@ -321,6 +322,9 @@ Level.prototype = {
 
     if(data.acquiringPlayerId === player.id) {
       AudioPlayer.playPowerupSound();
+      if(data.powerupType == PowerupIDs.SPEED) {
+        player.applySpeedPowerup();
+      }
     }
   },
 
