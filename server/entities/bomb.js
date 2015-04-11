@@ -29,10 +29,10 @@ Bomb.prototype = {
 
 	generateExplosionInDirection: function(x, y, xCoefficient, yCoefficient, strength, middleKey, endKey, explosionData, map, players) {
 		for(var i = 0; i < strength - 1; i++) {
-			var distanceBetweenCenters = i == 0 ? 35 : 40;
+			var distanceBetweenCenters = 40;
 
-			if(this.generateIndividualExplosion(x + xCoefficient * ((i + 1) * distanceBetweenCenters),
-				y + yCoefficient * ((i + 1) * distanceBetweenCenters), xCoefficient, yCoefficient,
+			if(this.generateIndividualExplosion(x + xCoefficient * (i * distanceBetweenCenters + 35),
+				y + yCoefficient * (i * distanceBetweenCenters + 35), xCoefficient, yCoefficient,
 				middleKey, explosionData, map, players, endKey) == false) {
 				return;
 			}
