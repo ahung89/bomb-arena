@@ -150,23 +150,25 @@ function onMovePlayer(data) {
 
 function onPlaceBomb(data) {
 	var game = games[this.gameId];
+	var player = game.players[this.id];
 
-	if(game === undefined || game.awaitingAcknowledgements) {
+	if(game === undefined || game.awaitingAcknowledgements || player.numBombsAlive >= player.bombCapacity) {
 		return;
 	}
 
 	var gameId = this.gameId;
-
 	var bombId = data.id;
-	var playerId = this.id;
-
 	var normalizedBombLocation = game.map.placeBombOnGrid(data.x, data.y);
+
 	if(normalizedBombLocation == -1) {
 		return;
 	}
 
+	player.numBombsAlive++;
+
 	var bombTimeoutId = setTimeout(function() {
 		var explosionData = bomb.detonate(game.map, 2, game.players);
+		player.numBombsAlive--;
 
 		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId, 
 			destroyedTiles: explosionData.destroyedBlocks});
@@ -189,14 +191,15 @@ function onPowerupOverlap(data) {
 		return;
 	}
 
-	console.log("powerup acquired, serverside.");
+	var player = games[this.gameId].players[this.id];
 
-	if(powerup.powerupType == PowerupIDs.BOMB_STRENGTH) {
-		games[this.gameId].players[this.id].bombStrength++;
-		console.log("incrementing bomb strength for player ", this.id, " to ", games[this.gameId].players[this.id].bombStrength);
+	if(powerup.powerupType === PowerupIDs.BOMB_STRENGTH) {
+		player.bombStrength++;
+	} else if(powerup.powerupType === PowerupIDs.BOMB_CAPACITY) {
+		player.bombCapacity++;
 	}
 
-	socket.emit("powerup acquired", {acquiringPlayerId: this.id, powerupId: powerup.id});
+	socket.emit("powerup acquired", {acquiringPlayerId: this.id, powerupId: powerup.id, powerupType: powerup.powerupType});
 };
 
 function handlePlayerDeath(deadPlayerIds, gameId) {
