@@ -6,8 +6,8 @@ window.level = null;
 startGame();
 
 function startGame() {
-	// socket = io("https://limitless-brook-9339.herokuapp.com:443");
-    socket = io("http://localhost:8000");
+	socket = io("https://limitless-brook-9339.herokuapp.com:443");
+    // socket = io("http://localhost:8000");
 
     require("./game/mods/phaser_enhancements");
 
