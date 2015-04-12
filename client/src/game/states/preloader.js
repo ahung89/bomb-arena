@@ -2,9 +2,9 @@ var Preloader = function () {};
 
 module.exports = Preloader;
 
-WebFontConfig = {
-   google: { families: [ "Carter One" ] }
-};
+// WebFontConfig = {
+//    google: { families: [ "Carter One" ] }
+// };
 
 Preloader.prototype = {
 
@@ -57,7 +57,7 @@ Preloader.prototype = {
     this.load.audio("explosion", "assets/sounds/bomb.ogg");
     this.load.audio("powerup", "assets/sounds/powerup.ogg");
 
-    game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
+    // game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },
 
   create: function () {
