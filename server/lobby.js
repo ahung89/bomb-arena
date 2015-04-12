@@ -3,7 +3,7 @@
 */
 
 var PendingGame = require("./entities/pending_game");
-var MapInfo = require("./metadata/map_info");
+var MapInfo = require("../common/map_info");
 
 var lobbySlots = [];
 var lobbyId = -1;

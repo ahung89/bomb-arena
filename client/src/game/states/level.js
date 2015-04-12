@@ -232,7 +232,7 @@ Level.prototype = {
 
   initializeMap: function() {
     this.map = game.add.tilemap(this.tilemapName);
-    this.map.addTilesetImage("tilez", "tiles", 40, 40);
+    this.map.addTilesetImage("tiles", "tiles", 40, 40);
 
     this.groundLayer = this.map.createLayer("Ground");
     this.groundLayer.resizeWorld();
