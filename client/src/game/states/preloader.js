@@ -46,6 +46,9 @@ Preloader.prototype = {
     this.load.image("bomb_count_powerup", "assets/sprites/bomb_count_powerup.png");
     this.load.image("bomb_strength_powerup", "assets/sprites/bomb_strength_powerup.png");
     this.load.image("speed_powerup", "assets/sprites/speed_powerup.png");
+    this.load.image("bomb_count_notification", "assets/sprites/bomb_count_notification.png");
+    this.load.image("bomb_strength_notification", "assets/sprites/bomb_strength_notification.png");
+    this.load.image("speed_notification", "assets/sprites/speed_notification.png");
     this.load.image("round_1", "assets/sprites/lobby/round_1.png");
     this.load.image("round_2", "assets/sprites/lobby/round_2.png");
     this.load.image("final_round", "assets/sprites/lobby/final_round.png");

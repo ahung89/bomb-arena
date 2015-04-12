@@ -8,6 +8,7 @@ var RemotePlayer = require("../entities/remoteplayer");
 var Bomb = require("../entities/bomb");
 var RoundEndAnimation = require("../entities/round_end_animation");
 var PowerupImageKeys = require("../util/powerup_image_keys");
+var PowerupNotificationPlayer = require("../util/powerup_notification_player");
 
 var remotePlayers = {};
 var gameFrozen = true;
@@ -322,6 +323,7 @@ Level.prototype = {
 
     if(data.acquiringPlayerId === player.id) {
       AudioPlayer.playPowerupSound();
+      PowerupNotificationPlayer.showPowerupNotification(data.powerupType, player.x, player.y);
       if(data.powerupType == PowerupIDs.SPEED) {
         player.applySpeedPowerup();
       }
