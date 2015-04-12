@@ -30,6 +30,7 @@ Preloader.prototype = {
     this.load.spritesheet("game_slot", "assets/sprites/lobby/game_slot.png", 522, 48);
 
     this.load.tilemap("levelOne", "assets/levels/level_one_blocks.json", null, Phaser.Tilemap.TILED_JSON);
+    this.load.tilemap("levelTwo", "assets/levels/level_two.json", null, Phaser.Tilemap.TILED_JSON);
     this.load.image("tiles", "assets/tiles/tileset.png");
     this.load.image("select_stage", "assets/sprites/lobby/select_stage.png");
     this.load.image("limitless_brook_thumbnail", "assets/levels/thumbnails/limitless_brook_thumbnail.png");
