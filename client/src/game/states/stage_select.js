@@ -78,6 +78,7 @@ StageSelect.prototype = {
 		this.text.setText(newStage.name);
 		this.numPlayersText.setText("Max # of players:   " + newStage.maxPlayers);
 		this.stageSizeText.setText("Map size:   " + newStage.size);
+		this.thumbnail.loadTexture(newStage.thumbnailKey);
 	},
 
 	configureText: function(text, color, size) {

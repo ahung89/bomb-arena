@@ -34,6 +34,7 @@ Preloader.prototype = {
     this.load.image("tiles", "assets/tiles/tileset.png");
     this.load.image("select_stage", "assets/sprites/lobby/select_stage.png");
     this.load.image("limitless_brook_thumbnail", "assets/levels/thumbnails/limitless_brook_thumbnail.png");
+    this.load.image("danger_desert_thumbnail", "assets/levels/thumbnails/danger_desert_thumbnail.png");
     this.load.image("pending_game_backdrop", "assets/sprites/lobby/backdrop.png");
     this.load.image("round_end_display", "assets/sprites/lobby/end_of_round_window.png");
     this.load.image("repeating_bombs", "assets/sprites/lobby/repeating_bombs.png");
@@ -57,8 +58,6 @@ Preloader.prototype = {
 
     this.load.audio("explosion", "assets/sounds/bomb.ogg");
     this.load.audio("powerup", "assets/sounds/powerup.ogg");
-
-    // game.load.script('webfont', '//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js');
   },
 
   create: function () {
