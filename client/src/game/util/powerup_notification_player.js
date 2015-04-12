@@ -6,8 +6,8 @@ notificationImageMap[PowerupIds.BOMB_CAPACITY] = "bomb_count_notification";
 notificationImageMap[PowerupIds.SPEED] = "speed_notification";
 
 exports.showPowerupNotification = function(powerupId, playerX, playerY) {
-	var notificationImageKey = notificationImageMap[powerupId];
-	var image = new Phaser.Image(game, playerX, playerY - 10, notificationImageKey);
+    var notificationImageKey = notificationImageMap[powerupId];
+    var image = new Phaser.Image(game, playerX, playerY - 10, notificationImageKey);
     image.anchor.setTo(.5, .5);
     game.add.existing(image);
 
