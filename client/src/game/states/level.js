@@ -2,6 +2,7 @@ var BLACK_HEX_CODE = "#000000";
 var TILE_SIZE = 40;
 
 var PowerupIDs = require("../../../../common/powerup_ids");
+var MapInfo = require("../../../../common/map_info");
 var AudioPlayer = require("../util/audio_player");
 var Player = require("../entities/player");
 var RemotePlayer = require("../entities/remoteplayer");
@@ -232,19 +233,21 @@ Level.prototype = {
 
   initializeMap: function() {
     this.map = game.add.tilemap(this.tilemapName);
-    this.map.addTilesetImage("tiles", "tiles", 40, 40);
+    var mapInfo = MapInfo[this.tilemapName];
 
-    this.groundLayer = this.map.createLayer("Ground");
+    this.map.addTilesetImage(mapInfo.tilesetName, mapInfo.tilesetImage, 40, 40);
+
+    this.groundLayer = this.map.createLayer(mapInfo.groundLayer);
     this.groundLayer.resizeWorld();
-    this.blockLayer = this.map.createLayer("Blocks");
+    this.blockLayer = this.map.createLayer(mapInfo.blockLayer);
     this.blockLayer.resizeWorld(); // Set the world size to match the size of this layer.
-    this.map.setCollision([127, 361], true, "Blocks");
+    this.map.setCollision(mapInfo.collisionTiles, true, mapInfo.blockLayer);
 
     // Send map data to server so it can do collisions.
     // TODO: do not allow the game to start until this operation is complete.
-    var blockLayerData = game.cache.getTilemapData("levelOne").data.layers[1];
+    var blockLayerData = game.cache.getTilemapData(this.tilemapName).data.layers[1];
 
-    socket.emit("register map", {tiles: blockLayerData.data, height: blockLayerData.height, width: blockLayerData.width, destructibleTileId: 361});
+    socket.emit("register map", {tiles: blockLayerData.data, height: blockLayerData.height, width: blockLayerData.width, destructibleTileId: mapInfo.destructibleTileId});
   },
 
   onMovePlayer: function(data) {
