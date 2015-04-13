@@ -73,6 +73,7 @@ function onClientDisconnect() {
 		var game = games[this.gameId];
 	
 		if(this.id in game.players) {
+			console.log("deleting " + this.id);
 			delete game.players[this.id];
 	
 			socket.sockets.emit("remove player", {id: this.id});	
@@ -167,6 +168,7 @@ function onPlaceBomb(data) {
 	player.numBombsAlive++;
 
 	var bombTimeoutId = setTimeout(function() {
+		console.log("detonatin with ", game.players);
 		var explosionData = bomb.detonate(game.map, player.bombStrength, game.players);
 		player.numBombsAlive--;
 
