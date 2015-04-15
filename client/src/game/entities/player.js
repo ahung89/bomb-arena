@@ -6,6 +6,7 @@ var PLAYER_SPEED_POWERUP_INCREMENT = 60;
 var Player = function(x, y, id, color) {
 	Phaser.Sprite.call(this, game, x, y, "bomberman_" + color);
 
+  this.spawnPoint = {x: x, y: y};
   this.id = id;
   this.facing = "down";
   this.anchor.setTo(.5, .5);
@@ -83,6 +84,18 @@ Player.prototype.handleMotionInput = function() {
 
   Player.prototype.applySpeedPowerup = function() {
     this.speed += PLAYER_SPEED_POWERUP_INCREMENT;
-  }
+  };
+
+  Player.prototype.reset = function() {
+    this.x = this.spawnPoint.x;
+    this.y = this.spawnPoint.y;
+    this.facing = "down";
+    this.bombButtonJustPressed = false;
+    this.speed = DEFAULT_PLAYER_SPEED;
+
+    if(!this.alive) {
+      this.revive();
+    }
+  };
 
 module.exports = Player;

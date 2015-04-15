@@ -5,6 +5,7 @@ var RemotePlayer = function(x, y, id, color) {
 	this.previousPosition = {x: x, y: y};
 	this.lastMoveTime = 0;
 	this.targetPosition;
+  this.spawnPoint = {x: x, y: y};
 
 	Phaser.Sprite.call(this, game, x, y, "bomberman_" + color);
 
@@ -40,5 +41,19 @@ RemotePlayer.prototype.interpolate = function(lastFrameTime) {
         }
     }
 }
+
+RemotePlayer.prototype.reset = function() {
+  this.x = this.spawnPoint.x;
+  this.y = this.spawnPoint.y;
+  this.previousPosition = {x: this.x, y: this.y};
+  this.distanceToCover = null;
+  this.distanceCovered = null;
+  this.targetPosition = null
+  this.lastMoveTime = null;
+  
+  if(!this.alive) {
+    this.revive();
+  }
+};
 
 module.exports = RemotePlayer;

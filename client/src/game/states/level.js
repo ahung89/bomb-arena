@@ -68,19 +68,11 @@ Level.prototype = {
   restartGame: function() {
     this.dimGraphic.destroy();
 
-    if(player.alive) {
-      player.destroy();
-    }
-
+    player.reset();
     for(var i in remotePlayers) {
-      var remotePlayer = remotePlayers[i];
-      if(remotePlayer.alive) {
-        remotePlayer.destroy();
-      }
+      remotePlayers[i].reset();
     }
 
-    remotePlayers = {};
-    player = null;
     this.deadGroup = [];
     this.lastFrameTime;
     this.tearDownMap();
@@ -88,7 +80,6 @@ Level.prototype = {
     this.bombs.destroy(true);
     this.destroyItems();
     this.bombs = game.add.group();
-    this.initializePlayers();
 
     gameFrozen = false;
     socket.emit("ready for round");
@@ -232,15 +223,20 @@ Level.prototype = {
   },
 
   initializeMap: function() {
+    // This call to add.tilemap doesn't actually add anything to the game, it just creates a tilemap.
     this.map = game.add.tilemap(this.tilemapName);
     var mapInfo = MapInfo[this.tilemapName];
 
     this.map.addTilesetImage(mapInfo.tilesetName, mapInfo.tilesetImage, 40, 40);
 
-    this.groundLayer = this.map.createLayer(mapInfo.groundLayer);
+    this.groundLayer = new Phaser.TilemapLayer(game, this.map, this.map.getLayerIndex(mapInfo.groundLayer), game.width, game.height);
+    game.world.addAt(this.groundLayer, 0);
     this.groundLayer.resizeWorld();
-    this.blockLayer = this.map.createLayer(mapInfo.blockLayer);
+
+    this.blockLayer = new Phaser.TilemapLayer(game, this.map, this.map.getLayerIndex(mapInfo.blockLayer), game.width, game.height);
+    game.world.addAt(this.blockLayer, 1);
     this.blockLayer.resizeWorld(); // Set the world size to match the size of this layer.
+
     this.map.setCollision(mapInfo.collisionTiles, true, mapInfo.blockLayer);
 
     // Send map data to server so it can do collisions.
@@ -290,11 +286,11 @@ Level.prototype = {
     if(data.id == player.id) {
       console.log("You've been killed.");
 
-      player.destroy();
+      player.kill();
     } else {
       var playerToRemove = remotePlayers[data.id];
 
-      playerToRemove.destroy();
+      playerToRemove.kill();
     }
   },
 
