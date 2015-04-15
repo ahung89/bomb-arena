@@ -278,7 +278,9 @@ Level.prototype = {
   onRemovePlayer: function(data) {
     var playerToRemove = remotePlayers[data.id];
 
-    playerToRemove.destroy();
+    if(playerToRemove.alive) {
+      playerToRemove.destroy();
+    }
 
     delete remotePlayers[data.id];
     delete this.players[data.id];
@@ -293,8 +295,6 @@ Level.prototype = {
       var playerToRemove = remotePlayers[data.id];
 
       playerToRemove.destroy();
-
-      delete remotePlayers[data.id];
     }
   },
 
