@@ -11,14 +11,15 @@ var RoundEndAnimation = require("../entities/round_end_animation");
 var PowerupImageKeys = require("../util/powerup_image_keys");
 var PowerupNotificationPlayer = require("../util/powerup_notification_player");
 
-var remotePlayers = {};
-var gameFrozen = true;
-
 var Level = function () {};
 
 module.exports = Level;
 
 Level.prototype = {
+  remotePlayers: {},
+
+  gameFrozen: true,
+
   init: function(tilemapName, players, id) {
     this.tilemapName = tilemapName;
     this.players = players;
@@ -28,10 +29,10 @@ Level.prototype = {
   setEventHandlers: function() {
     // Remember - these will actually be executed from the context of the Socket, not from the context of the level.
     socket.on("disconnect", this.onSocketDisconnect);
-    socket.on("move player", this.onMovePlayer);
+    socket.on("move player", this.onMovePlayer.bind(this));
     socket.on("remove player", this.onRemovePlayer.bind(this));
-    socket.on("kill player", this.onKillPlayer);
-    socket.on("place bomb", this.onPlaceBomb);
+    socket.on("kill player", this.onKillPlayer.bind(this));
+    socket.on("place bomb", this.onPlaceBomb.bind(this));
     socket.on("detonate", this.onDetonate.bind(this));
     socket.on("new round", this.onNewRound.bind(this));
     socket.on("end game", this.onEndGame.bind(this));
@@ -69,8 +70,8 @@ Level.prototype = {
     this.dimGraphic.destroy();
 
     player.reset();
-    for(var i in remotePlayers) {
-      remotePlayers[i].reset();
+    for(var i in this.remotePlayers) {
+      this.remotePlayers[i].reset();
     }
 
     this.deadGroup = [];
@@ -82,7 +83,7 @@ Level.prototype = {
     this.bombs = new Phaser.Group(game);
     game.world.setChildIndex(this.bombs, 2);
 
-    gameFrozen = false;
+    this.gameFrozen = false;
     socket.emit("ready for round");
   },
 
@@ -97,7 +98,7 @@ Level.prototype = {
   onNewRound: function(data) {
     this.createDimGraphic();
     var datAnimationDoe = new RoundEndAnimation(game, data.completedRoundNumber, data.roundWinnerColors);
-    gameFrozen = true;
+    this.gameFrozen = true;
 
 
     var roundImage;
@@ -115,7 +116,7 @@ Level.prototype = {
   onEndGame: function(data) {
     // TODO: Tear down the state.
     this.createDimGraphic();
-    gameFrozen = true;
+    this.gameFrozen = true;
     var animation = new RoundEndAnimation(game, data.completedRoundNumber, data.roundWinnerColors);
     animation.beginAnimation(function() {
       game.state.start("GameOver", true, false, data.gameWinnerColor, false);
@@ -130,7 +131,7 @@ Level.prototype = {
     tween.to({x: game.camera.width / 2}, 300).to({x: 1000}, 300, Phaser.Easing.Default, false, 800).onComplete.add(function() {
       this.dimGraphic.destroy();
       beginRoundText.destroy();
-      gameFrozen = false;
+      this.gameFrozen = false;
 
       if(callback) {
         callback();
@@ -147,7 +148,7 @@ Level.prototype = {
     }
 
     if(player != null && player.alive == true) {
-      if(gameFrozen) {
+      if(this.gameFrozen) {
         player.freeze();
       } else {
         player.handleInput();
@@ -163,8 +164,8 @@ Level.prototype = {
     this.stopAnimationForMotionlessPlayers();
     this.storePreviousPositions();
 
-    for(var id in remotePlayers) {
-      remotePlayers[id].interpolate(this.lastFrameTime);
+    for(var id in this.remotePlayers) {
+      this.remotePlayers[id].interpolate(this.lastFrameTime);
     }
 
     this.lastFrameTime = game.time.now;
@@ -185,15 +186,15 @@ Level.prototype = {
   },
 
   storePreviousPositions: function() {
-    for(var id in remotePlayers) {
-      remotePlayer = remotePlayers[id];
+    for(var id in this.remotePlayers) {
+      remotePlayer = this.remotePlayers[id];
       remotePlayer.previousPosition = {x: remotePlayer.position.x, y: remotePlayer.position.y};
     }
   },
 
   stopAnimationForMotionlessPlayers: function() {
-    for(var id in remotePlayers) {
-      remotePlayer = remotePlayers[id];
+    for(var id in this.remotePlayers) {
+      remotePlayer = this.remotePlayers[id];
       if(remotePlayer.lastMoveTime < game.time.now - 200) {
         remotePlayer.animations.stop();
       }
@@ -212,7 +213,7 @@ Level.prototype = {
       if(data.id == this.playerId) {
         player = new Player(data.x, data.y, data.id, data.color);
       } else {
-        remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id, data.color);
+        this.remotePlayers[data.id] = new RemotePlayer(data.x, data.y, data.id, data.color);
       }
     }
   },
@@ -248,11 +249,11 @@ Level.prototype = {
   },
 
   onMovePlayer: function(data) {
-    if(player && data.id == player.id || gameFrozen) {
+    if(player && data.id == player.id || this.gameFrozen) {
       return;
     }
 
-    var movingPlayer = remotePlayers[data.id];
+    var movingPlayer = this.remotePlayers[data.id];
 
     if(movingPlayer.targetPosition) {
       if(data.x == movingPlayer.targetPosition.x && data.y == movingPlayer.targetPosition.y) {
@@ -273,13 +274,13 @@ Level.prototype = {
   },
 
   onRemovePlayer: function(data) {
-    var playerToRemove = remotePlayers[data.id];
+    var playerToRemove = this.remotePlayers[data.id];
 
     if(playerToRemove.alive) {
       playerToRemove.destroy();
     }
 
-    delete remotePlayers[data.id];
+    delete this.remotePlayers[data.id];
     delete this.players[data.id];
   },
 
@@ -289,14 +290,14 @@ Level.prototype = {
 
       player.kill();
     } else {
-      var playerToRemove = remotePlayers[data.id];
+      var playerToRemove = this.remotePlayers[data.id];
 
       playerToRemove.kill();
     }
   },
 
   onPlaceBomb: function(data) {
-   level.bombs.add(new Bomb(data.x, data.y, data.id));
+   this.bombs.add(new Bomb(data.x, data.y, data.id));
   },
 
   onDetonate: function(data) {

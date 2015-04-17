@@ -14,6 +14,10 @@ GameOver.prototype = {
 		var textObject = game.add.text(game.camera.width / 2, game.camera.height / 2, textToDisplay);
 		textObject.anchor.setTo(0.5, 0.5);
 		TextConfigurer.configureText(textObject, "white", 28);
+	},
+
+	returnToLobby: function() {
+		
 	}
 }
 
