@@ -14,9 +14,9 @@ var RemotePlayer = function(x, y, id, color) {
 	this.anchor.setTo(.5, .5);
 
 	this.animations.add('down', [0, 1, 2, 3, 4], 10, true);
-  	this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
-  	this.animations.add('right', [10, 11, 12], 10, true);
-  	this.animations.add('left', [13, 14, 15], 10, true);
+  this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
+  this.animations.add('right', [10, 11, 12], 10, true);
+  this.animations.add('left', [13, 14, 15], 10, true);
 
 	game.add.existing(this);
 };
@@ -45,6 +45,7 @@ RemotePlayer.prototype.interpolate = function(lastFrameTime) {
 RemotePlayer.prototype.reset = function() {
   this.x = this.spawnPoint.x;
   this.y = this.spawnPoint.y;
+  this.frame = 0;
   this.previousPosition = {x: this.x, y: this.y};
   this.distanceToCover = null;
   this.distanceCovered = null;

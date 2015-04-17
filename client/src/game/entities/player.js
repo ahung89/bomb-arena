@@ -89,6 +89,7 @@ Player.prototype.handleMotionInput = function() {
   Player.prototype.reset = function() {
     this.x = this.spawnPoint.x;
     this.y = this.spawnPoint.y;
+    this.frame = 0;
     this.facing = "down";
     this.bombButtonJustPressed = false;
     this.speed = DEFAULT_PLAYER_SPEED;

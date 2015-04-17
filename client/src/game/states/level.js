@@ -81,7 +81,6 @@ Level.prototype = {
     this.destroyItems();
     this.bombs = new Phaser.Group(game);
     game.world.setChildIndex(this.bombs, 2);
-    console.log(game.world.children);
 
     gameFrozen = false;
     socket.emit("ready for round");
