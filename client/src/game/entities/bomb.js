@@ -8,9 +8,16 @@ var Bomb = function(x, y, id) {
 	game.physics.enable(this, Phaser.Physics.ARCADE);
   this.body.immovable = true;
 	game.add.existing(this);
+
+  this.sizeTween = game.add.tween(this.scale).to({x: 1.2, y: 1.2}, 500, Phaser.Easing.Default, true, 0, true, true);
 }
 
 Bomb.prototype = Object.create(Phaser.Sprite.prototype);
+
+Bomb.prototype.remove = function() {
+  this.destroy();
+  this.sizeTween.stop(); // stop tween and mark it for deletion
+};
 
 Bomb.renderExplosion = function(explosions) {
 	explosions.forEach(function(explosion) {

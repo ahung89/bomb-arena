@@ -306,7 +306,7 @@ Level.prototype = {
     //remove bomb from group. bombs is a Phaser.Group to make collisions easier.
     level.bombs.forEach(function(bomb) {
       if(bomb && bomb.id == data.id) {
-        bomb.destroy();
+        bomb.remove();
       }
     }, level);
 
