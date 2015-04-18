@@ -36,6 +36,7 @@ Level.prototype = {
     socket.on("detonate", this.onDetonate.bind(this));
     socket.on("new round", this.onNewRound.bind(this));
     socket.on("end game", this.onEndGame.bind(this));
+    socket.on("no opponents left", this.onNoOpponentsLeft.bind(this));
     socket.on("powerup acquired", this.onPowerupAcquired.bind(this));
   },
 
@@ -123,6 +124,10 @@ Level.prototype = {
     });
   },
 
+  onNoOpponentsLeft: function(data) {
+    game.state.start("GameOver", true, false, null, true);
+  },
+
   beginRoundAnimation: function(image, callback) {
     var beginRoundText = game.add.image(-600, game.camera.height / 2, image);
     beginRoundText.anchor.setTo(.5, .5);
@@ -142,11 +147,6 @@ Level.prototype = {
   },
 
   update: function() {
-    // End game if all other players have left.
-    if(Object.keys(this.players).length == 1) {
-      game.state.start("GameOver", true, false, null, true);
-    }
-
     if(player != null && player.alive == true) {
       if(this.gameFrozen) {
         player.freeze();

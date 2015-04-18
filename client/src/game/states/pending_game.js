@@ -146,6 +146,7 @@ PendingGame.prototype = {
 
 	startGame: function(data) {
 		repeatingBombTilesprite.doNotDestroy = false;
+		socket.removeAllListeners();
 		game.state.start("Level", true, false, data.mapName, data.players, this.id);
 	}
 }

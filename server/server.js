@@ -76,10 +76,13 @@ function onClientDisconnect() {
 			console.log("deleting " + this.id);
 			delete game.players[this.id];
 	
-			socket.sockets.emit("remove player", {id: this.id});	
+			socket.sockets.in(this.gameId).emit("remove player", {id: this.id});	
 		}
 
-		if(game.numPlayers == 0) {
+		if(game.numPlayers < 2) {
+			if(game.numPlayers == 1) {
+				socket.sockets.in(this.gameId).emit("no opponents left");
+			}
 			terminateExistingGame(this.gameId);
 		}
 
@@ -201,7 +204,7 @@ function onPowerupOverlap(data) {
 		player.bombCapacity++;
 	}
 
-	socket.emit("powerup acquired", {acquiringPlayerId: this.id, powerupId: powerup.id, powerupType: powerup.powerupType});
+	socket.sockets.in(this.gameId).emit("powerup acquired", {acquiringPlayerId: this.id, powerupId: powerup.id, powerupType: powerup.powerupType});
 };
 
 function handlePlayerDeath(deadPlayerIds, gameId) {
