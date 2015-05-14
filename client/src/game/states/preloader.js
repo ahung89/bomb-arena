@@ -56,11 +56,16 @@ Preloader.prototype = {
     this.load.image("final_round", "assets/sprites/lobby/final_round.png");
     this.load.image("tiebreaker", "assets/sprites/lobby/tiebreaker.png");
 
+    // For title screen
+    this.load.image("titlescreen_bg", "assets/titlescreen/background.png");
+    this.load.image("titlescreen_title", "assets/titlescreen/title.png");
+    this.load.spritesheet("titlescreen_bomberman", "assets/titlescreen/bomberman.png", 270, 240);
+
     this.load.audio("explosion", "assets/sounds/bomb.ogg");
     this.load.audio("powerup", "assets/sounds/powerup.ogg");
   },
 
   create: function () {
-    game.state.start("Lobby");
+    game.state.start("TitleScreen");
   }
 };
