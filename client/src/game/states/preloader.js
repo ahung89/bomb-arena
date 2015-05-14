@@ -59,6 +59,13 @@ Preloader.prototype = {
     // For title screen
     this.load.image("titlescreen_bg", "assets/titlescreen/background.png");
     this.load.image("titlescreen_title", "assets/titlescreen/title.png");
+    this.load.image("cloud1", "assets/titlescreen/cloud1.png");
+    this.load.image("cloud2", "assets/titlescreen/cloud2.png");
+    this.load.image("cloud3", "assets/titlescreen/cloud3.png");
+    this.load.image("cloud4", "assets/titlescreen/cloud4.png");
+    this.load.image("cloud5", "assets/titlescreen/cloud5.png");
+    this.load.image("cloud6", "assets/titlescreen/cloud6.png");
+    this.load.image("cloud7", "assets/titlescreen/cloud7.png");
     this.load.spritesheet("titlescreen_bomberman", "assets/titlescreen/bomberman.png", 270, 240);
 
     this.load.audio("explosion", "assets/sounds/bomb.ogg");
