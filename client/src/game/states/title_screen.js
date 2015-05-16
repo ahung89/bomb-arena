@@ -3,6 +3,10 @@ function TitleScreen() {};
 var titleOffsetX = 55;
 var titleOffsetY = 20;
 
+var buttonOffsetX = 40;
+var startButtonOffsetY = 275;
+var howToButtonOffsetY = 360;
+
 var bombermanOffsetX = 305;
 var bombermanOffsetY = 265;
 
@@ -37,6 +41,37 @@ var cloudData = [
 
 TitleScreen.prototype = {
 	create: function() {
+		this.createClouds();
+		this.createButtons();
+
+		var startButtonTween = this.createInitialButtonTween(this.startButton, 300);
+		var howToButtonTween = this.createInitialButtonTween(this.howToButton, 500);
+
+		var title = game.add.image(titleOffsetX, titleOffsetY - 200, "titlescreen_title");
+
+		var titleTween = game.add.tween(title);
+		titleTween.to({y: titleOffsetY}, 500, Phaser.Easing.Bounce.Out, true, 200).start();
+
+		var bomberman = game.add.sprite(bombermanOffsetX + 400, bombermanOffsetY, "titlescreen_bomberman");
+		bomberman.animations.add("bomb_animation", [0, 1, 2, 3, 4], 5, true);
+
+		var bombermanTween = game.add.tween(bomberman).to({x: bombermanOffsetX}, 300, Phaser.Easing.Default, false);
+		bombermanTween.onComplete.addOnce(function() {
+			bomberman.animations.play("bomb_animation");
+		});
+
+		titleTween.onComplete.addOnce(function() {
+			bombermanTween.start();
+			startButtonTween.start();
+			howToButtonTween.start();
+		});
+	},
+
+	createInitialButtonTween: function(button, delay) {
+		return game.add.tween(button).to({x: buttonOffsetX}, 300, Phaser.Easing.Default, false, delay);
+	},
+
+	createClouds: function() {
 		var cloudRightmostPoint = game.camera.width;
 		var cloudLeftmostPointX = -260;
 		var tweenDuration = duration * (game.camera.width - cloudLeftmostPointX) / game.camera.width;
@@ -60,23 +95,11 @@ TitleScreen.prototype = {
 				cloudTween.start();
 			})(cloudData[x]);
 		};
+	},
 
-		var title = game.add.image(titleOffsetX, titleOffsetY - 200, "titlescreen_title");
-
-		var titleTween = game.add.tween(title);
-		titleTween.to({y: titleOffsetY}, 500, Phaser.Easing.Bounce.Out, true, 200).start();
-
-		var bomberman = game.add.sprite(bombermanOffsetX + 400, bombermanOffsetY, "titlescreen_bomberman");
-		bomberman.animations.add("bomb_animation", [0, 1, 2, 3, 4], 5, true);
-
-		var bombermanTween = game.add.tween(bomberman).to({x: bombermanOffsetX}, 300, Phaser.Easing.Default, false);
-		bombermanTween.onComplete.addOnce(function() {
-			bomberman.animations.play("bomb_animation");
-		});
-
-		titleTween.onComplete.addOnce(function() {
-			bombermanTween.start();
-		});
+	createButtons: function() {
+		this.startButton = game.add.button(buttonOffsetX - 250, startButtonOffsetY, "titlescreen_start", function() {}, this);
+		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, "titlescreen_howto", function() {}, this);
 	}
 }
 
