@@ -14,36 +14,49 @@ var secondBombOffsetY = bombermanOffsetY + 141;
 
 var cloudRightmostPointX = 700;
 
+var duration = 80000;
+
 var cloudData = [
-	{startingX: 350, startingY: 30, image: "cloud1", delay: 16000, direction: "left"},
-	{startingX: 110, startingY: 80, image: "cloud2", delay: 15000, direction: "right"},
-	{startingX: -50, startingY: 120, image: "cloud3", delay: 14000, direction: "right"},
-	{startingX: -100, startingY: 160, image: "cloud4", delay: 12000, direction: "right"},
-	{startingX: 800, startingY: 200, image: "cloud5", delay: 13000, direction: "left"},
-	{startingX: 500, startingY: 250, image: "cloud6", delay: 16000, direction: "left"},
-	{startingX: -150, startingY: 50, image: "cloud7", delay: 12000, direction: "right"}
+	{startingX: 400, startingY: 50, image: "cloud1"},
+	{startingX: -150, startingY: 140, image: "cloud1"},
+	{startingX: 375, startingY: 200, image: "cloud1"},
+	{startingX: 330, startingY: -20, image: "cloud1"},
+	{startingX: 110, startingY: 110, image: "cloud2"},
+	{startingX: -300, startingY: 140, image: "cloud2"},
+	{startingX: -300, startingY: -30, image: "cloud2"},
+	{startingX: 0, startingY: 140, image: "cloud3"},
+	{startingX: -75, startingY: 200, image: "cloud4"},
+	{startingX: 200, startingY: 20, image: "cloud5"},
+	{startingX: 100, startingY: -20, image: "cloud5"},
+	{startingX: -200, startingY: 250, image: "cloud6"},
+	{startingX: 40, startingY: 80, image: "cloud7"},
+	{startingX: 200, startingY: 180, image: "cloud1"},
+	{startingX: -150, startingY: 20, image: "cloud5"},
+	{startingX: 300, startingY: 230, image: "cloud4"}
 ];
 
 TitleScreen.prototype = {
 	create: function() {
-		var cloudRightmostPoint = game.camera.width + 100;
+		var cloudRightmostPoint = game.camera.width;
+		var cloudLeftmostPointX = -260;
+		var tweenDuration = duration * (game.camera.width - cloudLeftmostPointX) / game.camera.width;
 
 		game.add.image(0, 0, "titlescreen_bg");
 
 		for(var x = 0; x < cloudData.length; x++) {
 			(function(data) {
 				var cloudImage = game.add.image(data.startingX, data.startingY, data.image);
+				cloudImage.anchor.setTo(0, 0);
 
-				var cloudLeftmostPointX = 0 - cloudImage.width;
-				var loopStartingX = data.direction == "left" ? cloudRightmostPointX : cloudLeftmostPointX;
-				var endingX = data.direction == "left" ? cloudLeftmostPointX : cloudRightmostPointX;
+				var initialTweenDuration = duration * (game.camera.width - data.startingX) / game.camera.width;
+				var cloudTween = game.add.tween(cloudImage).to({x: cloudRightmostPointX}, initialTweenDuration, Phaser.Easing.Default, true, 0, 0);
 
-				var cloudTween = game.add.tween(cloudImage).to({x: endingX}, data.delay, Phaser.Easing.Default, true, 0, 0);
+				var completionFunction = function() {
+					cloudImage.x = cloudLeftmostPointX;
+					game.add.tween(cloudImage).to({x: cloudRightmostPointX}, tweenDuration, Phaser.Easing.Default, true, 0, -1).start();	
+				};
 
-				cloudTween.onComplete.addOnce(function() {
-					cloudImage.x = loopStartingX;
-					game.add.tween(cloudImage).to({x: endingX}, data.delay, Phaser.Easing.Default, true, 0, -1).start();
-				});
+				cloudTween.onComplete.addOnce(completionFunction);
 				cloudTween.start();
 			})(cloudData[x]);
 		};
@@ -51,15 +64,19 @@ TitleScreen.prototype = {
 		var title = game.add.image(titleOffsetX, titleOffsetY - 200, "titlescreen_title");
 
 		var titleTween = game.add.tween(title);
-		titleTween.to({y: titleOffsetY}, 300).start();
+		titleTween.to({y: titleOffsetY}, 500, Phaser.Easing.Bounce.Out, true, 200).start();
 
-		var bomberman = game.add.sprite(bombermanOffsetX, bombermanOffsetY, "titlescreen_bomberman");
+		var bomberman = game.add.sprite(bombermanOffsetX + 400, bombermanOffsetY, "titlescreen_bomberman");
 		bomberman.animations.add("bomb_animation", [0, 1, 2, 3, 4], 5, true);
-		bomberman.animations.play("bomb_animation");
-	},
 
-	update: function() {
+		var bombermanTween = game.add.tween(bomberman).to({x: bombermanOffsetX}, 300, Phaser.Easing.Default, false);
+		bombermanTween.onComplete.addOnce(function() {
+			bomberman.animations.play("bomb_animation");
+		});
 
+		titleTween.onComplete.addOnce(function() {
+			bombermanTween.start();
+		});
 	}
 }
 
