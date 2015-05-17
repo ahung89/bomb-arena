@@ -1,5 +1,7 @@
 var Lobby = function() {};
-var TextConfigurer = require('../util/text_configurer');
+
+var TextConfigurer = require("../util/text_configurer");
+var Fader = require("../util/fader");
 
 var initialSlotYOffset = 130;
 var slotXOffset = 40;
@@ -8,6 +10,8 @@ var lobbySlotDistance = 60;
 var textXOffset = 260;
 var textYOffset = 25;
 var repeatingBombTilesprite;
+
+var headerYOffset = 70;
 
 module.exports = Lobby;
 
@@ -57,6 +61,9 @@ Lobby.prototype = {
 		repeatingBombTilesprite.doNotDestroy = true;
 
 		this.backdrop = game.add.image(12.5, 12.5, "lobby_backdrop");
+		this.header = game.add.text(game.camera.width / 2, headerYOffset, "Lobby");
+		this.header.anchor.setTo(.5, .5);
+		TextConfigurer.configureText(this.header, "white", 48);
 
 		this.slots = [];
 		this.labels = [];
@@ -69,6 +76,8 @@ Lobby.prototype = {
 			socket.on("add slots", this.addSlots.bind(this));
 			socket.on("update slot", this.updateSlot.bind(this));
 		}
+
+		Fader.fadeIn();
 	},
 
 	update: function() {

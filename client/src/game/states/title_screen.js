@@ -1,3 +1,5 @@
+var Fader = require("../util/fader");
+
 function TitleScreen() {};
 
 var titleOffsetX = 55;
@@ -43,28 +45,26 @@ TitleScreen.prototype = {
 	create: function() {
 		this.createClouds();
 		this.createButtons();
-
-		var startButtonTween = this.createInitialButtonTween(this.startButton, 300);
-		var howToButtonTween = this.createInitialButtonTween(this.howToButton, 500);
-
+	
+		var startButtonTween = this.createInitialButtonTween(this.startButton, 200);
+		var howToButtonTween = this.createInitialButtonTween(this.howToButton, 400);
+	
 		var title = game.add.image(titleOffsetX, titleOffsetY - 200, "titlescreen_title");
-
+	
 		var titleTween = game.add.tween(title);
 		titleTween.to({y: titleOffsetY}, 500, Phaser.Easing.Bounce.Out, true, 200).start();
-
+	
 		var bomberman = game.add.sprite(bombermanOffsetX + 400, bombermanOffsetY, "titlescreen_bomberman");
 		bomberman.animations.add("bomb_animation", [0, 1, 2, 3, 4], 5, true);
-
-		var bombermanTween = game.add.tween(bomberman).to({x: bombermanOffsetX}, 300, Phaser.Easing.Default, false);
+	
+		var bombermanTween = game.add.tween(bomberman).to({x: bombermanOffsetX}, 300, Phaser.Easing.Default, false, 100);
 		bombermanTween.onComplete.addOnce(function() {
 			bomberman.animations.play("bomb_animation");
 		});
-
-		titleTween.onComplete.addOnce(function() {
-			bombermanTween.start();
-			startButtonTween.start();
-			howToButtonTween.start();
-		});
+	
+		bombermanTween.start();
+		startButtonTween.start();
+		howToButtonTween.start();
 	},
 
 	createInitialButtonTween: function(button, delay) {
@@ -98,8 +98,12 @@ TitleScreen.prototype = {
 	},
 
 	createButtons: function() {
-		this.startButton = game.add.button(buttonOffsetX - 250, startButtonOffsetY, "titlescreen_start", function() {}, this);
-		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, "titlescreen_howto", function() {}, this);
+		this.startButton = game.add.button(buttonOffsetX - 250, startButtonOffsetY, "titlescreen_start", function() {
+			Fader.fadeOut(function() {
+				game.state.start("Lobby");
+			});
+		}, this, 1, 0);
+		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, "titlescreen_howto", function() {}, this, 1, 0);
 	}
 }
 
