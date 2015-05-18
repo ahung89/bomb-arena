@@ -1,14 +1,28 @@
+var TextConfigurer = require("../util/text_configurer");
+
 var Preloader = function () {};
 
 module.exports = Preloader;
 
-// WebFontConfig = {
-//    google: { families: [ "Carter One" ] }
-// };
-
 Preloader.prototype = {
 
+  displayLoader: function() {
+    this.text = game.add.text(game.camera.width / 2, 250, "Loading... ");
+    this.text.anchor.setTo(.5, .5);
+    TextConfigurer.configureText(this.text, "white", 32);
+
+    this.load.onFileComplete.add(function(progress) {
+        this.text.setText("Loading... " + progress + "%");
+    }, this);
+
+    this.load.onLoadComplete.add(function() {
+        game.state.start("TitleScreen");
+    });
+  },
+
   preload: function () {
+    this.displayLoader();
+
     this.load.spritesheet("bomberman_white", "assets/sprites/bomberman.png", 28, 50);
     this.load.spritesheet("bomberman_black", "assets/sprites/bomberman_black.png", 28, 50);
     this.load.spritesheet("bomberman_blue", "assets/sprites/bomberman_blue.png", 28, 50);
@@ -73,9 +87,5 @@ Preloader.prototype = {
 
     this.load.audio("explosion", "assets/sounds/bomb.ogg");
     this.load.audio("powerup", "assets/sounds/powerup.ogg");
-  },
-
-  create: function () {
-    game.state.start("TitleScreen");
   }
 };

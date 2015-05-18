@@ -62,7 +62,7 @@ Lobby.prototype = {
 		this.backdrop = game.add.image(12.5, 12.5, "lobby_backdrop");
 		this.header = game.add.text(game.camera.width / 2, headerYOffset, "Lobby");
 		this.header.anchor.setTo(.5, .5);
-		TextConfigurer.configureText(this.header, "white", 48);
+		TextConfigurer.configureText(this.header, "white", 32);
 
 		this.slots = [];
 		this.labels = [];
