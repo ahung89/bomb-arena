@@ -4,15 +4,19 @@ module.exports = {
 	createFadeTween: function (alphaFrom, alphaTo, fadeDuration) {
 		fadeDuration = fadeDuration || 300;
 
-		var fadeGraphic = game.add.graphics(0, 0);
-		fadeGraphic.beginFill(BLACK_HEX_CODE, 1);
-		fadeGraphic.drawRect(0, 0, game.camera.width, game.camera.height);
-		fadeGraphic.fixedToCamera = true;
+		if(this.fadeGraphic) {
+			this.fadeGraphic.destroy();
+		}
 
-		fadeGraphic.alpha = alphaFrom;
-		fadeGraphic.endFill();
+		this.fadeGraphic = game.add.graphics(0, 0);
+		this.fadeGraphic.beginFill(BLACK_HEX_CODE, 1);
+		this.fadeGraphic.drawRect(0, 0, game.camera.width, game.camera.height);
+		this.fadeGraphic.fixedToCamera = true;
 
-		var tween = game.add.tween(fadeGraphic);
+		this.fadeGraphic.alpha = alphaFrom;
+		this.fadeGraphic.endFill();
+
+		var tween = game.add.tween(this.fadeGraphic);
 		tween.to({alpha: alphaTo}, fadeDuration, Phaser.Easing.Default);
 		return tween;
 	},

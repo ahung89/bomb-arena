@@ -20,7 +20,7 @@ var secondBombOffsetY = bombermanOffsetY + 141;
 
 var cloudRightmostPointX = 700;
 
-var duration = 80000;
+var cloudTweenDuration = 80000;
 
 var cloudData = [
 	{startingX: 400, startingY: 50, image: "cloud1"},
@@ -43,6 +43,10 @@ var cloudData = [
 
 TitleScreen.prototype = {
 	create: function() {
+		this.showingInstructions = false;
+		this.justClickedHowTo = false;
+		this.justClickedOutOfHowTo = false;
+
 		this.createClouds();
 		this.createButtons();
 	
@@ -74,7 +78,7 @@ TitleScreen.prototype = {
 	createClouds: function() {
 		var cloudRightmostPoint = game.camera.width;
 		var cloudLeftmostPointX = -260;
-		var tweenDuration = duration * (game.camera.width - cloudLeftmostPointX) / game.camera.width;
+		var tweenDuration = cloudTweenDuration * (game.camera.width - cloudLeftmostPointX) / game.camera.width;
 
 		game.add.image(0, 0, "titlescreen_bg");
 
@@ -83,7 +87,7 @@ TitleScreen.prototype = {
 				var cloudImage = game.add.image(data.startingX, data.startingY, data.image);
 				cloudImage.anchor.setTo(0, 0);
 
-				var initialTweenDuration = duration * (game.camera.width - data.startingX) / game.camera.width;
+				var initialTweenDuration = cloudTweenDuration * (game.camera.width - data.startingX) / game.camera.width;
 				var cloudTween = game.add.tween(cloudImage).to({x: cloudRightmostPointX}, initialTweenDuration, Phaser.Easing.Default, true, 0, 0);
 
 				var completionFunction = function() {
@@ -99,11 +103,41 @@ TitleScreen.prototype = {
 
 	createButtons: function() {
 		this.startButton = game.add.button(buttonOffsetX - 250, startButtonOffsetY, "titlescreen_start", function() {
-			Fader.fadeOut(function() {
-				game.state.start("Lobby");
-			});
+			if(!this.showingInstructions && !this.justClickedOutOfHowTo) {
+				Fader.fadeOut(function() {
+					game.state.start("Lobby");
+				});
+			}
 		}, this, 1, 0);
-		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, "titlescreen_howto", function() {}, this, 1, 0);
+		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, "titlescreen_howto", function() {
+			if(!this.showingInstructions && !this.justClickedOutOfHowTo) {
+				this.showingInstructions = true;
+				Fader.fadeOut(function() {
+					this.howTo = game.add.image(0, 0, "howto");
+					this.justClickedHowTo = true;
+					Fader.fadeIn();
+				}, this);
+			}
+		}, this, 1, 0);
+	},
+
+	update: function() {
+		if(!game.input.activePointer.isDown && this.justClickedHowTo) {
+			this.justClickedHowTo = false;
+		}
+
+		if(!game.input.activePointer.isDown && this.justClickedOutOfHowTo) {
+			this.justClickedOutOfHowTo = false;
+		}
+
+		if(game.input.activePointer.isDown && this.showingInstructions && !this.justClickedHowTo) {
+			this.showingInstructions = false;
+			this.justClickedOutOfHowTo = true;
+			Fader.fadeOut(function() {
+				this.howTo.destroy();
+				Fader.fadeIn();
+			}, this);
+		}
 	}
 }
 

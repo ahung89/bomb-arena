@@ -59,6 +59,7 @@ Preloader.prototype = {
     // For title screen
     this.load.image("titlescreen_bg", "assets/titlescreen/background.png");
     this.load.image("titlescreen_title", "assets/titlescreen/title.png");
+    this.load.image("howto", "assets/titlescreen/howtoplay.png");
     this.load.image("cloud1", "assets/titlescreen/cloud1.png");
     this.load.image("cloud2", "assets/titlescreen/cloud2.png");
     this.load.image("cloud3", "assets/titlescreen/cloud3.png");

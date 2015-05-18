@@ -1,7 +1,6 @@
 var Lobby = function() {};
 
 var TextConfigurer = require("../util/text_configurer");
-var Fader = require("../util/fader");
 
 var initialSlotYOffset = 130;
 var slotXOffset = 40;
@@ -76,8 +75,6 @@ Lobby.prototype = {
 			socket.on("add slots", this.addSlots.bind(this));
 			socket.on("update slot", this.updateSlot.bind(this));
 		}
-
-		Fader.fadeIn();
 	},
 
 	update: function() {
