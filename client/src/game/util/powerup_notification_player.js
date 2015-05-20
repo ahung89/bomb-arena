@@ -1,13 +1,13 @@
 var PowerupIds = require("../../../../common/powerup_ids");
 
 var notificationImageMap = {};
-notificationImageMap[PowerupIds.BOMB_STRENGTH] = "bomb_strength_notification";
-notificationImageMap[PowerupIds.BOMB_CAPACITY] = "bomb_count_notification";
-notificationImageMap[PowerupIds.SPEED] = "speed_notification";
+notificationImageMap[PowerupIds.BOMB_STRENGTH] = "gamesprites/bomb_strength_notification.png";
+notificationImageMap[PowerupIds.BOMB_CAPACITY] = "gamesprites/bomb_count_notification.png";
+notificationImageMap[PowerupIds.SPEED] = "gamesprites/speed_notification.png";
 
 exports.showPowerupNotification = function(powerupId, playerX, playerY) {
     var notificationImageKey = notificationImageMap[powerupId];
-    var image = new Phaser.Image(game, playerX, playerY - 10, notificationImageKey);
+    var image = new Phaser.Image(game, playerX, playerY - 10, TEXTURES, notificationImageKey);
     image.anchor.setTo(.5, .5);
     game.add.existing(image);
 

@@ -22,32 +22,32 @@ Lobby.prototype = {
 	create: function() {
 		this.stateSettings = {
 			empty: {
-				outFrame: 0,
-				overFrame: 1,
+				outFrame: "lobby/slots/game_slot_01.png",
+				overFrame: "lobby/slots/game_slot_02.png",
 				text: "Host Game ", // For some reason, text gets slightly truncated if I don't append a space.
 				callback: this.hostGameAction
 			},
 			joinable: {
-				outFrame: 2,
-				overFrame: 3,
+				outFrame: "lobby/slots/game_slot_03.png",
+				overFrame: "lobby/slots/game_slot_04.png",
 				text: "Join Game ",
 				callback: this.joinGameAction
 			},
 			settingup: {
-				outFrame: 4,
-				overFrame: 5,
+				outFrame: "lobby/slots/game_slot_05.png",
+				overFrame: "lobby/slots/game_slot_05.png",
 				text: "Game is being set up... ",
 				callback: null
 			},
 			inprogress: {
-				outFrame: 4,
-				overFrame: 5,
+				outFrame: "lobby/slots/game_slot_05.png",
+				overFrame: "lobby/slots/game_slot_05.png",
 				text: "Game in Progress ",
 				callback: null
 			},
 			full: {
-				outFrame: 4,
-				overFrame: 5,
+				outFrame: "lobby/slots/game_slot_05.png",
+				overFrame: "lobby/slots/game_slot_05.png",
 				text: "Game Full ",
 				callback: null
 			}
@@ -59,7 +59,7 @@ Lobby.prototype = {
 
 		repeatingBombTilesprite.doNotDestroy = true;
 
-		this.backdrop = game.add.image(12.5, 12.5, "lobby_backdrop");
+		this.backdrop = game.add.image(12.5, 12.5, TEXTURES, "lobby/lobby_backdrop.png");
 		this.header = game.add.text(game.camera.width / 2, headerYOffset, "Lobby");
 		this.header.anchor.setTo(.5, .5);
 		TextConfigurer.configureText(this.header, "white", 32);
@@ -100,7 +100,7 @@ Lobby.prototype = {
 			})(i, settings.callback);
 
 			var slotYOffset = initialSlotYOffset + i * lobbySlotDistance;
-			this.slots[i] = game.add.button(slotXOffset, slotYOffset, "game_slot", callback, null, settings.overFrame, settings.outFrame);
+			this.slots[i] = game.add.button(slotXOffset, slotYOffset, TEXTURES, callback, null, settings.overFrame, settings.outFrame);
 			
 			var text = game.add.text(slotXOffset + textXOffset, slotYOffset + textYOffset, settings.text);
 			TextConfigurer.configureText(text, "white", 18);

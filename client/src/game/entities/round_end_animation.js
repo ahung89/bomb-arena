@@ -20,7 +20,7 @@ var roundEndTieText = "Draw! Winners are...";
 function RoundEndAnimation(game, roundNumber, winningColors) {
 	Phaser.Group.call(this, game);
 
-	var roundEndWindow = game.add.image(xOffset, yOffset, "round_end_display");
+	var roundEndWindow = game.add.image(xOffset, yOffset, TEXTURES, "lobby/end_of_round_window.png");
 
 	var header = game.add.text(headerXOffset, headerYOffset, "Round " + roundNumber + " Complete!")
 	TextConfigurer.configureText(header, "white", 32);
@@ -47,7 +47,7 @@ RoundEndAnimation.prototype.createAndAddWinnerImages = function(winningColors) {
 	var index = 3; // 3 is the index of the first winner image.
 
 	winningColors.forEach(function(color) {
-		var winnerPicImage = new Phaser.Image(game, winnerPicXOffset, winnerPicYOffset, "bomberman_head_" + color);
+		var winnerPicImage = new Phaser.Image(game, winnerPicXOffset, winnerPicYOffset, TEXTURES, "lobby/bomberman_head/bomberman_head_" + color + ".png");
 
 		winnerPicImage.scale = {x: 1.75, y: 1.75};
 		winnerPicImage.alpha = 0;

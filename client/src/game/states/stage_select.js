@@ -13,8 +13,8 @@ var stageNameYOffset = 328;
 var repeatingBombTilesprite;
 
 var stages = [
-	{name: "Limitless Brook", thumbnailKey: "limitless_brook_thumbnail", tilemapName: "levelOne", maxPlayers: 4, size: "small"},
-	{name: "Danger Desert", thumbnailKey: "danger_desert_thumbnail", tilemapName: "levelTwo", maxPlayers: 4, size: "medium"}
+	{name: "Limitless Brook", thumbnailKey: "thumbnails/limitless_brook_thumbnail.png", tilemapName: "levelOne", maxPlayers: 4, size: "small"},
+	{name: "Danger Desert", thumbnailKey: "thumbnails/danger_desert_thumbnail.png", tilemapName: "levelTwo", maxPlayers: 4, size: "medium"}
 ];
 
 StageSelect.prototype = {
@@ -24,15 +24,15 @@ StageSelect.prototype = {
 	},
 
 	create: function() {
-		var selectionWindow = game.add.image(xOffset, yOffset, "select_stage");
+		var selectionWindow = game.add.image(xOffset, yOffset, TEXTURES, "lobby/select_stage.png");
 		this.selectedStageIndex = 0;
 		var initialStage = stages[this.selectedStageIndex];
 
-		this.leftButton = game.add.button(150, 180, "left_select_button", this.leftSelect, this, 1, 0);
-		this.rightButton = game.add.button(400, 180, "right_select_button", this.rightSelect, this, 1, 0);
-		this.okButton = game.add.button(495, 460, "ok_button", this.confirmStageSelection, this, 1, 0);
+		this.leftButton = game.add.button(150, 180, TEXTURES, this.leftSelect, this, "lobby/buttons/left_select_button_02.png", "lobby/buttons/left_select_button_01.png");
+		this.rightButton = game.add.button(400, 180, TEXTURES, this.rightSelect, this, "lobby/buttons/right_select_button_02.png", "lobby/buttons/right_select_button_01.png");
+		this.okButton = game.add.button(495, 460, TEXTURES, this.confirmStageSelection, this, "lobby/buttons/ok_button_02.png", "lobby/buttons/ok_button_01.png");
 
-		this.thumbnail = game.add.image(thumbnailXOffset, thumbnailYOffset, initialStage.thumbnailKey);
+		this.thumbnail = game.add.image(thumbnailXOffset, thumbnailYOffset, TEXTURES, initialStage.thumbnailKey);
 
 		// Display title
 		this.text = game.add.text(game.camera.width / 2, stageNameYOffset, initialStage.name);
@@ -78,7 +78,7 @@ StageSelect.prototype = {
 		this.text.setText(newStage.name);
 		this.numPlayersText.setText("Max # of players:   " + newStage.maxPlayers);
 		this.stageSizeText.setText("Map size:   " + newStage.size);
-		this.thumbnail.loadTexture(newStage.thumbnailKey);
+		this.thumbnail.loadTexture(TEXTURES, newStage.thumbnailKey);
 	},
 
 	configureText: function(text, color, size) {

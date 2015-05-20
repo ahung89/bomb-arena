@@ -56,7 +56,7 @@ Level.prototype = {
     this.initializePlayers();
 
     this.createDimGraphic();
-    this.beginRoundAnimation("round_1");
+    this.beginRoundAnimation("round_text/round_1.png");
   },
 
   createDimGraphic: function() {
@@ -104,11 +104,11 @@ Level.prototype = {
 
     var roundImage;
     if(data.completedRoundNumber < 2) {
-      roundImage = "round_" + (data.completedRoundNumber + 1);
+      roundImage = "round_text/round_" + (data.completedRoundNumber + 1) + ".png";
     } else if (data.completedRoundNumber == 2) {
-      roundImage = "final_round";
+      roundImage = "round_text/final_round.png";
     } else {
-      roundImage = "tiebreaker";
+      roundImage = "round_text/tiebreaker.png";
     }
 
     datAnimationDoe.beginAnimation(this.beginRoundAnimation.bind(this, roundImage, this.restartGame.bind(this)));
@@ -129,7 +129,7 @@ Level.prototype = {
   },
 
   beginRoundAnimation: function(image, callback) {
-    var beginRoundText = game.add.image(-600, game.camera.height / 2, image);
+    var beginRoundText = game.add.image(-600, game.camera.height / 2, TEXTURES, image);
     beginRoundText.anchor.setTo(.5, .5);
 
     var tween = game.add.tween(beginRoundText);
@@ -333,7 +333,7 @@ Level.prototype = {
 
   generateItemEntity: function(itemId, row, col) {
      var imageKey = PowerupImageKeys[itemId];
-     var item = new Phaser.Sprite(game, col * TILE_SIZE, row * TILE_SIZE, imageKey);
+     var item = new Phaser.Sprite(game, col * TILE_SIZE, row * TILE_SIZE, TEXTURES, imageKey);
      game.physics.enable(item, Phaser.Physics.ARCADE);
      this.items[row + "." + col] = item;
 

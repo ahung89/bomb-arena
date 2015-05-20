@@ -36,10 +36,11 @@ PendingGame.prototype = {
 	create: function() {
 		socket.emit("enter pending game", {gameId: this.gameId});
 
-		var backdrop = game.add.image(xOffset, yOffset, "pending_game_backdrop");
-		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, "start_game_button", null, this,
-			2, 2);
-		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, "leave_game_button", this.leaveGameAction, null, 1, 0);
+		var backdrop = game.add.image(xOffset, yOffset, TEXTURES, "lobby/backdrop.png");
+		this.startGameButton = game.add.button(buttonXOffset, startGameButtonYOffset, TEXTURES, null, this,
+			"lobby/buttons/start_game_button_03.png", "lobby/buttons/start_game_button_03.png");
+		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, TEXTURES, this.leaveGameAction, null, 
+			"lobby/buttons/leave_game_button_02.png", "lobby/buttons/leave_game_button_01.png");
 		this.characterSquares = this.drawCharacterSquares(4);
 		this.characterImages = [];
 		this.numPlayersInGame = 0;
@@ -65,8 +66,8 @@ PendingGame.prototype = {
 		var xOffset = characterSquareStartingX;
 
 		for(var i = 0; i < numCharacterSquares; i++) {
-			var frame = i < numOpenings ? 0 : 1;
-			characterSquares[i] = game.add.sprite(xOffset, yOffset, "character_square", frame);
+			var frame = i < numOpenings ? "lobby/slots/character_square_01.png" : "lobby/slots/character_square_02.png";
+			characterSquares[i] = game.add.sprite(xOffset, yOffset, TEXTURES, frame);
 			if(i % 2 == 0) {
 				xOffset += characterSquareXDistance;
 			} else {
@@ -84,7 +85,7 @@ PendingGame.prototype = {
 		for(var playerId in data.players) {
 			var color = data.players[playerId].color;
 			this.characterImages[playerId] = game.add.image(this.characterSquares[this.numPlayersInGame].position.x + characterOffsetX, 
-				this.characterSquares[this.numPlayersInGame].position.y + characterOffsetY, "bomberman_head_" + color);
+				this.characterSquares[this.numPlayersInGame].position.y + characterOffsetY, TEXTURES, "lobby/bomberman_head/bomberman_head_" + color + ".png");
 			this.numPlayersInGame++;
 		}
 
@@ -99,7 +100,8 @@ PendingGame.prototype = {
 		this.numPlayersInGame++;
 		var index = this.numPlayersInGame - 1;
 
-		this.characterImages[data.id] = game.add.image(this.characterSquares[index].position.x + characterOffsetX, this.characterSquares[index].position.y + characterOffsetY, "bomberman_head_" +  data.color);
+		this.characterImages[data.id] = game.add.image(this.characterSquares[index].position.x + characterOffsetX,
+		 this.characterSquares[index].position.y + characterOffsetY, TEXTURES, "lobby/bomberman_head/bomberman_head_" +  data.color + ".png");
 
 		// Activate start game button if this is the second player to join the game.
 		if(this.numPlayersInGame == 2) {
@@ -109,14 +111,14 @@ PendingGame.prototype = {
 
 	activateStartGameButton: function() {
 		this.minPlayerMessage.visible = false;
-		this.startGameButton.setFrames(1, 0);
+		this.startGameButton.setFrames("lobby/buttons/start_game_button_02", "lobby/buttons/start_game_button_01.png");
 		this.startGameButton.onInputUp.removeAll();
 		this.startGameButton.onInputUp.add(this.startGameAction, this);
 	},
 
 	deactivateStartGameButton: function() {
 		this.minPlayerMessage.visible = true;
-		this.startGameButton.setFrames(2, 2);
+		this.startGameButton.setFrames("lobby/buttons/start_game_button_03", "lobby/buttons/start_game_button_03.png");
 		this.startGameButton.onInputUp.removeAll();
 	},
 

@@ -2,6 +2,7 @@ window.game = new Phaser.Game(600, 600, Phaser.AUTO, '');
 window.player = null;
 window.socket = null;
 window.level = null;
+window.TEXTURES = "bbo_textures";
 
 startGame();
 

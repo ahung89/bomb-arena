@@ -1,7 +1,12 @@
 var AudioPlayer = require("../util/audio_player");
+var TextureUtil = require("../util/texture_util");
+
+function getFrame(prefix, number) {
+  return "gamesprites/" + prefix + "/" + prefix + "_" + number + ".png";
+}
 
 var Bomb = function(x, y, id) {
-	Phaser.Sprite.call(this, game, x, y, "bomb");
+	Phaser.Sprite.call(this, game, x, y, TEXTURES, "gamesprites/bomb/bomb_01.png");
 	this.id = id;
 
 	this.anchor.setTo(.5, .5);
@@ -21,9 +26,9 @@ Bomb.prototype.remove = function() {
 
 Bomb.renderExplosion = function(explosions) {
 	explosions.forEach(function(explosion) {
-      var explosionSprite = new Phaser.Sprite(game, explosion.x, explosion.y, explosion.key, 0);
+      var explosionSprite = new Phaser.Sprite(game, explosion.x, explosion.y, TEXTURES, getFrame(explosion.key, "01"));
       explosionSprite.anchor.setTo(.5, .5);
-      explosionSprite.animations.add("explode");
+      explosionSprite.animations.add("explode", TextureUtil.getFrames(getFrame, explosion.key, ["02", "03", "04", "05"]));
       explosionSprite.animations.getAnimation("explode").onComplete.add(function() {
        level.deadGroup.push(this);
       }, explosionSprite);

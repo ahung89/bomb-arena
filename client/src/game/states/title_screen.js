@@ -53,13 +53,19 @@ TitleScreen.prototype = {
 		var startButtonTween = this.createInitialButtonTween(this.startButton, 200);
 		var howToButtonTween = this.createInitialButtonTween(this.howToButton, 400);
 	
-		var title = game.add.image(titleOffsetX, titleOffsetY - 200, "titlescreen_title");
+		var title = game.add.image(titleOffsetX, titleOffsetY - 200, TEXTURES, "titlescreen/title.png");
 	
 		var titleTween = game.add.tween(title);
 		titleTween.to({y: titleOffsetY}, 500, Phaser.Easing.Bounce.Out, true, 200).start();
 	
-		var bomberman = game.add.sprite(bombermanOffsetX + 400, bombermanOffsetY, "titlescreen_bomberman");
-		bomberman.animations.add("bomb_animation", [0, 1, 2, 3, 4], 5, true);
+		var bomberman = game.add.sprite(bombermanOffsetX + 400, bombermanOffsetY, TEXTURES, "titlescreen/bomberman/bomberman_01.png");
+		bomberman.animations.add("bomb_animation", [
+				"titlescreen/bomberman/bomberman_01.png",
+				"titlescreen/bomberman/bomberman_02.png",
+				"titlescreen/bomberman/bomberman_03.png",
+				"titlescreen/bomberman/bomberman_04.png",
+				"titlescreen/bomberman/bomberman_05.png"
+			], 5, true);
 	
 		var bombermanTween = game.add.tween(bomberman).to({x: bombermanOffsetX}, 300, Phaser.Easing.Default, false, 100);
 		bombermanTween.onComplete.addOnce(function() {
@@ -80,11 +86,11 @@ TitleScreen.prototype = {
 		var cloudLeftmostPointX = -260;
 		var tweenDuration = cloudTweenDuration * (game.camera.width - cloudLeftmostPointX) / game.camera.width;
 
-		game.add.image(0, 0, "titlescreen_bg");
+		game.add.image(0, 0, TEXTURES, "titlescreen/background.png");
 
 		for(var x = 0; x < cloudData.length; x++) {
 			(function(data) {
-				var cloudImage = game.add.image(data.startingX, data.startingY, data.image);
+				var cloudImage = game.add.image(data.startingX, data.startingY, TEXTURES, "titlescreen/" + data.image + ".png");
 				cloudImage.anchor.setTo(0, 0);
 
 				var initialTweenDuration = cloudTweenDuration * (game.camera.width - data.startingX) / game.camera.width;
@@ -102,23 +108,23 @@ TitleScreen.prototype = {
 	},
 
 	createButtons: function() {
-		this.startButton = game.add.button(buttonOffsetX - 250, startButtonOffsetY, "titlescreen_start", function() {
+		this.startButton = game.add.button(buttonOffsetX - 250, startButtonOffsetY, TEXTURES, function() {
 			if(!this.showingInstructions && !this.justClickedOutOfHowTo) {
 				Fader.fadeOut(function() {
 					game.state.start("Lobby");
 				});
 			}
-		}, this, 1, 0);
-		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, "titlescreen_howto", function() {
+		}, this, "titlescreen/buttons/startbutton_02.png", "titlescreen/buttons/startbutton_01.png");
+		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, TEXTURES, function() {
 			if(!this.showingInstructions && !this.justClickedOutOfHowTo) {
 				this.showingInstructions = true;
 				Fader.fadeOut(function() {
-					this.howTo = game.add.image(0, 0, "howto");
+					this.howTo = game.add.image(0, 0, TEXTURES, "titlescreen/howtoplay.png");
 					this.justClickedHowTo = true;
 					Fader.fadeIn();
 				}, this);
 			}
-		}, this, 1, 0);
+		}, this, "titlescreen/buttons/howtobutton_02.png", "titlescreen/buttons/howtobutton_01.png");
 	},
 
 	update: function() {

@@ -1,4 +1,9 @@
 var remotePlayerUpdateInterval = 100;
+var TextureUtil = require("../util/texture_util");
+
+function getFrame(color, number) {
+  return "gamesprites/bomberman_" + color + "/bomberman_" + color + "_" + number + ".png";
+}
 
 var RemotePlayer = function(x, y, id, color) {
 	this.id = id;
@@ -6,17 +11,18 @@ var RemotePlayer = function(x, y, id, color) {
 	this.lastMoveTime = 0;
 	this.targetPosition;
   this.spawnPoint = {x: x, y: y};
+  this.firstFrame = this.getFrame(color, "01");
 
-	Phaser.Sprite.call(this, game, x, y, "bomberman_" + color);
+	Phaser.Sprite.call(this, game, x, y, TEXTURES, this.firstFrame);
 
 	game.physics.enable(this, Phaser.Physics.ARCADE);
 
 	this.anchor.setTo(.5, .5);
 
-	this.animations.add('down', [0, 1, 2, 3, 4], 10, true);
-  this.animations.add('up', [5, 6, 7, 8, 9], 10, true);
-  this.animations.add('right', [10, 11, 12], 10, true);
-  this.animations.add('left', [13, 14, 15], 10, true);
+  this.animations.add("down", TextureUtil.getFrames(this.getFrame, color, ["01", "02", "03", "04", "05"]), 10, true);
+  this.animations.add("up", TextureUtil.getFrames(this.getFrame, color, ["06", "07", "08", "09", "10"]), 10, true);
+  this.animations.add("right", TextureUtil.getFrames(this.getFrame, color, ["11", "12", "13"]), 10, true);
+  this.animations.add("left", TextureUtil.getFrames(this.getFrame, color, ["14", "15", "16"]), 10, true);
 
 	game.add.existing(this);
 };
@@ -42,10 +48,14 @@ RemotePlayer.prototype.interpolate = function(lastFrameTime) {
     }
 }
 
+RemotePlayer.prototype.getFrame = function (color, number) {
+  return "gamesprites/bomberman_" + color + "/bomberman_" + color + "_" + number + ".png";
+}
+
 RemotePlayer.prototype.reset = function() {
   this.x = this.spawnPoint.x;
   this.y = this.spawnPoint.y;
-  this.frame = 0;
+  this.frame = this.firstFrame;
   this.previousPosition = {x: this.x, y: this.y};
   this.distanceToCover = null;
   this.distanceCovered = null;
