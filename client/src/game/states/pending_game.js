@@ -111,14 +111,14 @@ PendingGame.prototype = {
 
 	activateStartGameButton: function() {
 		this.minPlayerMessage.visible = false;
-		this.startGameButton.setFrames("lobby/buttons/start_game_button_02", "lobby/buttons/start_game_button_01.png");
+		this.startGameButton.setFrames("lobby/buttons/start_game_button_02.png", "lobby/buttons/start_game_button_01.png");
 		this.startGameButton.onInputUp.removeAll();
 		this.startGameButton.onInputUp.add(this.startGameAction, this);
 	},
 
 	deactivateStartGameButton: function() {
 		this.minPlayerMessage.visible = true;
-		this.startGameButton.setFrames("lobby/buttons/start_game_button_03", "lobby/buttons/start_game_button_03.png");
+		this.startGameButton.setFrames("lobby/buttons/start_game_button_03.png", "lobby/buttons/start_game_button_03.png");
 		this.startGameButton.onInputUp.removeAll();
 	},
 

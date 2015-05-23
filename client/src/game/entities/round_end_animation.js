@@ -1,6 +1,6 @@
 var TextConfigurer = require('../util/text_configurer');
 
-var screenWidth = game.width;
+var screenWidth = 600;
 
 var xOffset = 100 - screenWidth;
 var yOffset = 60;

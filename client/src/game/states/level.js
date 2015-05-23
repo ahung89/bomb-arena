@@ -29,7 +29,7 @@ Level.prototype = {
   setEventHandlers: function() {
     // Remember - these will actually be executed from the context of the Socket, not from the context of the level.
     socket.on("disconnect", this.onSocketDisconnect);
-    socket.on("move player", this.onMovePlayer.bind(this));
+    socket.on("m", this.onMovePlayer.bind(this));
     socket.on("remove player", this.onRemovePlayer.bind(this));
     socket.on("kill player", this.onKillPlayer.bind(this));
     socket.on("place bomb", this.onPlaceBomb.bind(this));
@@ -256,11 +256,12 @@ Level.prototype = {
     var movingPlayer = this.remotePlayers[data.id];
 
     if(movingPlayer.targetPosition) {
+      movingPlayer.animations.play(data.f);
+      movingPlayer.lastMoveTime = game.time.now;
+
       if(data.x == movingPlayer.targetPosition.x && data.y == movingPlayer.targetPosition.y) {
         return;
       }
-
-      movingPlayer.animations.play(data.facing);
 
       movingPlayer.position.x = movingPlayer.targetPosition.x;
       movingPlayer.position.y = movingPlayer.targetPosition.y;
@@ -270,7 +271,6 @@ Level.prototype = {
     }
 
     movingPlayer.targetPosition = {x: data.x, y: data.y};
-    movingPlayer.lastMoveTime = game.time.now;
   },
 
   onRemovePlayer: function(data) {

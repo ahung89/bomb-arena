@@ -34,7 +34,7 @@ var Lobby = {
 
 	onEnterLobby: function(data) {
 		this.join(lobbyId);
-		socket.sockets.in(lobbyId).emit("add slots", lobbySlots);
+		io.in(lobbyId).emit("add slots", lobbySlots);
 	},
 
 	onHostGame: function(data) {
@@ -73,7 +73,7 @@ var Lobby = {
 };
 
 function broadcastSlotStateUpdate(gameId, newState) {
-	socket.sockets.in(lobbyId).emit("update slot", {gameId: gameId, newState: newState});
+	io.in(lobbyId).emit("update slot", {gameId: gameId, newState: newState});
 };
 
 function leavePendingGame() {
@@ -81,16 +81,16 @@ function leavePendingGame() {
 
 	this.leave(this.gameId);
 	lobbySlot.removePlayer(this.id);
-	socket.sockets.in(this.gameId).emit("player left", {players: lobbySlot.players});
+	io.in(this.gameId).emit("player left", {players: lobbySlot.players});
 
 	if(lobbySlot.getNumPlayers()== 0) {
 		lobbySlot.state = "empty";
-		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
+		io.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "empty"});
 	}
 
 	if(lobbySlot.state == "full") {
 		lobbySlot.state = "joinable";
-		socket.sockets.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "joinable"});
+		io.in(lobbyId).emit("update slot", {gameId: this.gameId, newState: "joinable"});
 	}
 };
 

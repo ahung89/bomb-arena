@@ -2,8 +2,7 @@ var express = require("express");
 var app = express();
 var server = require("http").Server(app);
 
-// Figure out what to do about these globals.
-socket = require("socket.io").listen(server);
+io = require("socket.io").listen(server);
 TILE_SIZE = 40;
 
 // Game objects
@@ -18,6 +17,8 @@ var PowerupIDs = require("../common/powerup_ids");
 
 var games = {};
 
+// Broadcasting loop works better than sending an update every time a player moves because waiting for player movement messages adds
+// another source of jitter.
 var updateInterval = 100; // Broadcast updates every 100 ms.
 
 // Serve up index.html.
@@ -37,7 +38,7 @@ function init() {
 };
 
 function setEventHandlers () {
-	socket.sockets.on("connection", function(client) {
+	io.on("connection", function(client) {
 		console.log("New player has connected: " + client.id);
 
 		client.on("move player", onMovePlayer);
@@ -76,12 +77,12 @@ function onClientDisconnect() {
 			console.log("deleting " + this.id);
 			delete game.players[this.id];
 	
-			socket.sockets.in(this.gameId).emit("remove player", {id: this.id});	
+			io.in(this.gameId).emit("remove player", {id: this.id});	
 		}
 
 		if(game.numPlayers < 2) {
 			if(game.numPlayers == 1) {
-				socket.sockets.in(this.gameId).emit("no opponents left");
+				io.in(this.gameId).emit("no opponents left");
 			}
 			terminateExistingGame(this.gameId);
 		}
@@ -126,7 +127,7 @@ function onStartGame() {
 
 	game.numPlayersAlive = ids.length;
 
-	socket.sockets.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
+	io.in(this.gameId).emit("start game on client", {mapName: pendingGame.mapName, players: game.players});
 };
 
 function onRegisterMap(data) {
@@ -150,6 +151,7 @@ function onMovePlayer(data) {
 	movingPlayer.x = data.x;
 	movingPlayer.y = data.y;
 	movingPlayer.facing = data.facing;
+	movingPlayer.hasMoved = true;
 };
 
 function onPlaceBomb(data) {
@@ -175,7 +177,7 @@ function onPlaceBomb(data) {
 		var explosionData = bomb.detonate(game.map, player.bombStrength, game.players);
 		player.numBombsAlive--;
 
-		socket.sockets.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId, 
+		io.in(gameId).emit("detonate", {explosions: explosionData.explosions, id: bombId, 
 			destroyedTiles: explosionData.destroyedBlocks});
 		delete game.bombs[bombId];
 		game.map.removeBombFromGrid(data.x, data.y);
@@ -186,7 +188,7 @@ function onPlaceBomb(data) {
 	var bomb = new Bomb(normalizedBombLocation.x, normalizedBombLocation.y, bombTimeoutId);
 	game.bombs[bombId] = bomb;
 
-	socket.sockets.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
+	io.to(this.gameId).emit("place bomb", {x: normalizedBombLocation.x, y: normalizedBombLocation.y, id: data.id});
 };
 
 function onPowerupOverlap(data) {
@@ -204,7 +206,7 @@ function onPowerupOverlap(data) {
 		player.bombCapacity++;
 	}
 
-	socket.sockets.in(this.gameId).emit("powerup acquired", {acquiringPlayerId: this.id, powerupId: powerup.id, powerupType: powerup.powerupType});
+	io.in(this.gameId).emit("powerup acquired", {acquiringPlayerId: this.id, powerupId: powerup.id, powerupType: powerup.powerupType});
 };
 
 function handlePlayerDeath(deadPlayerIds, gameId) {
@@ -216,7 +218,7 @@ function handlePlayerDeath(deadPlayerIds, gameId) {
 
 	deadPlayerIds.forEach(function(deadPlayerId) {
 		games[gameId].players[deadPlayerId].alive = false;
-		socket.sockets.in(gameId).emit("kill player", {id: deadPlayerId});
+		io.in(gameId).emit("kill player", {id: deadPlayerId});
 		games[gameId].numPlayersAlive--;
 	}, this);
 
@@ -246,7 +248,7 @@ function endRound(gameId, tiedWinnerIds) {
 		var gameWinners = game.calculateGameWinners();
 
 		if(gameWinners.length == 1 && (game.currentRound > 3 || gameWinners[0].wins == 2)) {
-			socket.sockets.in(gameId).emit("end game", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors, 
+			io.in(gameId).emit("end game", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors, 
 				gameWinnerColor: gameWinners[0].color});
 			terminateExistingGame(gameId);
 			return;
@@ -257,7 +259,7 @@ function endRound(gameId, tiedWinnerIds) {
 	game.resetForNewRound();
 
 
-	socket.sockets.in(gameId).emit("new round", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors});
+	io.in(gameId).emit("new round", {completedRoundNumber: game.currentRound - 1, roundWinnerColors: roundWinnerColors});
 };
 
 function onReadyForRound() {
@@ -279,8 +281,9 @@ function broadcastingLoop() {
 		var game = games[g];
 		for(var i in game.players) {
 			var player = game.players[i];
-			if(player.alive) {
-				socket.sockets.in(g).emit("move player", {id: player.id, x: player.x, y: player.y, facing: player.facing, timestamp: (+new Date())});
+			if(player.alive && player.hasMoved) {
+				io.to(g).emit("m", {id: player.id, x: player.x, y: player.y, f: player.facing});
+				player.hasMoved = false;
 			}
 		}
 	}
