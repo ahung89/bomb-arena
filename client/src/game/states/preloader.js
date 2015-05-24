@@ -32,5 +32,8 @@ Preloader.prototype = {
 
     this.load.audio("explosion", "assets/sounds/bomb.ogg");
     this.load.audio("powerup", "assets/sounds/powerup.ogg");
+    this.load.audio("click", "assets/sounds/click.ogg");
+
+    window.buttonClickSound = new Phaser.Sound(game, "click", .25);
   }
 };

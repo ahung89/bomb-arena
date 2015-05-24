@@ -32,6 +32,10 @@ StageSelect.prototype = {
 		this.rightButton = game.add.button(400, 180, TEXTURES, this.rightSelect, this, "lobby/buttons/right_select_button_02.png", "lobby/buttons/right_select_button_01.png");
 		this.okButton = game.add.button(495, 460, TEXTURES, this.confirmStageSelection, this, "lobby/buttons/ok_button_02.png", "lobby/buttons/ok_button_01.png");
 
+		this.leftButton.setDownSound(buttonClickSound);
+		this.rightButton.setDownSound(buttonClickSound);
+		this.okButton.setDownSound(buttonClickSound);
+
 		this.thumbnail = game.add.image(thumbnailXOffset, thumbnailYOffset, TEXTURES, initialStage.thumbnailKey);
 
 		// Display title

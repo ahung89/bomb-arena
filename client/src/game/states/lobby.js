@@ -101,6 +101,7 @@ Lobby.prototype = {
 
 			var slotYOffset = initialSlotYOffset + i * lobbySlotDistance;
 			this.slots[i] = game.add.button(slotXOffset, slotYOffset, TEXTURES, callback, null, settings.overFrame, settings.outFrame);
+			this.slots[i].setDownSound(buttonClickSound);
 			
 			var text = game.add.text(slotXOffset + textXOffset, slotYOffset + textYOffset, settings.text);
 			TextConfigurer.configureText(text, "white", 18);

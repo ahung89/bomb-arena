@@ -115,6 +115,8 @@ TitleScreen.prototype = {
 				});
 			}
 		}, this, "titlescreen/buttons/startbutton_02.png", "titlescreen/buttons/startbutton_01.png");
+		this.startButton.setDownSound(buttonClickSound);
+
 		this.howToButton = game.add.button(buttonOffsetX - 250, howToButtonOffsetY, TEXTURES, function() {
 			if(!this.showingInstructions && !this.justClickedOutOfHowTo) {
 				this.showingInstructions = true;
@@ -125,6 +127,7 @@ TitleScreen.prototype = {
 				}, this);
 			}
 		}, this, "titlescreen/buttons/howtobutton_02.png", "titlescreen/buttons/howtobutton_01.png");
+		this.howToButton.setDownSound(buttonClickSound);
 	},
 
 	update: function() {
@@ -137,6 +140,7 @@ TitleScreen.prototype = {
 		}
 
 		if(game.input.activePointer.isDown && this.showingInstructions && !this.justClickedHowTo) {
+			buttonClickSound.play();
 			this.showingInstructions = false;
 			this.justClickedOutOfHowTo = true;
 			Fader.fadeOut(function() {

@@ -41,6 +41,9 @@ PendingGame.prototype = {
 			"lobby/buttons/start_game_button_03.png", "lobby/buttons/start_game_button_03.png");
 		this.leaveGameButton = game.add.button(buttonXOffset, leaveButtonYOffset, TEXTURES, this.leaveGameAction, null, 
 			"lobby/buttons/leave_game_button_02.png", "lobby/buttons/leave_game_button_01.png");
+
+		this.leaveGameButton.setDownSound(buttonClickSound);
+		
 		this.characterSquares = this.drawCharacterSquares(4);
 		this.characterImages = [];
 		this.numPlayersInGame = 0;
@@ -114,12 +117,14 @@ PendingGame.prototype = {
 		this.startGameButton.setFrames("lobby/buttons/start_game_button_02.png", "lobby/buttons/start_game_button_01.png");
 		this.startGameButton.onInputUp.removeAll();
 		this.startGameButton.onInputUp.add(this.startGameAction, this);
+		this.startGameButton.setDownSound(buttonClickSound);
 	},
 
 	deactivateStartGameButton: function() {
 		this.minPlayerMessage.visible = true;
 		this.startGameButton.setFrames("lobby/buttons/start_game_button_03.png", "lobby/buttons/start_game_button_03.png");
 		this.startGameButton.onInputUp.removeAll();
+		this.startGameButton.setDownSound(null);
 	},
 
 	playerLeft: function(data) {
