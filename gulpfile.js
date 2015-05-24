@@ -22,7 +22,6 @@ gulp.task('compile', function() {
 			.bundle()
 			.pipe(source('bomb_arena.min.js'))
 			.pipe(buffer())
-			// Uncomment the line below once releasing
 			.pipe(uglify())
 			.pipe(connect.reload())
 			.pipe(gulp.dest(paths.dist))
