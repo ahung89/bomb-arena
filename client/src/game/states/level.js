@@ -286,7 +286,7 @@ Level.prototype = {
 
   onKillPlayer: function(data) {
     if(data.id == player.id) {
-      console.log("You've been killed.");
+      console.log("Too bad! You've been killed.");
 
       player.kill();
     } else {
