@@ -91,6 +91,7 @@ PendingGame.prototype = {
 				this.characterSquares[this.numPlayersInGame].position.y + characterOffsetY, TEXTURES, "lobby/bomberman_head/bomberman_head_" + color + ".png");
 			this.numPlayersInGame++;
 		}
+		console.log(this.numPlayersInGame);
 
 		if(this.numPlayersInGame > 1) {
 			this.activateStartGameButton();
@@ -143,10 +144,12 @@ PendingGame.prototype = {
 	// When the "start" button is clicked, send a message to the server to initialize the game.
 	startGameAction: function() {
 		socket.emit("start game on server");
+		console.log(socket);
 	},
 
 	leaveGameAction: function() {
 		socket.emit("leave pending game");
+		console.log(socket);
 		socket.removeAllListeners();
 		game.state.start("Lobby", true, false, repeatingBombTilesprite);
 	},
