@@ -9,6 +9,7 @@ var Map = function(data, tileSize) {
 
 	var tiles = data.tiles;
 	var i = 0;
+    var destructibleTiles = data.destructibleTileId;
 
 	for(var row = 0; row < data.height; row++) {
 		this.mapData.push([]);
@@ -17,7 +18,8 @@ var Map = function(data, tileSize) {
 			this.placedBombs[row][col] = 0;
 			if(tiles[i] == 0) {
 				this.mapData[row][col] = 0;
-			} else if(tiles[i] == data.destructibleTileId) {
+
+			} else if(-1 !== destructibleTiles.indexOf(tiles[i])) {
 				this.mapData[row][col] = 2;
 			} else {
 				this.mapData[row][col] = 1;

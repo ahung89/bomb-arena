@@ -19,12 +19,12 @@ var MapInfo = {
 	},
 	aztec: {
 		spawnLocations: [{x: 1, y: 1}, {x: 1, y: 13}, {x: 13, y: 13}, {x: 13, y: 1}],
-		collisionTiles: [169, 191],
+		collisionTiles: [125, 160, 238, 240, 354, 268, 269, 270, 297],
 		groundLayer: "Ground",
 		blockLayer: "Blocks",
 		tilesetName: "tiles",
 		tilesetImage: "tiles",
-		destructibleTileId: 191
+		destructibleTileId: [354, 297]
     }
 
 };
