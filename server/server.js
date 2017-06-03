@@ -39,6 +39,8 @@ function init() {
 
 function setEventHandlers () {
 	io.on("connection", function(client) {
+		console.log("New player has connected: " + client.id);
+
 		client.on("move player", onMovePlayer);
 		client.on("disconnect", onClientDisconnect);
 		client.on("place bomb", onPlaceBomb);
@@ -72,6 +74,7 @@ function onClientDisconnect() {
 		var game = games[this.gameId];
 	
 		if(this.id in game.players) {
+			console.log("deleting " + this.id);
 			delete game.players[this.id];
 	
 			io.in(this.gameId).emit("remove player", {id: this.id});	
@@ -170,6 +173,7 @@ function onPlaceBomb(data) {
 	player.numBombsAlive++;
 
 	var bombTimeoutId = setTimeout(function() {
+		console.log("detonatin with ", game.players);
 		var explosionData = bomb.detonate(game.map, player.bombStrength, game.players);
 		player.numBombsAlive--;
 
