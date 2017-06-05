@@ -7,7 +7,7 @@ var gulp = require('gulp'),
 	source = require('vinyl-source-stream'),
 	jshint = require('gulp-jshint');
 
-gulp.task('default', ['connect', 'compile']);
+gulp.task('default', ['compile']);
 
 paths = {
 	entry: './client/src/main.js',
@@ -31,12 +31,5 @@ gulp.task('compile', function() {
 	bundler.on('update', bundle);
 
 	return bundle();
-});
 
-gulp.task('connect', function() {
-	connect.server({
-		root: [__dirname + '/client'],
-		port: 9000,
-		livereload: true
-	});
 });
