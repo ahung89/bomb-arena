@@ -16,7 +16,17 @@ var MapInfo = {
 		tilesetName: "tiles",
 		tilesetImage: "tiles",
 		destructibleTileId: 191
-	}
+	},
+	aztec: {
+		spawnLocations: [{x: 1, y: 1}, {x: 1, y: 13}, {x: 13, y: 13}, {x: 13, y: 1}],
+		collisionTiles: [125, 160, 238, 240, 354, 268, 269, 270, 297],
+		groundLayer: "Ground",
+		blockLayer: "Blocks",
+		tilesetName: "tiles",
+		tilesetImage: "tiles",
+		destructibleTileId: [354, 297]
+    }
+
 };
 
 module.exports = MapInfo;

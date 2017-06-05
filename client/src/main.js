@@ -7,8 +7,8 @@ window.TEXTURES = "bbo_textures";
 startGame();
 
 function startGame() {
-	socket = io("https://limitless-brook-9339.herokuapp.com:443");
-    // socket = io("http://localhost:8000");
+     // socket = io("http://localhost:8000");
+	socket = io("https://moa-bomberman.herokuapp.com:443");
 
     require("./game/mods/phaser_enhancements");
 
