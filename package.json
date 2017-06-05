@@ -4,7 +4,6 @@
   "description": "An HTML5 multiplayer arena combat game.",
   "main": "game.js",
   "scripts": {
-    "start": "node server/server.js",
     "postinstall": "gulp",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
